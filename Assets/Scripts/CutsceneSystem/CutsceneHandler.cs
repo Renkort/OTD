@@ -16,6 +16,8 @@ public class CutsceneHandler : MonoBehaviour
 
     private void AddCutsceneEvents()
     {
+        if (currentEvents == null)
+            return;
         this.cutsceneSegments = currentEvents.Events;
         if (cutsceneSegments.Length == 0)
             Debug.Log($"WARNIGN: Cutscene segments == 0");
@@ -37,21 +39,23 @@ public class CutsceneHandler : MonoBehaviour
 
     public void OnOpenSegment(int segmentIndex)
     {
-        if (cutsceneSegments.Length == 0)
+        if (cutsceneSegments == null || cutsceneSegments.Length == 0)
             return;
         cutsceneSegments[segmentIndex].OnOpenSegment?.Invoke();
     }
 
     public void SetCurrentEvents(DialogueObject dialogueObject)
     {
+        if (allEvents == null)
+            return;
         for (int i = 0; i < allEvents.Length; i++)
-        {
-            if (allEvents[i].DialogueObject == dialogueObject)
             {
-                currentEvents = allEvents[i];
-                break;
+                if (allEvents[i].DialogueObject == dialogueObject)
+                {
+                    currentEvents = allEvents[i];
+                    break;
+                }
             }
-        }
         AddCutsceneEvents();
     }
 
