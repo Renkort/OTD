@@ -1,10 +1,12 @@
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using DialogueSystem.Cutscenes;
 using UnityEngine;
 
 
 namespace DialogueSystem
 {
-    public class DialogueActivator3D : MonoBehaviour, IInteractable
+    public class DialogueActivator3D : MonoBehaviour, IInteractable, IDataPersistance
     {
         [SerializeField] private DialogueObject dialogueObject;
         [SerializeField] private string staticInteractText;
@@ -72,6 +74,38 @@ namespace DialogueSystem
 
             Player.Instance.ToggleInteractText(false);
             player.DialogueUI.ShowDialogue(dialogueObject);
+        }
+
+        public void LoadData(GameData data)
+        {
+            // Dictionary<string, DialogueObject> dialogueObj = Player.Instance.DialogueUI.dialogueObjects;
+            // if (dialogueObj == null)
+            //     Debug.Log($"DialougeObjects in DialougeUI is null");
+            // string dialogueId = "";
+            // data.Dialogues.TryGetValue(gameObject.name, out dialogueId);
+            // if (dialogueObj[dialogueId] != null)
+            //     dialogueObject = dialogueObj[dialogueId];
+        }
+
+        public void SaveData(ref GameData data)
+        {
+            // Dictionary<DialogueObject, string> dialogueIds = Player.Instance.DialogueUI.dialogueIds;
+            // //WARNING: GameObject name is using as uniq id for person name;
+            // if (data.Dialogues.ContainsKey(gameObject.name))
+            // {
+            //     data.Dialogues[gameObject.name] = dialogueIds[dialogueObject];
+            // }
+            // else
+            // {
+            //     if (!dialogueIds.ContainsKey(dialogueObject))
+            //     {
+            //         string dialogueId = System.Guid.NewGuid().ToString();
+            //         dialogueIds.Add(dialogueObject, dialogueId);
+            //         Player.Instance.DialogueUI.dialogueObjects.Add(dialogueId, dialogueObject);
+            //         Debug.Log($"Adding {dialogueId}");
+            //     }
+            //     data.Dialogues.Add(gameObject.name, dialogueIds[dialogueObject]);
+            // }
         }
     }
 

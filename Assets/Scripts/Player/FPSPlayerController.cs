@@ -1,9 +1,8 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController), typeof(AudioSource))]
-public class FPSPlayerController : MonoBehaviour
+public class FPSPlayerController : MonoBehaviour, IDataPersistance
 {
     [Header("Movement")]
     [SerializeField] private float walkSpeed = 5f;
@@ -49,8 +48,10 @@ public class FPSPlayerController : MonoBehaviour
     private bool wasGrounded;
     private float currentHeight;
     private float originalStepOffset;
-    private bool canMove = true, canLookAround = true;
+    private bool canMove = true, canLookAround = true,
+    usePhysics = true;
     private float tilt;
+    private bool isDead = false;
 
     private void Awake()
     {
@@ -66,20 +67,21 @@ public class FPSPlayerController : MonoBehaviour
 
     private void Update()
     {
-        HandleGroundCheck();
-        if (!canMove)
+        if (isDead)
+        {
+            HandleBodyPhysics();
+            ApplyFinalMovements();
             return;
+        }
+
+        HandleGroundCheck();
         HandleMovement();
         HandleMouseLook();
-        //HandleMouseLook();
         HandleJump();
         HandleCrouch();
         HandleHeadBob();
         HandleFootsteps();
         ApplyFinalMovements();
-    }
-    private void FixedUpdate()
-    {
     }
 
     private void HandleGroundCheck()
@@ -106,6 +108,8 @@ public class FPSPlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
+        if (!canMove)
+            return;
         isGrounded = characterController.isGrounded;
 
         if (isGrounded && moveDirection.y < 0)
@@ -150,6 +154,8 @@ public class FPSPlayerController : MonoBehaviour
 
     private void HandleMouseLook()
     {
+        if (!canLookAround)
+            return;
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
@@ -158,7 +164,7 @@ public class FPSPlayerController : MonoBehaviour
         yRotation += mouseX;
 
         // Камера покачивается при повороте
-        
+
         // Quaternion targetRotation = Quaternion.Euler(xRotation, 0f, tilt);
         // playerCamera.localRotation = Quaternion.Lerp(
         //     playerCamera.localRotation, 
@@ -173,11 +179,13 @@ public class FPSPlayerController : MonoBehaviour
 
     private void HandleJump()
     {
+        if (!canMove)
+            return;
         if (Input.GetButtonDown("Jump") && isGrounded && !isCrouching)
-            {
-                moveDirection.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-                moveDirection = moveDirection.normalized * Mathf.Max(moveDirection.magnitude, walkSpeed);
-            }
+        {
+            moveDirection.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            moveDirection = moveDirection.normalized * Mathf.Max(moveDirection.magnitude, walkSpeed);
+        }
 
         moveDirection.y += gravity * Time.deltaTime;
     }
@@ -186,9 +194,9 @@ public class FPSPlayerController : MonoBehaviour
     {
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
-            {
-                isCrouching = !isCrouching;
-            }
+        {
+            isCrouching = !isCrouching;
+        }
 
         float targetHeight = isCrouching ? crouchHeight : standHeight;
         currentHeight = Mathf.Lerp(currentHeight, targetHeight, crouchTransitionSpeed * Time.deltaTime);
@@ -251,11 +259,27 @@ public class FPSPlayerController : MonoBehaviour
         audioSource.pitch = Random.Range(0.9f, 1.1f);
         audioSource.PlayOneShot(clip);
     }
+    private void HandleBodyPhysics()
+    {
+        characterController.height = crouchHeight;
+        characterController.center = new Vector3(0, crouchHeight / 2, 0);
+        currentHeight = Mathf.Lerp(currentHeight, crouchHeight, crouchTransitionSpeed * Time.deltaTime);
+        Vector3 camPos = playerCamera.localPosition;
+        camPos.y = defaultCameraY - (standHeight - currentHeight);
+        playerCamera.localPosition = camPos;
+        Quaternion targetRotation = Quaternion.Euler(-60f, 0f, 30f);
+        playerCamera.localRotation = Quaternion.Lerp(playerCamera.localRotation, targetRotation, tiltSpeed * Time.deltaTime);
+
+        moveDirection.y += gravity * Time.deltaTime;
+    }
 
     private void ApplyFinalMovements()
     {
+        if (!usePhysics)
+            return;
         characterController.Move(moveDirection * Time.deltaTime);
     }
+
 
     public void ShakeCamera(float duration, float magnitude)
     {
@@ -288,5 +312,53 @@ public class FPSPlayerController : MonoBehaviour
     {
         this.canMove = canMove;
         this.canLookAround = canLookAround;
+    }
+    public void FreezeMovement(bool canMove, bool canLookAround, float duration)
+    {
+        StartCoroutine(FreezeActionsForSeconds(canMove, canLookAround, duration));
+    }
+
+    IEnumerator FreezeActionsForSeconds(bool canMoveNow, bool canLookAroundNow, float duration)
+    {
+        float elapsed = 0.0f;
+        FreezeMovement(canMoveNow, canLookAroundNow);
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        FreezeMovement(true, true);
+    }
+    public void OnEnablePhysics(bool usePhysics)
+    {
+        this.usePhysics = usePhysics;
+    }
+
+    public void KillPlayer()
+    {
+        isDead = true;
+        FreezeMovement(false, false);
+        ShakeCamera(0.2f, 0.02f);
+    }
+
+    public void LoadData(GameData data)
+    {
+        canMove = data.CanMove;
+        canLookAround = data.CanLookAround;
+        usePhysics = data.UsePhysics;
+        isDead = data.IsDead;
+
+        playerCamera.localRotation = Quaternion.Euler(data.CameraRotation);
+        
+
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.CanMove = canMove;
+        data.CanLookAround = canLookAround;
+        data.UsePhysics = usePhysics;
+
+        data.CameraRotation = playerCamera.localRotation.eulerAngles;
     }
 }

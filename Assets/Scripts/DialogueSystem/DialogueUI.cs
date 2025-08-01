@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DialogueSystem.Cutscenes;
+using System.Collections.Generic;
 
 namespace DialogueSystem
 {
@@ -13,6 +14,8 @@ namespace DialogueSystem
         [SerializeField] private TextMeshProUGUI textLabel;
         [SerializeField] private Image portraitLabel;
         public bool IsOpen { get; private set; }
+        public Dictionary<DialogueObject, string> dialogueIds = new();
+        public Dictionary<string, DialogueObject> dialogueObjects = new();
         private ResponseHandler responseHandler;
         private TypewriterEffect typewriterEffect;
         private CutsceneHandler cutsceneHandler;
@@ -22,12 +25,13 @@ namespace DialogueSystem
             responseHandler = GetComponent<ResponseHandler>();
             typewriterEffect = GetComponent<TypewriterEffect>();
             cutsceneHandler = GetComponent<CutsceneHandler>();
-            CloseDialogueBox();
+            //CloseDialogueBox();
+            dialogueBox.SetActive(false);
         }
 
         public void ShowDialogue(DialogueObject dialogueObject)
         {
-            Player.Instance.FreezePlayerActions(true, true);
+            Player.Instance.FreezePlayerActions(true, false);
             IsOpen = true;
             dialogueBox.SetActive(true);
             StartCoroutine(StepThroughDialogue(dialogueObject));
@@ -75,6 +79,7 @@ namespace DialogueSystem
             }
             else
             {
+                cutsceneHandler.ClearCurrentEvents();
                 CloseDialogueBox();
             }
 

@@ -3,20 +3,66 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-public class IngameUI : MonoBehaviour
+public class IngameUI : MonoBehaviour, IDataPersistance
 {
     [SerializeField] private bool showDebugInfo = false;
+    [SerializeField] private GameObject deathScreen;
+    [SerializeField] private Animator whiteFadeScreen;
     private float deltaTime = 0.0f;
     private Transform playerTransform;
+
+    public Animator WhiteFadeScreen => whiteFadeScreen;
 
     void Start()
     {
         playerTransform = Player.Instance.gameObject.GetComponent<Transform>();
+
+        deathScreen.SetActive(false);
     }
 
     void Update()
     {
         deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+
+        HandleSaveGameInput();
+
+        if (Player.Instance.IsDead)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Debug.Log($"Loading last game save...");
+                DataPersistenceManager.Instance.LoadGame();
+            }
+        }
+    }
+
+    private void HandleSaveGameInput()
+    {
+        if (Player.Instance.DialogueUI.IsOpen)
+        {
+            return;
+        }
+        if (Input.GetKeyDown(KeyCode.F5) && !Player.Instance.IsDead)
+        {
+            Debug.Log("SAVING...");
+            DataPersistenceManager.Instance.SaveGame();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F7))
+        {
+            Debug.Log("LOADING...");
+            DataPersistenceManager.Instance.LoadGame();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            showDebugInfo = !showDebugInfo;
+        }
+    }
+
+    public void ShowDeathScreen()
+    {
+        deathScreen.SetActive(true);
     }
 
     //Debug UI
@@ -36,10 +82,10 @@ public class IngameUI : MonoBehaviour
 
         Rect verRect = new Rect(0, 0, w, uiSize);
         Rect fpsRect = new Rect(0, uiSize, w, uiSize);
-        Rect posRect = new Rect(0, uiSize*2, w, uiSize);
-        Rect memoryRect = new Rect(0, uiSize*3, w, uiSize);
+        Rect posRect = new Rect(0, uiSize * 2, w, uiSize);
+        Rect memoryRect = new Rect(0, uiSize * 3, w, uiSize);
 
-        string verText = $"{Application.productName} ver. {Application.version}"; 
+        string verText = $"{Application.productName} ver. {Application.version}";
 
         float msec = deltaTime * 1000.0f;
         float fps = 1.0f / deltaTime;
@@ -56,5 +102,16 @@ public class IngameUI : MonoBehaviour
         GUI.Label(posRect, posText, style); // player position
         GUI.Label(memoryRect, allocMemoryText, style); // allocated memory
 
+    }
+
+    public void LoadData(GameData data)
+    {
+        showDebugInfo = data.ShowDebugInfo;
+        deathScreen.SetActive(data.IsDead);
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.ShowDebugInfo = showDebugInfo;
     }
 }

@@ -73,11 +73,14 @@ namespace DialogueSystem
             responseBox.gameObject.SetActive(true);
 
             Player.Instance.SetCursorVisible(true);
+            Player.Instance.FreezePlayerActions(true, true);
         }
 
         private void OnPickedResponse(Response response, int responseIndex)
         {
             responseBox.gameObject.SetActive(false);
+            Player.Instance.SetCursorVisible(false);
+            Player.Instance.FreezePlayerActions(true, false);
 
             foreach (GameObject responseButton in tempResponseButtons)
             {
@@ -101,7 +104,6 @@ namespace DialogueSystem
                 dialogueUI.CloseDialogueBox();
             }
 
-            Player.Instance.SetCursorVisible(false);
         }
     }
 

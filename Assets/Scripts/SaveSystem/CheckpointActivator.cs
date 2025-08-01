@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class CheckpointActivator : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public string Id { get; private set; }
 
-    // Update is called once per frame
-    void Update()
+    public void TriggerCheckpoint()
     {
-        
+        Debug.Log($"Checkpoint...");
+        DataPersistenceManager.Instance.SaveGame();
     }
 }

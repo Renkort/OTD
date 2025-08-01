@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class GameUI : MonoBehaviour
 {
-    [SerializeField] private Menu mainMenu;
+    public Menu MainMenu;
+    public IngameUI IngameUI;
 }

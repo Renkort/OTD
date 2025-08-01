@@ -45,12 +45,14 @@ public class DataPersistenceManager : MonoBehaviour
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        Debug.Log($"DEBUG OnSceneLoaded. Loading Game...");
         this.dataPersistanceObjects = FindAllDataPersistanceObjects();
         LoadGame();
     }
 
     public void OnSceneUnloaded(Scene scene)
     {
+        Debug.Log($"[DEBUG] OnSceneUnloaded. Saving Game...");
         SaveGame();
     }
 
@@ -100,7 +102,7 @@ public class DataPersistenceManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        SaveGame();
+        //SaveGame();
     }
 
     private List<IDataPersistance> FindAllDataPersistanceObjects()

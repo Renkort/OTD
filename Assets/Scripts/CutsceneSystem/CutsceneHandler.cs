@@ -49,14 +49,20 @@ public class CutsceneHandler : MonoBehaviour
         if (allEvents == null)
             return;
         for (int i = 0; i < allEvents.Length; i++)
+        {
+            if (allEvents[i].DialogueObject == dialogueObject)
             {
-                if (allEvents[i].DialogueObject == dialogueObject)
-                {
-                    currentEvents = allEvents[i];
-                    break;
-                }
+                currentEvents = allEvents[i];
+                break;
             }
+        }
         AddCutsceneEvents();
+    }
+    public void ClearCurrentEvents()
+    {
+        allEvents = null;
+        currentEvents = null;
+        cutsceneSegments = null;
     }
 
     public void ActivateGO(GameObject go)
