@@ -11,6 +11,7 @@ namespace DialogueSystem
         [SerializeField] private RectTransform responseBox;
         [SerializeField] private RectTransform responseButtonTemplate;
         [SerializeField] private RectTransform responseContainer;
+        [SerializeField] private AudioClip selectResponseSFX;
 
         private List<GameObject> tempResponseButtons = new List<GameObject>();
         private ResponseEvent[] responseEvents;
@@ -61,8 +62,8 @@ namespace DialogueSystem
 
                 GameObject responseButton = Instantiate(responseButtonTemplate.gameObject, responseContainer);
                 responseButton.SetActive(true);
-                responseButton.GetComponent<TextMeshProUGUI>().text = $"[{i + 1}] " + response.ResponseText;
-                responseButton.GetComponent<Button>().onClick.AddListener(() => OnPickedResponse(response, responseIndex));
+                responseButton.GetComponentInChildren<TextMeshProUGUI>().text = $"[{i + 1}] " + response.ResponseText;
+                responseButton.GetComponentInChildren<Button>().onClick.AddListener(() => OnPickedResponse(response, responseIndex));
                 dialogueResponses.Add(new UnityEvent());
                 dialogueResponses[i].AddListener(() => OnPickedResponse(response, responseIndex));
 
@@ -81,6 +82,7 @@ namespace DialogueSystem
             responseBox.gameObject.SetActive(false);
             Player.Instance.SetCursorVisible(false);
             Player.Instance.FreezePlayerActions(true, false);
+            SoundFXHandler.Instance.PlaySoundFXClip(selectResponseSFX, Player.Instance.gameObject.transform, 0.2f);
 
             foreach (GameObject responseButton in tempResponseButtons)
             {
@@ -101,6 +103,7 @@ namespace DialogueSystem
             }
             else
             {
+                Player.Instance.FreezePlayerActions(false, false);
                 dialogueUI.CloseDialogueBox();
             }
 

@@ -13,6 +13,10 @@ public class InteractableDoor : InteractionPoint, IDataPersistance
     [SerializeField] private Animator animator;
     [SerializeField] private string OpenActionText;
     [SerializeField] private string CloseActionText;
+    [SerializeField] private AudioClip openSFX;
+    [SerializeField] private AudioClip closeSFX;
+    [SerializeField] private AudioClip lockedSFX;
+    [SerializeField] private AudioSource audioSource;
     public bool IsLocked = false;
 
     private bool isOpen = false;
@@ -39,21 +43,28 @@ public class InteractableDoor : InteractionPoint, IDataPersistance
     private void OpenCloseDoor()
     {
         if (IsLocked)
+        {
+            audioSource.clip = lockedSFX;
+            audioSource.Play();
             return;
+        }
 
         if (isOpen)
         {
+            audioSource.clip = closeSFX;
             isOpen = false;
             animator.SetTrigger("Close");
             SetInteractText(OpenActionText);
         }
         else
         {
+            audioSource.clip = openSFX;
             onOpenDoor?.Invoke();
             isOpen = true;
             animator.SetTrigger("Open");
             SetInteractText(CloseActionText);
         }
+        audioSource.Play();
     }
 
     public void LoadData(GameData data)

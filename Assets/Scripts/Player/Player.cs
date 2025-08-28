@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DialogueSystem;
 using UnityEngine;
 using TMPro;
-
+[RequireComponent(typeof(AudioSource))]
 public class Player : MonoBehaviour, IDataPersistance
 {
     [SerializeField] private FPSPlayerController fpsController;
@@ -13,6 +13,12 @@ public class Player : MonoBehaviour, IDataPersistance
     [SerializeField] private TextMeshProUGUI interactTextLabel;
     [SerializeField] private Light flashlight;
     [SerializeField] private GameUI gameUI;
+    [Header("AUDIO")]
+    [SerializeField] private AudioClip deathSFX;
+    [Header("DEBUG")]
+    [SerializeField] private bool isDebugMode = false;
+    [SerializeField] private Transform startPosition;
+
     private bool isFlashlightActive = false;
     public IInteractable Interactable { get; set; }
     public static Player Instance;
@@ -26,6 +32,10 @@ public class Player : MonoBehaviour, IDataPersistance
     {
         ToggleInteractText(false);
         FreezePlayerActions(true, true, 1.3f);
+        if (isDebugMode && startPosition != null)
+        {
+            transform.position = startPosition.position;
+        }
     }
     private void Update()
     {
@@ -64,7 +74,7 @@ public class Player : MonoBehaviour, IDataPersistance
 
     public void Kill()
     {
-        Debug.Log($"DEBUG: PLAYER IS DEAD!");
+        GetComponent<AudioSource>().PlayOneShot(deathSFX);
         IsDead = true;
         gameUI.IngameUI.ShowDeathScreen();
         fpsController.KillPlayer();

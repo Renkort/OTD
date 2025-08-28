@@ -23,7 +23,7 @@ public class ObjectElevator : MonoBehaviour
         while (elapsedTime < targetPoint.MovementDuration)
         {
             player.transform.position = Vector3.Lerp(startPosition, targetPoint.Transform.position, elapsedTime / targetPoint.MovementDuration);
-            player.transform.rotation = Quaternion.Slerp(startRotation, targetPoint.Transform.rotation, elapsedTime / targetPoint.MovementDuration);
+            //player.transform.rotation = Quaternion.Slerp(startRotation, targetPoint.Transform.rotation, elapsedTime / targetPoint.MovementDuration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }

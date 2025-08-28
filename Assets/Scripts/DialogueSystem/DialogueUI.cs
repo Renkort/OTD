@@ -25,8 +25,7 @@ namespace DialogueSystem
             responseHandler = GetComponent<ResponseHandler>();
             typewriterEffect = GetComponent<TypewriterEffect>();
             cutsceneHandler = GetComponent<CutsceneHandler>();
-            //CloseDialogueBox();
-            dialogueBox.SetActive(false);
+            CloseDialogueBox();
         }
 
         public void ShowDialogue(DialogueObject dialogueObject)
@@ -80,6 +79,7 @@ namespace DialogueSystem
             else
             {
                 cutsceneHandler.ClearCurrentEvents();
+                Player.Instance.FreezePlayerActions(false, false);
                 CloseDialogueBox();
             }
 
@@ -112,7 +112,7 @@ namespace DialogueSystem
         public void CloseDialogueBox()
         {
             portraitLabel.enabled = true;
-            Player.Instance.FreezePlayerActions(false, false);
+            
             IsOpen = false;
             textLabel.text = string.Empty;
             dialogueBox.SetActive(false);

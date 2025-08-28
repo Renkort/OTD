@@ -33,8 +33,11 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
     private float headBobTimer;
 
     [Header("Audio")]
-    [SerializeField] private AudioClip[] footstepSounds;
+    [SerializeField] private SurfaceFootsteps[] footstepSounds;
     [SerializeField] private float footstepInterval = 0.5f;
+    [SerializeField] private Transform footstepOrigin;
+    [SerializeField] private float raycastDistance = 0.2f;
+    [SerializeField] private LayerMask groundLayer;
     private float footstepTimer;
     private AudioSource audioSource;
 
@@ -255,10 +258,45 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
     {
         if (footstepSounds.Length == 0) return;
 
-        AudioClip clip = footstepSounds[Random.Range(0, footstepSounds.Length)];
+        string currentSurface = GetSurfaceTag();
+
+        AudioClip clip = GetFootstepClip(currentSurface);
         audioSource.pitch = Random.Range(0.9f, 1.1f);
         audioSource.PlayOneShot(clip);
     }
+
+    private string GetSurfaceTag()
+    {
+        if (Physics.Raycast(footstepOrigin.position, Vector3.down, out RaycastHit hit, raycastDistance, groundLayer))
+        {
+            return hit.collider.tag;
+        }
+        else
+        {
+            return "Default";
+        }
+    }
+
+    private AudioClip GetFootstepClip(string surfaceTag)
+    {
+        foreach (var surface in footstepSounds)
+        {
+            if (surface.SurfaceTag == surfaceTag && surface.FootstepClips.Length > 0)
+            {
+                return surface.FootstepClips[Random.Range(0, surface.FootstepClips.Length)];
+            }
+        }
+
+        foreach (var surface in footstepSounds)
+        {
+            if (surface.SurfaceTag == "Default" && surface.FootstepClips.Length > 0)
+            {
+                return surface.FootstepClips[Random.Range(0, surface.FootstepClips.Length)];
+            }
+        }
+        return null;
+    }
+
     private void HandleBodyPhysics()
     {
         characterController.height = crouchHeight;
@@ -280,6 +318,10 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
         characterController.Move(moveDirection * Time.deltaTime);
     }
 
+    public void ShakeCamera(float duration)
+    {
+        ShakeCamera(duration, 0.02f);
+    }
 
     public void ShakeCamera(float duration, float magnitude)
     {
@@ -308,10 +350,21 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
         playerCamera.localPosition = originalPos;
     }
 
+    public void FreezeAllMovement()
+    {
+        FreezeMovement(false, false);
+    }
+    public void UnfreezeAll()
+    {
+        FreezeMovement(true, true);
+    }
+
     public void FreezeMovement(bool canMove, bool canLookAround = true)
     {
         this.canMove = canMove;
         this.canLookAround = canLookAround;
+        moveDirection = Vector3.zero;
+        currentVelocity = Vector3.zero;
     }
     public void FreezeMovement(bool canMove, bool canLookAround, float duration)
     {
@@ -349,7 +402,7 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
         isDead = data.IsDead;
 
         playerCamera.localRotation = Quaternion.Euler(data.CameraRotation);
-        
+
 
     }
 
@@ -361,4 +414,12 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
 
         data.CameraRotation = playerCamera.localRotation.eulerAngles;
     }
+
+    [System.Serializable]
+    public struct SurfaceFootsteps
+    {
+        public string SurfaceTag;
+        public AudioClip[] FootstepClips;
+    }
+
 }

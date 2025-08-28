@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DialogueSystem
 {
-    public class CutsceneDialogueActivator : DialogueActivator2D
+    public class CutsceneDialogueActivator : DialogueActivator3D
     {
         [SerializeField] private bool playOnAwake;
         private bool isPlayed = false;
@@ -25,7 +25,7 @@ namespace DialogueSystem
             //player.Interactable = this;
             Interact(player);
         }
-        private void OnTriggerEnter2D(Collider2D collision)
+        private void OnTriggerEnter(Collider collision)
         {
             if (isPlayed)
                 return;

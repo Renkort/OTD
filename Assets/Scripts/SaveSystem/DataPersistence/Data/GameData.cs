@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameData
 {
     public int currentChapter;
+    public string LastOpenedScene;
     public SerializableDictionary<string, bool> IsLockedDoors = new SerializableDictionary<string, bool>();
     // Dialogues( PersonID, DialogueID)
     public SerializableDictionary<string, string> Dialogues = new();
@@ -39,5 +40,6 @@ public class GameData
         CanMove = true;
         CanLookAround = true;
         UsePhysics = true;
+        LastOpenedScene = "OTD_Intro";
     }
 }

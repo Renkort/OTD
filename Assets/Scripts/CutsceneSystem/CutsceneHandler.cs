@@ -13,7 +13,6 @@ public class CutsceneHandler : MonoBehaviour
     private DialogueCutsceneEvents[] allEvents;
     private DialogueCutsceneEvents currentEvents;
 
-
     private void AddCutsceneEvents()
     {
         if (currentEvents == null)
@@ -46,7 +45,7 @@ public class CutsceneHandler : MonoBehaviour
 
     public void SetCurrentEvents(DialogueObject dialogueObject)
     {
-        if (allEvents == null)
+        if (allEvents == null || allEvents.Length == 0)
             return;
         for (int i = 0; i < allEvents.Length; i++)
         {
@@ -54,6 +53,11 @@ public class CutsceneHandler : MonoBehaviour
             {
                 currentEvents = allEvents[i];
                 break;
+            }
+            else
+            {
+                currentEvents = null;
+                cutsceneSegments = null;
             }
         }
         AddCutsceneEvents();
@@ -84,12 +88,12 @@ public class CutsceneHandler : MonoBehaviour
     {
         for (int i = 0; i < cutsceneSegments.Length; i++)
         {
-            Debug.Log("DEBUG: CUTSCENE HANDLER");
             CutsceneSegment currentSegment = cutsceneSegments[i];
             cutsceneSegments[i].OnOpenSegment?.Invoke();
             yield return new WaitForSeconds(currentSegment.SegmentTime);
             cutsceneSegments[i].OnCloseSegment?.Invoke();
             yield return new WaitForSeconds(currentSegment.TimeBeforeNextSegment);
         }
+        ClearCurrentEvents();
     }
 }

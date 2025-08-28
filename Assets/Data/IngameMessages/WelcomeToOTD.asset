@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc6a706dfc875174983eba7ab6df4fa9, type: 3}
+  m_Name: WelcomeToOTD
+  m_EditorClassIdentifier: 
+  Message: "\u0414\u043E\u0431\u0440\u043E \u041F\u043E\u0436\u0430\u043B\u043E\u0432\u0430\u0442\u044C
+    \u0432 \u041E\u0422\u0414!"
+  Duration: 5
