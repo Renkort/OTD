@@ -172,7 +172,7 @@ public class MainMenu : MonoBehaviour
                 brightnessSlider.value = defaultBrightness;
                 brightnessTextValue.text = defaultBrightness.ToString("0.0");
 
-                qualityDropdown.value = 1;
+                qualityDropdown.value = 4;
                 QualitySettings.SetQualityLevel(1);
 
                 fullscreenToggle.isOn = true;
