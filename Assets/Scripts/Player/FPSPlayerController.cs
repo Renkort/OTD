@@ -66,6 +66,9 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        if (PlayerPrefs.HasKey("masterSensitivity"))
+            mouseSensitivity = 25 * PlayerPrefs.GetFloat("masterSensitivity");
     }
 
     private void Update()
