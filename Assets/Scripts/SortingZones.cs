@@ -54,7 +54,6 @@ public class SortingZones : ZoneEffector
     }
     public void StartSorting()
     {
-        Debug.Log($"START SORTING. TimeForSort: {timeForSorting}, TimeToCheckPlayer: {timeToCheckPlayer}");
         if (isSorting) return;
         timeToCheckPlayer = Time.time + timeForSorting;
         animator.SetBool("Alarm", true);
