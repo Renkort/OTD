@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DialogueSystem;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 [RequireComponent(typeof(AudioSource))]
 public class Player : MonoBehaviour, IDataPersistance
 {
@@ -11,6 +12,7 @@ public class Player : MonoBehaviour, IDataPersistance
     [field: SerializeField] public CutsceneHandler CutsceneHandler { get; set; }
 
     [SerializeField] private TextMeshProUGUI interactTextLabel;
+    [SerializeField] private float maxInteractionDistance = 4f;
     [SerializeField] private Light flashlight;
     [SerializeField] private GameUI gameUI;
     [Header("AUDIO")]
@@ -21,8 +23,10 @@ public class Player : MonoBehaviour, IDataPersistance
 
     private bool isFlashlightActive = false;
     public IInteractable Interactable { get; set; }
+    public InteractableObject CurrentInteractable { get; set; }
     public static Player Instance;
     [HideInInspector] public bool IsDead = false;
+    private Ray viewRay;
 
     void Awake()
     {
@@ -39,15 +43,17 @@ public class Player : MonoBehaviour, IDataPersistance
     }
     private void Update()
     {
-        if (DialogueUI.IsOpen)
+        if (DialogueUI.IsOpen || InventoryUI.Instance.IsOpen)
         {
             return;
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && CurrentInteractable != null)
         {
-            Interactable?.Interact(this);
+            //Interactable?.Interact(this);
+            CurrentInteractable.Interact(this);
         }
-        
+
+        HighlightInteractables();
         HandleInventoryInput();
     }
 
@@ -107,6 +113,42 @@ public class Player : MonoBehaviour, IDataPersistance
                 isFlashlightActive = true;
                 flashlight.gameObject.SetActive(true);
             }
+        }
+    }
+
+    private void HighlightInteractables()
+    {
+        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        RaycastHit hit;
+        viewRay = ray;
+        // Debug.DrawRay(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0)), new Vector3(0, 0, maxInteractionDistance), Color.blue);
+
+        if (Physics.Raycast(ray, out hit, maxInteractionDistance))
+        {
+            GameObject objectHitByRaycast = hit.transform.gameObject;
+            if (objectHitByRaycast.GetComponent<InteractableObject>() == CurrentInteractable)
+                return;
+
+            if (objectHitByRaycast.GetComponent<InteractableObject>())
+            {
+                CurrentInteractable = objectHitByRaycast.gameObject.GetComponent<InteractableObject>();
+                CurrentInteractable.SetOutline(true);
+                ToggleInteractText(true, CurrentInteractable.InteractText);
+            }
+            else
+            {
+                if (CurrentInteractable)
+                {
+                    CurrentInteractable.SetOutline(false);
+                    ToggleInteractText(false);
+                    CurrentInteractable = null;
+                }
+            }
+        }
+        else if (CurrentInteractable)
+        {
+            CurrentInteractable.SetOutline(false);
+            ToggleInteractText(false);
         }
     }
 
