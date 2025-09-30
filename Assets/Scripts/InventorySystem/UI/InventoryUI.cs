@@ -19,6 +19,7 @@ public class InventoryUI : MonoBehaviour
     private CellUI currentSelected;
     [HideInInspector] public bool IsInCutscene = false;
 
+    public bool IsOpen => isOpen;
     public event Action<string> OnRecieveItem, OnRemoveItem;
     public event Action<int> OnDescriptionRequested; //, OnItemActionRequested;
     public static InventoryUI Instance;

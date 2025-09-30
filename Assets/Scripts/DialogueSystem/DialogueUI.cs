@@ -69,7 +69,8 @@ namespace DialogueSystem
                     break;
                 }
 
-                yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.E));
+                yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.E)
+                || Input.GetMouseButtonDown(0));
             }
 
             if (dialogueObject.HasResponses)

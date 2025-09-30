@@ -11,6 +11,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private string lastOpenedScene;
     [SerializeField] private GameObject optionsUI;
     [SerializeField] private SoundMixerHandler soundMixerHandler;
+    [SerializeField] private TextMeshProUGUI gameVerLabel;
     [Header("Button SFX Settings")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip buttonClickSfx;
@@ -84,6 +85,7 @@ public class MainMenu : MonoBehaviour
         }
         HideOptions();
         SetCursorVisible(true);
+        gameVerLabel.text = $"{Application.productName} ver. {Application.version}";
     }
 
 

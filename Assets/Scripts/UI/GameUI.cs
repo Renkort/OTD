@@ -49,7 +49,7 @@ public class GameUI : MonoBehaviour, IDataPersistance
         IngameMenu.gameObject.SetActive(isActive);
         activeGameMenu = isActive;
         Player.Instance.SetCursorVisible(isActive);
-        Player.Instance.FreezePlayerActions(isActive, isActive);
+        Time.timeScale = isActive ? 0f : 1f;
     }
 
     private void HandleInput()

@@ -1,52 +1,24 @@
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using DialogueSystem.Cutscenes;
 using UnityEngine;
 
 
 namespace DialogueSystem
 {
-    public class DialogueActivator3D : MonoBehaviour, IInteractable, IDataPersistance
+    public class DialogueActivator3D : InteractableObject, IDataPersistance
     {
         [SerializeField] private DialogueObject dialogueObject;
         [SerializeField] private string staticInteractText;
-        private string interactText;
 
         void Start()
         {
-            interactText = $"[E] {staticInteractText}";
-        }
-
-        public void SetInteractText(string text)
-        {
-            interactText = $"[E] {text}";
+            InteractText = staticInteractText;
+            InteractAction.AddListener(ActivateDialogue);
         }
 
         public void UpdateDialogueObject(DialogueObject dialogueObject)
         {
             this.dialogueObject = dialogueObject;
             UpdateDialogueEvents();
-        }
-
-        void OnTriggerEnter(Collider other)
-        {
-            if (other.CompareTag("Player") && other.TryGetComponent(out Player player))
-            {
-                player.Interactable = this;
-                Player.Instance.ToggleInteractText(true, interactText);
-            }
-        }
-
-        void OnTriggerExit(Collider other)
-        {
-            if (other.CompareTag("Player") && other.TryGetComponent(out Player player))
-            {
-                if (player.Interactable is DialogueActivator3D dialogueActivator && dialogueActivator == this)
-                {
-                    player.Interactable = null;
-                    Player.Instance.ToggleInteractText(false);
-                }
-            }
         }
 
         private void UpdateDialogueEvents()
@@ -68,12 +40,12 @@ namespace DialogueSystem
             player.DialogueUI.AddAllCutsceneEvents(GetComponents<DialogueCutsceneEvents>());
         }
 
-        public void Interact(Player player)
+        public void ActivateDialogue()
         {
             UpdateDialogueEvents();
 
             Player.Instance.ToggleInteractText(false);
-            player.DialogueUI.ShowDialogue(dialogueObject);
+            Player.Instance.DialogueUI.ShowDialogue(dialogueObject);
         }
 
         public void LoadData(GameData data)

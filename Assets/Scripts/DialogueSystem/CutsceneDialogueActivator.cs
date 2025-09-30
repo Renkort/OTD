@@ -10,6 +10,7 @@ namespace DialogueSystem
 
         private void Start()
         {
+            InteractAction.AddListener(ActivateDialogue);
             if (playOnAwake && !isPlayed)
             {
                 StartCoroutine(PlayOnAwake());
@@ -22,7 +23,6 @@ namespace DialogueSystem
 
             isPlayed = true;
             Player player = FindObjectOfType<Player>();
-            //player.Interactable = this;
             Interact(player);
         }
         private void OnTriggerEnter(Collider collision)
@@ -32,7 +32,7 @@ namespace DialogueSystem
             if (collision.CompareTag("Player") && collision.TryGetComponent(out Player player))
             {
                 isPlayed = true;
-                player.Interactable = this;
+                player.CurrentInteractable = this;
                 Interact(player);
             }
         }

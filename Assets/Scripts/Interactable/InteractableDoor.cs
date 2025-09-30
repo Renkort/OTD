@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class InteractableDoor : InteractionPoint, IDataPersistance
+public class InteractableDoor : InteractableObject, IDataPersistance
 {
     [SerializeField] private string Id;
     [ContextMenu("Generate guid for id")]
@@ -22,8 +22,10 @@ public class InteractableDoor : InteractionPoint, IDataPersistance
     private bool isOpen = false;
     void Start()
     {
-        OnInteract += OpenCloseDoor;
-        SetInteractText(OpenActionText);
+        // OnInteract += OpenCloseDoor;
+        // SetInteractText(OpenActionText);
+        InteractText = OpenActionText;
+        InteractAction.AddListener(OpenCloseDoor);
         if (Id == string.Empty)
             Debug.LogError($"Door {gameObject.name} must have uniq Id");
     }
@@ -35,9 +37,7 @@ public class InteractableDoor : InteractionPoint, IDataPersistance
         {
             isOpen = false;
             animator.SetTrigger("Close");
-            SetInteractText(OpenActionText);
         }
-        //play sound
     }
 
     private void OpenCloseDoor()
@@ -54,7 +54,8 @@ public class InteractableDoor : InteractionPoint, IDataPersistance
             audioSource.clip = closeSFX;
             isOpen = false;
             animator.SetTrigger("Close");
-            SetInteractText(OpenActionText);
+            //SetInteractText(OpenActionText);
+            InteractText = OpenActionText;
         }
         else
         {
@@ -62,7 +63,8 @@ public class InteractableDoor : InteractionPoint, IDataPersistance
             onOpenDoor?.Invoke();
             isOpen = true;
             animator.SetTrigger("Open");
-            SetInteractText(CloseActionText);
+            //SetInteractText(CloseActionText);
+            InteractText = CloseActionText;
         }
         audioSource.Play();
     }

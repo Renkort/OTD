@@ -114,8 +114,6 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
 
     private void HandleMovement()
     {
-        if (!canMove)
-            return;
         isGrounded = characterController.isGrounded;
 
         if (isGrounded && moveDirection.y < 0)
@@ -130,6 +128,11 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
 
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
+        if (!canMove)
+        {
+            horizontal = 0.0f;
+            vertical = 0.0f;
+        }
         Vector3 inputDirection = transform.right * horizontal + transform.forward * vertical;
         inputDirection = Vector3.ClampMagnitude(inputDirection, 1f);
 
@@ -185,9 +188,7 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
 
     private void HandleJump()
     {
-        if (!canMove)
-            return;
-        if (Input.GetButtonDown("Jump") && isGrounded && !isCrouching)
+        if (Input.GetButtonDown("Jump") && isGrounded && canMove/*&& !isCrouching*/)
         {
             moveDirection.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             moveDirection = moveDirection.normalized * Mathf.Max(moveDirection.magnitude, walkSpeed);
@@ -366,8 +367,9 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
     {
         this.canMove = canMove;
         this.canLookAround = canLookAround;
-        moveDirection = Vector3.zero;
-        currentVelocity = Vector3.zero;
+        
+        // moveDirection = Vector3.zero;
+        // currentVelocity = Vector3.zero;
     }
     public void FreezeMovement(bool canMove, bool canLookAround, float duration)
     {
