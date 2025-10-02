@@ -202,7 +202,22 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            isCrouching = !isCrouching;
+            if (Physics.Raycast(footstepOrigin.position + new Vector3(0, crouchHeight, 0), Vector3.up, out RaycastHit hit))
+            {
+                if (hit.distance < standHeight - crouchHeight)
+                {
+                    return;
+                }
+                else
+                {
+                    isCrouching = !isCrouching;
+                }
+            }
+            else
+            {
+                isCrouching = !isCrouching;
+            }
+            
         }
 
         float targetHeight = isCrouching ? crouchHeight : standHeight;
