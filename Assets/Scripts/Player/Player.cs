@@ -13,6 +13,7 @@ public class Player : MonoBehaviour, IDataPersistance
 
     [SerializeField] private TextMeshProUGUI interactTextLabel;
     [SerializeField] private float maxInteractionDistance = 4f;
+    [SerializeField] private LayerMask interactionLayer;
     [SerializeField] private Light flashlight;
     [SerializeField] private GameUI gameUI;
     [Header("AUDIO")]
@@ -27,6 +28,7 @@ public class Player : MonoBehaviour, IDataPersistance
     public static Player Instance;
     [HideInInspector] public bool IsDead = false;
     private Ray viewRay;
+    private GameObject lastRaycastObject;
 
     void Awake()
     {
@@ -50,6 +52,7 @@ public class Player : MonoBehaviour, IDataPersistance
         if (Input.GetKeyDown(KeyCode.E) && CurrentInteractable != null)
         {
             //Interactable?.Interact(this);
+            CurrentInteractable.SetOutline(false);
             CurrentInteractable.Interact(this);
         }
 
@@ -123,32 +126,25 @@ public class Player : MonoBehaviour, IDataPersistance
         viewRay = ray;
         // Debug.DrawRay(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0)), new Vector3(0, 0, maxInteractionDistance), Color.blue);
 
-        if (Physics.Raycast(ray, out hit, maxInteractionDistance))
+        if (Physics.Raycast(ray, out hit, maxInteractionDistance, interactionLayer))
         {
             GameObject objectHitByRaycast = hit.transform.gameObject;
-            if (objectHitByRaycast.GetComponent<InteractableObject>() == CurrentInteractable)
+            if (objectHitByRaycast == lastRaycastObject)
                 return;
+            if (lastRaycastObject)
+                lastRaycastObject.GetComponentInParent<InteractableObject>().SetOutline(false);
+            lastRaycastObject = objectHitByRaycast;
 
-            if (objectHitByRaycast.GetComponent<InteractableObject>())
-            {
-                CurrentInteractable = objectHitByRaycast.gameObject.GetComponent<InteractableObject>();
-                CurrentInteractable.SetOutline(true);
-                ToggleInteractText(true, CurrentInteractable.InteractText);
-            }
-            else
-            {
-                if (CurrentInteractable)
-                {
-                    CurrentInteractable.SetOutline(false);
-                    ToggleInteractText(false);
-                    CurrentInteractable = null;
-                }
-            }
+            CurrentInteractable = objectHitByRaycast.gameObject.GetComponentInParent<InteractableObject>();
+            CurrentInteractable.SetOutline(true);
+            ToggleInteractText(true, CurrentInteractable.InteractText);
         }
         else if (CurrentInteractable)
         {
             CurrentInteractable.SetOutline(false);
             ToggleInteractText(false);
+            CurrentInteractable = null;
+            lastRaycastObject = null;
         }
     }
 
