@@ -21,6 +21,11 @@ namespace DialogueSystem
             UpdateDialogueEvents();
         }
 
+        public void UpdateInteractText(string newText)
+        {
+            InteractText = newText;
+        }
+
         private void UpdateDialogueEvents()
         {
             Player player = Player.Instance;

@@ -17,8 +17,13 @@ public class AudioHandler : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null || Instance != this)
-            Instance = this;
+        if (Instance != null)
+        {
+            Debug.Log("Found more than one AudioHandler. Destroying newest one.");
+            Destroy(this);
+            return;
+        }
+        Instance = this;
         if (currentMusicSource == null || sfxSource == null)
             Debug.Log($"ERROR: Music or sfx Audio Source is null");
     }
@@ -41,6 +46,7 @@ public class AudioHandler : MonoBehaviour
     {
         if (isCrossFading) return;
         nextMusicSource.clip = audioClip;
+        Debug.Log("CROSSFADING MUSIC");
         StartCoroutine(CrossFade());
     }
 
@@ -51,22 +57,39 @@ public class AudioHandler : MonoBehaviour
         float timer = 0;
         float startVolumeCurrent = currentMusicSource.volume;
         float startVolumeNext = nextMusicSource.volume;
+        float inverseDuration = 1f / crossFadeDuration;
 
         nextMusicSource.volume = 0f;
         nextMusicSource.Play();
+
+        AudioSource current = currentMusicSource;
+        AudioSource next = nextMusicSource;
+
+        float lastUpdateTime = 0f;
+        const float updateInterval = 0.1f;
+        int updateCount = 0;
 
         while (timer < crossFadeDuration)
         {
             timer += Time.deltaTime;
 
-            currentMusicSource.volume = Mathf.Lerp(startVolumeCurrent, 0, timer / crossFadeDuration);
-            nextMusicSource.volume = Mathf.Lerp(0, startVolumeNext, timer / crossFadeDuration);
+            if (Time.time - lastUpdateTime >= updateInterval)
+            {
+                float progress = timer * inverseDuration;
+                current.volume = Mathf.Lerp(startVolumeCurrent, 0, progress);
+                next.volume = Mathf.Lerp(0, startVolumeNext, progress);
+                lastUpdateTime = Time.time;
+                Debug.Log($"UPDATE [{updateCount}]");
+                updateCount++;
+            }
 
             yield return null;
         }
+        current.volume = 0f;
+        next.volume = startVolumeNext;
 
-        currentMusicSource.Stop();
-        currentMusicSource.volume = startVolumeCurrent;
+        current.Stop();
+        current.volume = startVolumeCurrent;
 
         AudioSource temp = currentMusicSource;
         currentMusicSource = nextMusicSource;

@@ -5,17 +5,17 @@ using UnityEngine;
 public class FPSPlayerController : MonoBehaviour, IDataPersistance
 {
     [Header("Movement")]
-    [SerializeField] private float walkSpeed = 5f;
-    [SerializeField] private float runSpeed = 8f;
-    [SerializeField] private float crouchSpeed = 2.5f;
-    [SerializeField] private float jumpHeight = 1.5f;
+    [SerializeField] private float walkSpeed = 4f;
+    [SerializeField] private float runSpeed = 7f;
+    [SerializeField] private float crouchSpeed = 2.0f;
+    [SerializeField] private float jumpHeight = 1.0f;
     [SerializeField] private float gravity = -15f;
     [SerializeField] private float crouchHeight = 0.5f;
     [SerializeField] private float standHeight = 1.25f;
     [SerializeField] private float crouchTransitionSpeed = 5f;
     [SerializeField] private float acceleration = 10f;
     [SerializeField] private float deceleration = 15f;
-    [SerializeField] private float airControl = 0.5f;
+    [SerializeField] private float airControl = 0.2f;
 
     [Header("Camera")]
     [SerializeField] private Transform playerCamera;
