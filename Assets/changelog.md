@@ -26,3 +26,29 @@
  - Fixed SFX in Flashback levels
  - Sensitivity option added
  - Fixed bug with endless sorting in EW
+
+## ver 0.2.2
+### Quick fix: Critical bug
+ - Fixed locked gates to ASCA after getting Red flash drive
+ - Changed Gerta 3d model 
+
+## ver 0.3
+### Improvements after tests & Interact system
+ - Return BIG BOSS title
+ - Added new dialogues after Winkins's actions
+ - Pointer to ASCA near Greg, at Endless Warehouse
+ - Fixed dialogue text and changed dialogue UI
+ - Rain sfx into flashbacks may disappear, but now it's okay
+ - Fixed some bugs in Main Menu; mouse sensitivity
+ - Rare bug with endless sorting
+ - Fixed camera shake after dialogues and inventory closing
+ - Now you can't open inventory and start dialogue
+ - After pressing ESC you can't walk with dialogue box
+ - Some animations in Office
+
+ ## ver 0.3.1
+ ### Foggy dialogues update (After Matt ideas)
+  - Added new level: Foggy Train
+  - Outer doors were removed
+  - Dialogues in Office 1 were changed (some Wilkins lines were cut)
+  - Flashlight was improved
