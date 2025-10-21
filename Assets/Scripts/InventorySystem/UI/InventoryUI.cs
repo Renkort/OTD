@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject cellContainer;
     [SerializeField] private UIInventoryDescription inventoryDescription;
     [SerializeField] private MouseFollower mouseFollower;
+    [SerializeField] private List<EquipmentCell> equipmentCells;
     private bool isOpen;
     private int curBeginDrag = -1;
     private GameObject player;
@@ -107,6 +109,11 @@ public class InventoryUI : MonoBehaviour
             cells[i].OnItemEndDrag += HandleEndDrag;
             cells[i].OnRightMouseBtnClick += HandlePerformItemActions;
         }
+        for (int i = 0; i < equipmentCells.Count; i++)
+        {
+            equipmentCells[i].OnItemClicked += HandleItemSelection;
+            equipmentCells[i].OnRightMouseBtnClick += HandlePerformItemActions;
+        }
         LoadCellsData();
     }
     private string PrepareDescripriton(InventoryItem item)
@@ -155,21 +162,58 @@ public class InventoryUI : MonoBehaviour
             EquipItem(cell);
         }
     }
+
+    private EquipmentCell GetEquipmentCellByType(EquipmentCell.EquipmentType equipmentType)
+    {
+        foreach (var cell in equipmentCells)
+        {
+            if (cell.equipmentType == equipmentType)
+            {
+                return cell;
+            }
+        }
+        return null;
+    }
     private void EquipItem(CellUI cell)
     {
-        curBeginDrag = cells.IndexOf(cell);
-        HandleSwapItems(cells[11]);
-        if (cells.IndexOf(cell) == 11)
+        EquipmentCell equipmentCell = cell as EquipmentCell;
+        if (equipmentCell != null)
         {
-            AddItemAtEmpty(cell.Data.inventoryItem.itemData);
-            IItemAction itemAction = cell.Data.inventoryItem.itemData as IItemAction;
-            EquippableItemData item = cell.Data.inventoryItem.itemData as EquippableItemData;
-            //item.SetModifyValue(GlobalValues.DEFAULT_ATTACK);
-            itemAction.PerformAction(player, null);
-            item.ResetModifyValue();
-            cell.TryRemoveItem(1);
-
+            AddItemAtEmpty(equipmentCell.Data.inventoryItem.itemData);
+            equipmentCell.ClearCell();
+            equipmentCell.UpdateUI();
+            return;
         }
+        curBeginDrag = cells.IndexOf(cell);
+        EquippableItemData eqItem = cell.Data.inventoryItem.itemData as EquippableItemData;
+        EquipmentCell.EquipmentType type = eqItem.equipmentType;
+        switch(type)
+        {
+            case EquipmentCell.EquipmentType.LeftHand:
+                HandleSwapItems(GetEquipmentCellByType(EquipmentCell.EquipmentType.LeftHand));
+                break;
+            case EquipmentCell.EquipmentType.RightHand:
+                HandleSwapItems(GetEquipmentCellByType(EquipmentCell.EquipmentType.RightHand));
+                break;
+            case EquipmentCell.EquipmentType.Body:
+                HandleSwapItems(GetEquipmentCellByType(EquipmentCell.EquipmentType.Body));
+                break;
+            case EquipmentCell.EquipmentType.Head:
+                HandleSwapItems(GetEquipmentCellByType(EquipmentCell.EquipmentType.Head));
+                break;
+        }
+        // HandleSwapItems(cells[11]);
+        // if (cells.IndexOf(cell) == 11)
+        // {
+        //     AddItemAtEmpty(cell.Data.inventoryItem.itemData);
+        //     IItemAction itemAction = cell.Data.inventoryItem.itemData as IItemAction;
+        //     EquippableItemData item = cell.Data.inventoryItem.itemData as EquippableItemData;
+        //     //item.SetModifyValue(GlobalValues.DEFAULT_ATTACK);
+        //     itemAction.PerformAction(player, null);
+        //     item.ResetModifyValue();
+        //     cell.TryRemoveItem(1);
+
+        // }
     }
 
     private void HandleItemSelection(CellUI cell)
@@ -193,16 +237,17 @@ public class InventoryUI : MonoBehaviour
 
     private void HandleSwapItems(CellUI endCell)
     {
-        int index = cells.IndexOf(endCell);
+        // int index = cells.IndexOf(endCell);
         IEquippaleItem equippableItem = cells[curBeginDrag].Data.inventoryItem.itemData
             as IEquippaleItem;
-        if (index == -1)
-            return;
-        else if (equippableItem == null && index == 11)
-            return;
+        // if (index == -1)
+        //     return;
+        // else if (equippableItem == null && index == 11)
+        //     return;
         cells[curBeginDrag].Data.SwapCellsData(endCell.Data);
         cells[curBeginDrag].UpdateUI();
-        cells[cells.IndexOf(endCell)].UpdateUI();
+        // cells[cells.IndexOf(endCell)].UpdateUI();
+        endCell.UpdateUI();
     }
 
     private void DeselectCells()

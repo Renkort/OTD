@@ -59,6 +59,7 @@ public class CellUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler,
             Data.Quantity++;
         else Data.Quantity = 1;
         QuantityText.text = Data.Quantity.ToString();
+        UpdateUI();
     }
 
     public bool TryRemoveItem(int number = 1)

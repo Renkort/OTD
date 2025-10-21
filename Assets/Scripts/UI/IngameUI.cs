@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Profiling;
 
 public class IngameUI : MonoBehaviour, IDataPersistance
@@ -8,6 +8,10 @@ public class IngameUI : MonoBehaviour, IDataPersistance
     [SerializeField] private bool showDebugInfo = false;
     [SerializeField] private GameObject deathScreen;
     [SerializeField] private Animator whiteFadeScreen;
+    [SerializeField] private TextMeshProUGUI ammoDisplay;
+    [SerializeField] private Image weaponBulletIcon;
+    public Slider forceModifierSlider;
+    [SerializeField] private Throwable throwable;
     private float deltaTime = 0.0f;
     private Transform playerTransform;
 
@@ -18,6 +22,7 @@ public class IngameUI : MonoBehaviour, IDataPersistance
         playerTransform = Player.Instance.gameObject.GetComponent<Transform>();
 
         deathScreen.SetActive(false);
+        forceModifierSlider.maxValue = throwable.ForceModifierLimit;
     }
 
     void Update()
@@ -34,6 +39,17 @@ public class IngameUI : MonoBehaviour, IDataPersistance
                 DataPersistenceManager.Instance.LoadGame();
             }
         }
+    }
+
+    public void SetAmmoUI(string ammoDisplay, Sprite weaponBulletIcon)
+    {
+        this.ammoDisplay.text = ammoDisplay;
+        this.weaponBulletIcon.sprite = weaponBulletIcon;
+    }
+
+    public void DisplayForceModifierSlider(float sliderValue)
+    {
+        forceModifierSlider.value = sliderValue;
     }
 
     private void HandleSaveGameInput()

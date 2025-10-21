@@ -42,6 +42,12 @@ public class AudioHandler : MonoBehaviour
         currentMusicSource.Play();
     }
 
+    public void StopAllSound()
+    {
+        currentMusicSource.Stop();
+        sfxSource.Stop();
+    }
+
     public void CrossFadeMusicTo(AudioClip audioClip)
     {
         if (isCrossFading) return;
@@ -79,7 +85,6 @@ public class AudioHandler : MonoBehaviour
                 current.volume = Mathf.Lerp(startVolumeCurrent, 0, progress);
                 next.volume = Mathf.Lerp(0, startVolumeNext, progress);
                 lastUpdateTime = Time.time;
-                Debug.Log($"UPDATE [{updateCount}]");
                 updateCount++;
             }
 

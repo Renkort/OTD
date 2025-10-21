@@ -57,7 +57,6 @@ public class Player : MonoBehaviour, IDataPersistance
         }
 
         HighlightInteractables();
-        HandleInventoryInput();
     }
 
     public void FreezePlayerActions(bool isFreezedMovement, bool isFreezedLook)
@@ -102,23 +101,6 @@ public class Player : MonoBehaviour, IDataPersistance
         Cursor.visible = isVisible;
     }
 
-    private void HandleInventoryInput()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            if (isFlashlightActive)
-            {
-                isFlashlightActive = false;
-                flashlight.gameObject.SetActive(false);
-            }
-            else
-            {
-                isFlashlightActive = true;
-                flashlight.gameObject.SetActive(true);
-            }
-        }
-    }
-
     private void HighlightInteractables()
     {
         Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
@@ -152,7 +134,7 @@ public class Player : MonoBehaviour, IDataPersistance
     {
         transform.position = data.PlayerPosition;
         isFlashlightActive = data.IsFlashlightActive;
-        flashlight.gameObject.SetActive(isFlashlightActive);
+        // flashlight.gameObject.SetActive(isFlashlightActive);
         IsDead = data.IsDead;
         transform.localRotation = Quaternion.Euler(data.PlayerRotation);
 
