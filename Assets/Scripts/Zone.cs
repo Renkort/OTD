@@ -20,7 +20,6 @@ public class Zone : MonoBehaviour, IDataPersistance
     public UnityEvent OnPlayerEnter, OnPlayerExit;
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"DEBUG: Zone: {gameObject.name}, WasTriggered: {wasTriggered}");
         if (wasTriggered)
             return;
         if (other.CompareTag("Player") && other.gameObject.TryGetComponent(out Player player))

@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class MainMenu : MonoBehaviour
 {
@@ -55,6 +56,11 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI sfxVolumeText;
     private bool isOptionsActive = false;
 
+    [Header("CHANGELOG")]
+    [SerializeField] private TextMeshProUGUI changelogLabel;
+    [SerializeField] private GameObject changelogScroll;
+    private bool isChangelogActive = false;
+
     void Start()
     {
         resolutions = Screen.resolutions;
@@ -85,7 +91,16 @@ public class MainMenu : MonoBehaviour
         }
         HideOptions();
         SetCursorVisible(true);
-        gameVerLabel.text = $"{Application.productName} ver. {Application.version}";
+
+        gameVerLabel.text = $"[ {Application.productName} ver. {Application.version} ]";
+
+        string changelogPath = Path.Combine(Application.streamingAssetsPath, "CHANGELOG.md");
+        if (File.Exists(changelogPath))
+        {
+            string changelogText = File.ReadAllText(changelogPath);
+
+            changelogLabel.text = changelogText;
+        }
     }
 
 
@@ -309,5 +324,20 @@ public class MainMenu : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
         Cursor.visible = isVisible;
+    }
+
+    public void ShowHideChangelog()
+    {
+        if (isChangelogActive)
+        {
+            changelogScroll.SetActive(false);
+            isChangelogActive = false;
+        }
+        else
+        {
+            changelogScroll.SetActive(true);
+            isChangelogActive = true;
+        }
+
     }
 }

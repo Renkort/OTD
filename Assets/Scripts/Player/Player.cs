@@ -4,6 +4,7 @@ using DialogueSystem;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 [RequireComponent(typeof(AudioSource))]
 public class Player : MonoBehaviour, IDataPersistance
 {
@@ -21,6 +22,8 @@ public class Player : MonoBehaviour, IDataPersistance
     [Header("DEBUG")]
     [SerializeField] private bool isDebugMode = false;
     [SerializeField] private Transform startPosition;
+
+    public event Action OnPlayerDied;
 
     private bool isFlashlightActive = false;
     public IInteractable Interactable { get; set; }
@@ -86,6 +89,7 @@ public class Player : MonoBehaviour, IDataPersistance
         IsDead = true;
         gameUI.IngameUI.ShowDeathScreen();
         fpsController.KillPlayer();
+        OnPlayerDied.Invoke();
     }
 
     public void SetCursorVisible(bool isVisible)

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using UnityEngine;
 
 public class SortingZones : ZoneEffector
@@ -8,12 +9,12 @@ public class SortingZones : ZoneEffector
     [SerializeField] private float timeForSorting;
     [SerializeField] private AudioClip alarmSound;
     [SerializeField] private AudioClip alarmMusic;
+    [SerializeField] private List<TurretAI> turrets;
     private float timeToCheckPlayer;
     private bool isPlayerInside;
     private bool isSorting = false;
     private AudioClip defaultSfx;
     private AudioClip defaultMusic;
-
 
     void Update()
     {
@@ -49,7 +50,21 @@ public class SortingZones : ZoneEffector
 
         if (!isPlayerInside)
         {
-            player.Kill();
+            // player.Kill();
+            player.OnPlayerDied += DeactivateTurrets;
+            ActivateTurrets(true);
+        }
+    }
+
+    public void DeactivateTurrets()
+    {
+        ActivateTurrets(false);
+    }
+    public void ActivateTurrets(bool isActive)
+    {
+        foreach (TurretAI turret in turrets)
+        {
+            turret.Activate(isActive);
         }
     }
     public void StartSorting()

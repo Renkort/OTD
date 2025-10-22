@@ -6,13 +6,13 @@ using UnityEngine.Events;
 public class ZoneEffector : MonoBehaviour
 {
     [SerializeField] protected Player player;
-    [SerializeField] protected List<Zone> zones = new List<Zone>();
+    [SerializeField] protected List<Zone> zones;
 
     public UnityEvent OnPlayerEnter, OnPlayerExit;
 
     void Awake()
     {
-        Initialize();
+        // Initialize();
     }
 
     private void Initialize()
