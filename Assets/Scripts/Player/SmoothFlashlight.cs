@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SmoothFlashlight : MonoBehaviour
+public class SmoothFlashlight : MonoBehaviour, IDataPersistance
 {
     [Header("References")]
     public Transform playerCamera;
@@ -47,24 +47,35 @@ public class SmoothFlashlight : MonoBehaviour
                 audioSource.PlayOneShot(toggleSound);
         }
     }
-    
-    
+
+
     void FollowCamera()
     {
         Vector3 targetPosition = playerCamera.TransformPoint(positionOffset);
         transform.position = Vector3.SmoothDamp(
-            transform.position, 
-            targetPosition, 
-            ref positionVelocity, 
+            transform.position,
+            targetPosition,
+            ref positionVelocity,
             positionSpeed * Time.deltaTime
         );
-        
+
         transform.rotation = QuaternionUtil.SmoothDamp(
             transform.rotation,
             playerCamera.rotation,
             ref rotationVelocity,
             rotationSpeed * Time.deltaTime
         );
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        Debug.Log($"Is Flashlight enabled: {flashlightLight.enabled}");
+        data.IsFlashlightActive = flashlightLight.enabled;
+    }
+
+    public void LoadData(GameData gameData)
+    {
+        flashlightLight.enabled = gameData.IsFlashlightActive;
     }
 }
 public static class QuaternionUtil

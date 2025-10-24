@@ -54,26 +54,26 @@ public class IngameUI : MonoBehaviour, IDataPersistance
 
     private void HandleSaveGameInput()
     {
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            showDebugInfo = !showDebugInfo;
+        }
         if (Player.Instance.DialogueUI.IsOpen)
         {
             return;
         }
         if (Input.GetKeyDown(KeyCode.F5) && !Player.Instance.IsDead)
         {
-            Debug.Log("SAVING...");
+            Debug.Log("QUICK SAVING...");
             DataPersistenceManager.Instance.SaveGame();
         }
 
-        if (Input.GetKeyDown(KeyCode.F7))
+        if (Input.GetKeyDown(KeyCode.F9))
         {
             Debug.Log("LOADING...");
             DataPersistenceManager.Instance.LoadGame();
         }
 
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            showDebugInfo = !showDebugInfo;
-        }
     }
 
     public void ShowDeathScreen()

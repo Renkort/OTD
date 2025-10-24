@@ -20,7 +20,7 @@ public class TurretAI : MonoBehaviour
     [SerializeField] private float laserDuration = 0.2f;
 
     [Header("Idle Behavior")]
-    [SerializeField] private Vector3 idleTargetPoint;
+    [SerializeField] private Transform idleTargetPoint;
     [SerializeField] private float idleRotationSpeed = 30f;
 
 
@@ -40,6 +40,9 @@ public class TurretAI : MonoBehaviour
     void Start()
     {
         player = Player.Instance.gameObject.transform;
+
+        if (laserLine != null)
+            laserLine.useWorldSpace = true;
 
         if (isOn)
             ShowLaserLine();
@@ -110,7 +113,7 @@ public class TurretAI : MonoBehaviour
     private void IdleBehavior()
     {
         // Плавно поворачиваем голову к точке покоя
-        Quaternion targetRotation = Quaternion.LookRotation(idleTargetPoint - head.position);
+        Quaternion targetRotation = Quaternion.LookRotation(idleTargetPoint.position - head.position);
         head.rotation = Quaternion.RotateTowards(head.rotation, targetRotation, idleRotationSpeed * Time.deltaTime);
     }
 
@@ -180,8 +183,8 @@ public class TurretAI : MonoBehaviour
             laserLine.enabled = true;
         }
 
-        if (idleTargetPoint == Vector3.zero)
-            idleTargetPoint = muzzle.position + muzzle.forward * 10f;
+        if (idleTargetPoint.position == Vector3.zero)
+            idleTargetPoint.position = muzzle.position + muzzle.forward * 10f;
     }
 
     private void UpdateLaser()
@@ -227,7 +230,7 @@ public class TurretAI : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, visionRange);
 
         Gizmos.color = Color.green;
-        if (muzzle != null)
-            Gizmos.DrawLine(muzzle.position, idleTargetPoint);
+        if (muzzle != null && idleTargetPoint != null)
+            Gizmos.DrawLine(muzzle.position, idleTargetPoint.position);
     }
 }

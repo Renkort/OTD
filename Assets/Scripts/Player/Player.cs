@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using DialogueSystem;
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 using System;
 [RequireComponent(typeof(AudioSource))]
 public class Player : MonoBehaviour, IDataPersistance
@@ -24,8 +21,6 @@ public class Player : MonoBehaviour, IDataPersistance
     [SerializeField] private Transform startPosition;
 
     public event Action OnPlayerDied;
-
-    private bool isFlashlightActive = false;
     public IInteractable Interactable { get; set; }
     public InteractableObject CurrentInteractable { get; set; }
     public static Player Instance;
@@ -89,7 +84,7 @@ public class Player : MonoBehaviour, IDataPersistance
         IsDead = true;
         gameUI.IngameUI.ShowDeathScreen();
         fpsController.KillPlayer();
-        OnPlayerDied.Invoke();
+        OnPlayerDied?.Invoke();
     }
 
     public void SetCursorVisible(bool isVisible)
@@ -136,19 +131,11 @@ public class Player : MonoBehaviour, IDataPersistance
 
     public void LoadData(GameData data)
     {
-        transform.position = data.PlayerPosition;
-        isFlashlightActive = data.IsFlashlightActive;
-        // flashlight.gameObject.SetActive(isFlashlightActive);
         IsDead = data.IsDead;
-        transform.localRotation = Quaternion.Euler(data.PlayerRotation);
 
     }
     public void SaveData(ref GameData data)
     {
-        data.PlayerPosition = transform.position;
-        data.IsFlashlightActive = isFlashlightActive;
         data.IsDead = IsDead;
-        Quaternion playerRotation = transform.rotation;
-        data.PlayerRotation = new Vector3(playerRotation.x, playerRotation.y, playerRotation.z);
     }
 }

@@ -55,6 +55,7 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
     usePhysics = true;
     private float tilt;
     private bool isDead = false;
+    private bool isLoading = false;
 
     private void Awake()
     {
@@ -73,6 +74,8 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
 
     private void Update()
     {
+        if (isLoading)
+            return;
         if (isDead)
         {
             HandleBodyPhysics();
@@ -411,28 +414,39 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
     {
         isDead = true;
         FreezeMovement(false, false);
-        ShakeCamera(0.2f, 0.02f);
+        // ShakeCamera(0.2f, 0.02f);
     }
 
     public void LoadData(GameData data)
     {
+        isLoading = true;
+        characterController.enabled = false;
+
+        xRotation = data.PlayerRotation.x;
+        yRotation = data.PlayerRotation.y;
+        transform.position = data.PlayerPosition;
         canMove = data.CanMove;
         canLookAround = data.CanLookAround;
         usePhysics = data.UsePhysics;
         isDead = data.IsDead;
-
         playerCamera.localRotation = Quaternion.Euler(data.CameraRotation);
 
+        characterController.enabled = true;
+        isLoading = false;
 
     }
 
     public void SaveData(ref GameData data)
     {
+        isLoading = true;
+
+        data.PlayerRotation = new Vector3(xRotation, yRotation, transform.rotation.eulerAngles.z);
+        data.PlayerPosition = transform.position;
         data.CanMove = canMove;
         data.CanLookAround = canLookAround;
         data.UsePhysics = usePhysics;
-
         data.CameraRotation = playerCamera.localRotation.eulerAngles;
+        isLoading = false;
     }
 
     [System.Serializable]
