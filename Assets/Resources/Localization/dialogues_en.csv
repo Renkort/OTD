@@ -1,0 +1,52 @@
+key;character_name;text
+;;
+intro_1;Narrator;Wilkins was walking home late at night in the pouring rain.
+intro_2; Narrator; He knew exactly what he would say to his mother when she asked me why he was late.
+intro_3;Narrator; Mothers tend to get upset and worry about nothing. 
+intro_4;Narrator; One day, Wilkins and a friend, in purely research interests, dug a deep hole in a neighbor's yard.
+intro_5;Narrator; And old Mr. Harold fell into it and broke his knee.
+intro_6;Narrator; Wilkins' mom made a whole story out of it, where he is the main villain, his friend is a malicious accomplice, and in general they are all criminals.
+intro_7;Narrator; Yes, there was a case...
+intro_8;Narrator; Hmm...
+intro_9;Narrator; Wilkins thought: mom's birthday is coming soon.
+intro_10;Narrator;I need to remind Kayleigh of this, let her at least buy a gift.
+intro_11;Narrator; As an older sister, she should be the most responsible and keep an eye on me and my younger brother.
+;;
+int_strange_painting_1;;The painting is badly worn, which is why it is almost impossible to make out what is depicted on it.
+int_strange_painting_2;;But maybe it's for the best.
+int_strange_painting_3;;It doesn't look like it was a good picture.
+;;
+int_toma_tv_1;;The TV screen fills the space in front of it with a golden glow.
+int_toma_tv_2;;Since it doesn't show anything, it works more like a lamp here than a TV.
+;;
+01_secretary_fashion;???;...You can't buy such fashionable things anywhere now...
+01_secretary_fashion_response_1;;What?
+01_secretary_fashion_response_2;;How did I end up here?
+01_secretary_fashion_response_3;;Are you a utility employee?
+;;
+secretary_first_meet_1;???;Expect to be approached.
+secretary_first_meet_2;???;You can sit down for now... somewhere.
+secretary_first_meet_3;???;Wait, did you just die?
+secretary_first_meet_4;Gert;"My name is Gerta," she smiled and held out her hand to me, "Nice to meet you."
+secretary_first_meet_5; Wilkins;Wilkins
+secretary_first_meet_6;Gerta;To be honest, no one has been here for a long time. I don't even quite understand what to do
+secretary_first_meet_7;;Herta started digging in her notebook
+secretary_first_meet_8;Herta;Hmm...
+secretary_first_meet_9;Herta;Hmmmm...
+secretary_first_meet_10;Herta;HMMMMM!..
+secretary_first_meet_11;;Then she picked up the phone and dialed the short number
+secretary_first_meet_12;Herta;Boss, we have a man in the waiting room, says he died recently.
+secretary_first_meet_13;Wilkins;(Actually, I didn't say that. I would also like to figure out for myself whether I'm dead or not)
+secretary_first_meet_14;Gert;...
+secretary_first_meet_15;Gert;Are you sure? This is too much...
+secretary_first_meet_16;Gert;…understood. I'll do it without sugar this time.
+secretary_first_meet_17;Gert; And what should I do with the deceased?
+secretary_first_meet_18; Gert; Understood, I'll tell you now.
+secretary_first_meet_19;;She hung up the phone and turned to me again with a smile
+secretary_first_meet_20;Herta;The boss said to give you to him. You're in luck!
+secretary_first_meet_21;Gerta; Don't worry, you'll like him. Of course, he can be too loud and active, but this is even better.
+secretary_first_meet_22;Gerta; Otherwise there is always such a deathly silence.
+secretary_first_meet_23;Gert;Coffin, got it?)
+secretary_first_meet_24; Gert; Go out the door right behind me and immediately to the right, to the end of the corridor.
+secretary_first_meet_25;Gert;There is a sign on the door that says, you will not miss
+secretary_first_meet_26;Gerta; Come on! Don't be sad!)
