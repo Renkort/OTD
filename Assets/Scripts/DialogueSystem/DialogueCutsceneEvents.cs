@@ -14,24 +14,24 @@ namespace DialogueSystem.Cutscenes
         public void OnValidate()
         {
             if (dialogueObject == null) return;
-            if (events != null && events.Length == dialogueObject.Dialogue.Length) return;
+            if (events != null && events.Length == dialogueObject.Keys.Count) return;
 
             if (events == null)
             {
-                events = new CutsceneSegment[dialogueObject.Dialogue.Length];
+                events = new CutsceneSegment[dialogueObject.Keys.Count];
             }
             else
             {
-                Array.Resize(ref events, dialogueObject.Dialogue.Length);
+                Array.Resize(ref events, dialogueObject.Keys.Count);
             }
 
-            for (int i = 0; i < dialogueObject.Dialogue.Length; i++)
+            for (int i = 0; i < dialogueObject.Keys.Count; i++)
             {
                 if (events[i] != null)
                 {
-                    events[i].name = dialogueObject.Dialogue[i].Dialogue;
+                    events[i].name = dialogueObject.Keys[i];
                 }
-                events[i] = new CutsceneSegment() {name = dialogueObject.Dialogue[i].Dialogue};
+                events[i] = new CutsceneSegment() {name = dialogueObject.Keys[i]};
             } 
         }
     }

@@ -414,7 +414,7 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
     {
         isDead = true;
         FreezeMovement(false, false);
-        // ShakeCamera(0.2f, 0.02f);
+        ShakeCamera(0.2f, 0.02f);
     }
 
     public void LoadData(GameData data)

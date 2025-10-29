@@ -47,7 +47,7 @@ public class DataPersistenceManager : MonoBehaviour
     {
         Debug.Log($"DEBUG OnSceneLoaded. Loading Game...");
         this.dataPersistanceObjects = FindAllDataPersistanceObjects();
-        LoadGame();
+        // LoadGame();
     }
 
     public void OnSceneUnloaded(Scene scene)
@@ -86,6 +86,11 @@ public class DataPersistenceManager : MonoBehaviour
 
     public void SaveGame()
     {
+        if (this.gameData == null && initializeDataIfNull)
+        {
+            NewGame();
+        }
+
         if (this.gameData == null)
         {
             Debug.LogWarning($"No data was found. A New Game needs to be started before data can be loaded");

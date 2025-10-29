@@ -47,8 +47,9 @@ namespace DialogueSystem
 
         private IEnumerator StepThroughDialogue(DialogueObject dialogueObject)
         {
+            dialogueObject.LoadDialogueSentences();
             cutsceneHandler.SetCurrentEvents(dialogueObject);
-            for (int i = 0; i < dialogueObject.Dialogue.Length; i++)
+            for (int i = 0; i < dialogueObject.Dialogue.Count; i++)
             {
                 string dialogue = dialogueObject.Dialogue[i].Dialogue;
                 nameLabel.text = dialogueObject.Dialogue[i].Name;
@@ -64,7 +65,7 @@ namespace DialogueSystem
 
                 textLabel.text = dialogue;
 
-                if (i == dialogueObject.Dialogue.Length - 1 && dialogueObject.HasResponses)
+                if (i == dialogueObject.Dialogue.Count - 1 && dialogueObject.HasResponses)
                 {
                     break;
                 }
