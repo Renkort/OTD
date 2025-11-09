@@ -50,19 +50,20 @@ namespace DialogueSystem
             this.responseEvents = responseEvents;
         }
 
-        public void ShowResponses(Response[] responses)
+        public void ShowResponses(List<Response> responses)
         {
             if (dialogueResponses != null) dialogueResponses.Clear();
             float responseBoxHeight = 0f;
 
-            for (int i = 0; i < responses.Length; i++)
+            for (int i = 0; i < responses.Count; i++)
             {
                 Response response = responses[i];
                 int responseIndex = i;
 
                 GameObject responseButton = Instantiate(responseButtonTemplate.gameObject, responseContainer);
                 responseButton.SetActive(true);
-                responseButton.GetComponentInChildren<TextMeshProUGUI>().text = $"[{i + 1}] " + response.ResponseText;
+                DialogueSentence responceLocalizedText = LocalizationLoader.Instance.GetDialogueSentence(response.ResponseText);
+                responseButton.GetComponentInChildren<TextMeshProUGUI>().text = $"[{i + 1}] " + responceLocalizedText.Dialogue;
                 responseButton.GetComponentInChildren<Button>().onClick.AddListener(() => OnPickedResponse(response, responseIndex));
                 dialogueResponses.Add(new UnityEvent());
                 dialogueResponses[i].AddListener(() => OnPickedResponse(response, responseIndex));

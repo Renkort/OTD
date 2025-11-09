@@ -43,6 +43,13 @@ public class CutsceneHandler : MonoBehaviour
         cutsceneSegments[segmentIndex].OnOpenSegment?.Invoke();
     }
 
+    public void OnCloseSegment(int segmentIndex)
+    {
+        if (cutsceneSegments == null || cutsceneSegments.Length == 0)
+            return;
+        cutsceneSegments[segmentIndex].OnCloseSegment?.Invoke();
+    }
+
     public void SetCurrentEvents(DialogueObject dialogueObject)
     {
         if (allEvents == null || allEvents.Length == 0)

@@ -8,7 +8,7 @@ public class SmoothFlashlight : MonoBehaviour, IDataPersistance
     [Header("Smooth Settings")]
     [SerializeField] private float rotationSpeed = 2f;
     [SerializeField] private float positionSpeed = 5f;
-    [SerializeField] private Vector3 positionOffset = new Vector3(0.3f, -0.2f, 0.1f);
+    [SerializeField] private Vector3 positionOffset = new Vector3(-0.1f, -0.15f, 0.2f);
     [SerializeField] private Light flashlightLight;
     [SerializeField] private AudioClip toggleSound;
     

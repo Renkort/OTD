@@ -14,7 +14,14 @@ namespace DialogueSystem.Cutscenes
         public void OnValidate()
         {
             if (dialogueObject == null) return;
-            if (events != null && events.Length == dialogueObject.Keys.Count) return;
+            if (events != null && events.Length == dialogueObject.Keys.Count)
+            {
+                for (int i = 0; i < dialogueObject.Keys.Count; i++)
+                {
+                    events[i].name = dialogueObject.Keys[i];
+                }
+                return;
+            }
 
             if (events == null)
             {

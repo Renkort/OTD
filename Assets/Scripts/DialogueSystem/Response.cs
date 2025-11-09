@@ -12,5 +12,10 @@ namespace DialogueSystem
         public string ResponseText => responseText;
         public DialogueObject DialogueObject => dialogueObject;
 
+        public Response(string responseText, DialogueObject nextDialogue)
+        {
+            this.responseText = responseText;
+            this.dialogueObject = nextDialogue;
+        }
     }
 }

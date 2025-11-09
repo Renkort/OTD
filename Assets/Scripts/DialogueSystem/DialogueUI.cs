@@ -60,7 +60,7 @@ namespace DialogueSystem
                 else
                     portraitLabel.enabled = true;
 
-                yield return RunCutsceneSegment(i);
+                yield return OpenCutsceneSegment(i);
                 yield return RunTypingEffect(dialogue);
 
                 textLabel.text = dialogue;
@@ -72,6 +72,7 @@ namespace DialogueSystem
 
                 yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.E)
                 || Input.GetMouseButtonDown(0));
+                yield return CloseCutsceneSegment(i);
             }
 
             if (dialogueObject.HasResponses)
@@ -87,10 +88,17 @@ namespace DialogueSystem
 
         }
 
-        private IEnumerator RunCutsceneSegment(int segmentIndex)
+        private IEnumerator OpenCutsceneSegment(int segmentIndex)
         {
             cutsceneHandler.OnOpenSegment(segmentIndex);
-
+            while (cutsceneHandler.IsPlaying)
+            {
+                yield return null;
+            }
+        }
+        private IEnumerator CloseCutsceneSegment(int segmentIndex)
+        {
+            cutsceneHandler.OnCloseSegment(segmentIndex);
             while (cutsceneHandler.IsPlaying)
             {
                 yield return null;

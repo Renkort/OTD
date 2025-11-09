@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using DialogueSystem;
+using Unity.VisualScripting;
 
 public class DialogueResponseEvents : MonoBehaviour
 {
@@ -14,18 +15,25 @@ public class DialogueResponseEvents : MonoBehaviour
     {
         if (dialogueObject == null) return;
         if (dialogueObject.Responses == null) return;
-        if (events != null && events.Length == dialogueObject.Responses.Length) return;
+        if (events != null && events.Length == dialogueObject.Responses.Count)
+        {
+            for (int i = 0; i < dialogueObject.Responses.Count; i++)
+            {
+                events[i].name = dialogueObject.Responses[i].ResponseText;
+            }
+            return;
+        }
 
         if (events == null)
         {
-            events = new ResponseEvent[dialogueObject.Responses.Length];
+            events = new ResponseEvent[dialogueObject.Responses.Count];
         }
         else
         {
-            Array.Resize(ref events, dialogueObject.Responses.Length);
+            Array.Resize(ref events, dialogueObject.Responses.Count);
         }
 
-        for (int i = 0; i < dialogueObject.Responses.Length; i++)
+        for (int i = 0; i < dialogueObject.Responses.Count; i++)
         {
             Response response = dialogueObject.Responses[i];
 

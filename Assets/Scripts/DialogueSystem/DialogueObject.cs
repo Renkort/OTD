@@ -9,13 +9,13 @@ namespace DialogueSystem
     {
         [SerializeField] private List<string> dialogueKeys;
         [SerializeField] private List<DialogueSentence> dialogue;
-        [SerializeField] private Response[] responses;
+        [SerializeField] private List<Response> responses;
 
-        public bool HasResponses => responses != null && responses.Length > 0;
+        public bool HasResponses => responses != null && responses.Count > 0;
 
         public List<string> Keys => dialogueKeys;
         public List<DialogueSentence> Dialogue => dialogue;
-        public Response[] Responses => responses;
+        public List<Response> Responses => responses;
 
         public void LoadDialogueSentences()
         {
