@@ -17,6 +17,8 @@ namespace DialogueSystem
         private ResponseEvent[] responseEvents;
         private List<UnityEvent> dialogueResponses = new List<UnityEvent>();
         private DialogueUI dialogueUI;
+        private DialogueResponseEvents[] allEvents;
+        private DialogueResponseEvents currentEvents;
 
         private void Start()
         {
@@ -48,6 +50,34 @@ namespace DialogueSystem
         public void AddResponseEvents(ResponseEvent[] responseEvents)
         {
             this.responseEvents = responseEvents;
+        }
+
+        public void AddAllResponseEvents(DialogueResponseEvents[] allEvents)
+        {
+            if (allEvents.Length == 0)
+                return;
+            this.allEvents = allEvents;
+        }
+
+        public void SetCurrentEvents(DialogueObject dialogueObject)
+        {
+            if (allEvents == null || allEvents.Length == 0)
+                return;
+            for (int i = 0; i < allEvents.Length; i++)
+            {
+                if (allEvents[i].DialogueObject == dialogueObject)
+                {
+                    currentEvents = allEvents[i];
+                    break;
+                }
+                else
+                {
+                    currentEvents = null;
+                    responseEvents = null;
+                }
+            }
+            if (currentEvents != null)
+                AddResponseEvents(currentEvents.Events);
         }
 
         public void ShowResponses(List<Response> responses)

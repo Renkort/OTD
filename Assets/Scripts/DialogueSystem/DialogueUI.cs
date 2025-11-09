@@ -44,11 +44,16 @@ namespace DialogueSystem
         {
             cutsceneHandler.AddAllCutsceneEvents(allEvents);
         }
+        public void AddAllResponseEvents(DialogueResponseEvents[] allEvents)
+        {
+            responseHandler.AddAllResponseEvents(allEvents);
+        }
 
         private IEnumerator StepThroughDialogue(DialogueObject dialogueObject)
         {
             dialogueObject.LoadDialogueSentences();
             cutsceneHandler.SetCurrentEvents(dialogueObject);
+            responseHandler.SetCurrentEvents(dialogueObject);
             for (int i = 0; i < dialogueObject.Dialogue.Count; i++)
             {
                 string dialogue = dialogueObject.Dialogue[i].Dialogue;

@@ -34,14 +34,15 @@ namespace DialogueSystem
                 Debug.Log($"Dialogue object is null! Game object: {gameObject.name}");
                 return;
             }
-            foreach (DialogueResponseEvents responseEvents in GetComponents<DialogueResponseEvents>())
-            {
-                if (responseEvents != null && responseEvents.DialogueObject == dialogueObject)
-                {
-                    player.DialogueUI.AddResponseEvents(responseEvents.Events);
-                    break;
-                }
-            }
+            // foreach (DialogueResponseEvents responseEvents in GetComponents<DialogueResponseEvents>())
+            // {
+            //     if (responseEvents != null && responseEvents.DialogueObject == dialogueObject)
+            //     {
+            //         player.DialogueUI.AddResponseEvents(responseEvents.Events);
+            //         break;
+            //     }
+            // }
+            player.DialogueUI.AddAllResponseEvents(GetComponents<DialogueResponseEvents>());
             player.DialogueUI.AddAllCutsceneEvents(GetComponents<DialogueCutsceneEvents>());
         }
 
