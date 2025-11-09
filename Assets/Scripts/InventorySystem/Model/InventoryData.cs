@@ -7,4 +7,5 @@ public class InventoryData : ScriptableObject
 {
     public int CellCount;
     public List<CellData> CellDatas;
+    public List<CellData> EquipmentCellDatas;
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -15,6 +16,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private UIInventoryDescription inventoryDescription;
     [SerializeField] private MouseFollower mouseFollower;
     [SerializeField] private List<EquipmentCell> equipmentCells;
+    private ItemHolder itemHolder;
     private bool isOpen;
     private int curBeginDrag = -1;
     private GameObject player;
@@ -44,6 +46,7 @@ public class InventoryUI : MonoBehaviour
     }
     private void Start()
     {
+        itemHolder = ItemHolder.Instance;
         InitializeInventoryUI();
     }
 
@@ -115,6 +118,12 @@ public class InventoryUI : MonoBehaviour
             equipmentCells[i].OnRightMouseBtnClick += HandlePerformItemActions;
         }
         LoadCellsData();
+        foreach (EquipmentCell equipment in equipmentCells)
+        {
+            EquippableItemData equippableItem = equipment.Data.inventoryItem.itemData as EquippableItemData;
+            if (equippableItem != null)
+                itemHolder.SetActiveItem(equippableItem, true);
+        }
     }
     private string PrepareDescripriton(InventoryItem item)
     {
@@ -154,6 +163,7 @@ public class InventoryUI : MonoBehaviour
         IDestroyableItem destroyableItem = cell.Data.inventoryItem.itemData as IDestroyableItem;
         if (destroyableItem != null)
         {
+            Debug.Log($"IDestroyable item. Perform action");
             cell.TryRemoveItem();
         }
         IEquippaleItem equippableItem = cell.Data.inventoryItem.itemData as IEquippaleItem;
@@ -177,9 +187,12 @@ public class InventoryUI : MonoBehaviour
     private void EquipItem(CellUI cell)
     {
         EquipmentCell equipmentCell = cell as EquipmentCell;
-        if (equipmentCell != null)
+        if (equipmentCell != null && !equipmentCell.Data.IsEmpty)
         {
-            AddItemAtEmpty(equipmentCell.Data.inventoryItem.itemData);
+            EquippableItemData equippableItem = cell.Data.inventoryItem.itemData as EquippableItemData;
+            itemHolder.SetActiveItem(equippableItem, false);
+            for (int i=0; i < equipmentCell.Data.Quantity; i++)
+                AddItemAtEmpty(equipmentCell.Data.inventoryItem.itemData, false);
             equipmentCell.ClearCell();
             equipmentCell.UpdateUI();
             return;
@@ -187,7 +200,7 @@ public class InventoryUI : MonoBehaviour
         curBeginDrag = cells.IndexOf(cell);
         EquippableItemData eqItem = cell.Data.inventoryItem.itemData as EquippableItemData;
         EquipmentCell.EquipmentType type = eqItem.equipmentType;
-        switch(type)
+        switch (type)
         {
             case EquipmentCell.EquipmentType.LeftHand:
                 HandleSwapItems(GetEquipmentCellByType(EquipmentCell.EquipmentType.LeftHand));
@@ -202,6 +215,8 @@ public class InventoryUI : MonoBehaviour
                 HandleSwapItems(GetEquipmentCellByType(EquipmentCell.EquipmentType.Head));
                 break;
         }
+        itemHolder.SetActiveItem(eqItem, true);
+        SaveCellsData();
         // HandleSwapItems(cells[11]);
         // if (cells.IndexOf(cell) == 11)
         // {
@@ -260,7 +275,7 @@ public class InventoryUI : MonoBehaviour
 
     public void AddItemAtEmpty(ItemData item)
     {
-        OnRecieveItem?.Invoke(item.ItemTitle);
+
         foreach (CellUI cell in cells)
         {
             if (cell.Data.IsEmpty)
@@ -284,9 +299,21 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
+    public void AddItemAtEmpty(ItemData item, bool showNotification)
+    {
+        if (showNotification)
+            OnRecieveItem?.Invoke(item.ItemTitle);
+        AddItemAtEmpty(item);
+    }
+    
+    public void AddItemAtEmptyWithNotification(ItemData item)
+    {
+        AddItemAtEmpty(item, true);
+    }
+
     public void RemoveItems(ItemData item)
     {
-        OnRemoveItem?.Invoke(item.ItemTitle);
+        
         foreach (CellUI cell in cells)
         {
             if (!cell.Data.IsEmpty && cell.Data.inventoryItem.itemData.Id == item.Id)
@@ -307,6 +334,12 @@ public class InventoryUI : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public void RemoveItemsWithNotification(ItemData item)
+    {
+        OnRemoveItem?.Invoke(item.ItemTitle);
+        RemoveItems(item);
     }
 
     public ItemData GetItem(string id)
@@ -330,12 +363,21 @@ public class InventoryUI : MonoBehaviour
         {
             cells[i].Data = data.CellDatas[i];
         }
+        for (int i = 0; i < equipmentCells.Count; i++)
+        {
+            equipmentCells[i].Data = data.EquipmentCellDatas[i];
+        }
+        
     }
     private void SaveCellsData()
     {
         for (int i = 0; i < cells.Count; i++)
         {
             data.CellDatas[i] = cells[i].Data;
+        }
+        for (int i = 0; i < equipmentCells.Count; i++)
+        {
+            data.EquipmentCellDatas[i] = equipmentCells[i].Data;
         }
     }
     private void InitializeData()
@@ -344,6 +386,10 @@ public class InventoryUI : MonoBehaviour
         for (int i = 0; i < cells.Count; i++)
         {
             data.CellDatas.Add(cells[i].Data);
+        }
+        for (int i = 0; i < equipmentCells.Count; i++)
+        {
+            data.EquipmentCellDatas.Add(equipmentCells[i].Data);
         }
     }
 }

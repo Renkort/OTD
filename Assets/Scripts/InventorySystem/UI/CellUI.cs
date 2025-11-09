@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using UnityEngine.EventSystems;
+using System.Collections;
 
 public class CellUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler,
     IEndDragHandler, IDropHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler
@@ -14,6 +15,7 @@ public class CellUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler,
 
     public event Action<CellUI> OnItemClicked,
         OnItemDroppedOn, OnItemBeginDrag, OnItemEndDrag, OnRightMouseBtnClick;
+
     public void Awake()
     {
         Deselect();
@@ -24,19 +26,21 @@ public class CellUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler,
         UpdateUI();
     }
 
-
-
     private void Update()
     {
-        //if (activateItem.WasPerformedThisFrame())
-        if (Input.GetMouseButtonDown(1))
-        {
-            OnRightMouseBtnClick?.Invoke(this);
-        }
-        //if (selectItem.WasPerformedThisFrame())
-        if (Input.GetMouseButtonDown(0))
-            OnItemClicked?.Invoke(this);
+        // //if (activateItem.WasPerformedThisFrame())
+        // if (Input.GetMouseButtonDown(1) && isClicked)
+        // {
+        //     StartCoroutine(ClickOnCellAction(1));
+        //     isClicked = false;
+        //     //OnRightMouseBtnClick?.Invoke(this);
+        // }
+        // //if (selectItem.WasPerformedThisFrame())
+        // if (Input.GetMouseButtonDown(0) && isClicked)
+        //     StartCoroutine(ClickOnCellAction(0));
+        //     //OnItemClicked?.Invoke(this);
     }
+
 
     public void Select()
     {
@@ -58,6 +62,19 @@ public class CellUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler,
         if (item.IsStackable)
             Data.Quantity++;
         else Data.Quantity = 1;
+        QuantityText.text = Data.Quantity.ToString();
+        UpdateUI();
+    }
+
+    public void AddItems(ItemData item, int count)
+    {
+        Data.IsEmpty = false;
+        Data.inventoryItem.itemData = item;
+        itemImage.sprite = item.Icon;
+        if (item.IsStackable)
+            Data.Quantity += count;
+        else
+            Data.Quantity = count;
         QuantityText.text = Data.Quantity.ToString();
         UpdateUI();
     }
