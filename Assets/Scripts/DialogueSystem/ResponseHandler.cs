@@ -33,18 +33,24 @@ namespace DialogueSystem
 
         private void HandleInput()
         {
+            int responseIndex = -1;
             if (Input.GetKeyDown(KeyCode.Alpha1))
-            { dialogueResponses[0]?.Invoke(); }
+            { responseIndex = 0; }
             else if (Input.GetKeyDown(KeyCode.Alpha2))
-            { dialogueResponses[1]?.Invoke(); }
+            { responseIndex = 1; }
             else if (Input.GetKeyDown(KeyCode.Alpha3))
-            { dialogueResponses[2]?.Invoke(); }
+            { responseIndex = 2; }
             else if (Input.GetKeyDown(KeyCode.Alpha4))
-            { dialogueResponses[3]?.Invoke(); }
+            { responseIndex = 3; }
             else if (Input.GetKeyDown(KeyCode.Alpha5))
-            { dialogueResponses[4]?.Invoke(); }
+            { responseIndex = 4; }
             else if (Input.GetKeyDown(KeyCode.Alpha6))
-            { dialogueResponses[5]?.Invoke(); }
+            { responseIndex = 5; }
+
+            if (responseIndex >= 0 && dialogueResponses.Count > responseIndex)
+            {
+                dialogueResponses[responseIndex]?.Invoke();
+            }
         }
 
         public void AddResponseEvents(ResponseEvent[] responseEvents)
