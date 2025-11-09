@@ -45,15 +45,16 @@ public class DataPersistenceManager : MonoBehaviour
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log($"DEBUG OnSceneLoaded. Loading Game...");
+        Debug.Log($"[DEBUG] OnSceneLoaded. Loading Game...");
         this.dataPersistanceObjects = FindAllDataPersistanceObjects();
         // LoadGame();
+        SaveGame();
     }
 
     public void OnSceneUnloaded(Scene scene)
     {
-        Debug.Log($"[DEBUG] OnSceneUnloaded. Saving Game...");
-        SaveGame();
+        // Debug.Log($"[DEBUG] OnSceneUnloaded. Saving Game...");
+        // SaveGame();
     }
 
 
