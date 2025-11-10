@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace DialogueSystem
+namespace Akkerman.DialogueSystem
 {
     public class CutsceneDialogueActivator : DialogueActivator3D
     {
@@ -22,14 +22,14 @@ namespace DialogueSystem
             yield return new WaitForSeconds(0.5f);
 
             isPlayed = true;
-            Player player = FindObjectOfType<Player>();
+            FPS.Player player = FindObjectOfType<FPS.Player>();
             Interact(player);
         }
         private void OnTriggerEnter(Collider collision)
         {
             if (isPlayed)
                 return;
-            if (collision.CompareTag("Player") && collision.TryGetComponent(out Player player))
+            if (collision.CompareTag("Player") && collision.TryGetComponent(out FPS.Player player))
             {
                 isPlayed = true;
                 player.CurrentInteractable = this;

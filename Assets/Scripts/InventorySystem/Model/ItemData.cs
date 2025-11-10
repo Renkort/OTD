@@ -2,32 +2,36 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ItemData : ScriptableObject
+namespace Akkerman.InventorySystem
 {
-    public string ItemTitle;
-    [TextArea] public string Desctiption;
-    public Sprite Icon;
-    public bool IsStackable;
-    public string Id;
-
-    [field: SerializeField] public List<ItemParameter> DefaultParametersList { get; set; }
-}
-
-[Serializable]
-public struct InventoryItem
-{
-    public ItemData itemData;
-    [field: SerializeField] public List<ItemParameter> ItemState { get; set; }
-}
-
-[Serializable]
-public struct ItemParameter : IEquatable<ItemParameter>
-{
-    public ItemParameterData itemParameter;
-    public float value;
-
-    public bool Equals(ItemParameter other)
+    
+    public abstract class ItemData : ScriptableObject
     {
-        return other.itemParameter == itemParameter;
+        public string ItemTitle;
+        [TextArea] public string Desctiption;
+        public Sprite Icon;
+        public bool IsStackable;
+        public string Id;
+
+        [field: SerializeField] public List<ItemParameter> DefaultParametersList { get; set; }
+    }
+
+    [Serializable]
+    public struct InventoryItem
+    {
+        public ItemData itemData;
+        [field: SerializeField] public List<ItemParameter> ItemState { get; set; }
+    }
+
+    [Serializable]
+    public struct ItemParameter : IEquatable<ItemParameter>
+    {
+        public ItemParameterData itemParameter;
+        public float value;
+
+        public bool Equals(ItemParameter other)
+        {
+            return other.itemParameter == itemParameter;
+        }
     }
 }

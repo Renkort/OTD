@@ -1,22 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ItemUI : MonoBehaviour
+namespace Akkerman.InventorySystem
 {
-    [SerializeField] private Image itemImage;
-    [SerializeField] private int quantity;
-
-    public void SetData(Sprite sprite, int quantity)
+    
+    public class ItemUI : MonoBehaviour
     {
-        itemImage.sprite = sprite;
-        this.quantity = quantity;
-    }
+        [SerializeField] private Image itemImage;
+        [SerializeField] private int quantity;
 
-    public void ResetData()
-    {
-        itemImage.sprite = null;
-        quantity = 0;
+        public void SetData(Sprite sprite, int quantity)
+        {
+            itemImage.sprite = sprite;
+            this.quantity = quantity;
+        }
+
+        public void ResetData()
+        {
+            itemImage.sprite = null;
+            quantity = 0;
+        }
     }
 }

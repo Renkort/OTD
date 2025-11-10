@@ -1,13 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Akkerman.FPS;
 
-public class CheckpointHandler : MonoBehaviour
+
+namespace Akkerman.SaveSystem
 {
-    [SerializeField] private List<CheckpointActivator> acivators = new();
-
-    public void SavePlayerData(Player player)
+    public class CheckpointHandler : MonoBehaviour
     {
-        
+        [SerializeField] private List<CheckpointActivator> acivators = new();
+
+        public void SavePlayerData(Player player)
+        {
+
+        }
     }
 }

@@ -4,35 +4,40 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class UIInventoryDescription : MonoBehaviour
+
+namespace Akkerman.InventorySystem
 {
-    [SerializeField] private Image itemImage;
-    [SerializeField] private TextMeshProUGUI title;
-    [SerializeField] private TextMeshProUGUI description;
-
-    public void Awake()
+    
+    public class UIInventoryDescription : MonoBehaviour
     {
-        ResetDescription();
-    }
+        [SerializeField] private Image itemImage;
+        [SerializeField] private TextMeshProUGUI title;
+        [SerializeField] private TextMeshProUGUI description;
 
-    public void ResetDescription()
-    {
-        itemImage.gameObject.SetActive(false);
-        title.text = "";
-        description.text = "";
-    }
+        public void Awake()
+        {
+            ResetDescription();
+        }
 
-    public void SetDescription(CellUI cell, string description)
-    {
-        itemImage.gameObject.SetActive(true);
-        itemImage.sprite = cell.Data.inventoryItem.itemData.Icon;
-        title.text = cell.Data.inventoryItem.itemData.ItemTitle;
-        this.description.text = description;
-    }
+        public void ResetDescription()
+        {
+            itemImage.gameObject.SetActive(false);
+            title.text = "";
+            description.text = "";
+        }
 
-    public void SetDescription(string description)
-    {
-        ResetDescription();
-        this.description.text = description;
+        public void SetDescription(CellUI cell, string description)
+        {
+            itemImage.gameObject.SetActive(true);
+            itemImage.sprite = cell.Data.inventoryItem.itemData.Icon;
+            title.text = cell.Data.inventoryItem.itemData.ItemTitle;
+            this.description.text = description;
+        }
+
+        public void SetDescription(string description)
+        {
+            ResetDescription();
+            this.description.text = description;
+        }
     }
 }

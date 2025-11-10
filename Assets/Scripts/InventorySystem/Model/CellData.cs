@@ -1,37 +1,42 @@
 using System;
 
-[Serializable]
-public class CellData
+
+namespace Akkerman.InventorySystem
 {
-    public InventoryItem inventoryItem;
-    public bool IsEmpty;
-    public int Quantity;
-    public string ID;
-
-    public CellData()
+    
+    [Serializable]
+    public class CellData
     {
-        IsEmpty = true;
-        Quantity = 0;
-        ID = Guid.NewGuid().ToString();
-    }
+        public InventoryItem inventoryItem;
+        public bool IsEmpty;
+        public int Quantity;
+        public string ID;
 
-    public void SwapCellsData(CellData cellData)
-    {
-        InventoryItem tmpItemData = inventoryItem;
-        bool tmpIsEmtpy = IsEmpty;
-        int tmpQuantity = Quantity;
-        string tmpID = ID;
+        public CellData()
+        {
+            IsEmpty = true;
+            Quantity = 0;
+            ID = Guid.NewGuid().ToString();
+        }
 
-        inventoryItem = cellData.inventoryItem;
-        cellData.inventoryItem = tmpItemData;
+        public void SwapCellsData(CellData cellData)
+        {
+            InventoryItem tmpItemData = inventoryItem;
+            bool tmpIsEmtpy = IsEmpty;
+            int tmpQuantity = Quantity;
+            string tmpID = ID;
 
-        Quantity = cellData.Quantity;
-        cellData.Quantity = tmpQuantity;
+            inventoryItem = cellData.inventoryItem;
+            cellData.inventoryItem = tmpItemData;
 
-        IsEmpty = cellData.IsEmpty;
-        cellData.IsEmpty = tmpIsEmtpy;
+            Quantity = cellData.Quantity;
+            cellData.Quantity = tmpQuantity;
 
-        ID = cellData.ID;
-        cellData.ID = tmpID;
+            IsEmpty = cellData.IsEmpty;
+            cellData.IsEmpty = tmpIsEmtpy;
+
+            ID = cellData.ID;
+            cellData.ID = tmpID;
+        }
     }
 }

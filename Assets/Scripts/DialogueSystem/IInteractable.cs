@@ -1,4 +1,7 @@
-public interface IInteractable
+namespace Akkerman.InteractionSystem
 {
-    public void Interact(Player player);
+    public interface IInteractable
+    {
+        public void Interact(Akkerman.FPS.Player player);
+    }
 }

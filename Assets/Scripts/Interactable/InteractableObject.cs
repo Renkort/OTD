@@ -1,30 +1,35 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(Outline))]
 
-public class InteractableObject : MonoBehaviour, IInteractable
+namespace Akkerman.InteractionSystem
 {
-    [HideInInspector] public string InteractText;
-    public Outline outline;
-    public UnityEvent InteractAction;
-    [SerializeField] private LayerMask interactionLayer;
+    
+    [RequireComponent(typeof(Outline))]
 
-    void Awake()
+    public class InteractableObject : MonoBehaviour, IInteractable
     {
-        SetOutline(false);
-        if (1 << gameObject.layer != interactionLayer)
-            Debug.LogWarning($"{gameObject} is not on interaction layer");
-    }
+        [HideInInspector] public string InteractText;
+        public Outline outline;
+        public UnityEvent InteractAction;
+        [SerializeField] private LayerMask interactionLayer;
 
-    public void SetOutline(bool isActive)
-    {
-        outline.enabled = isActive;
-    }
+        void Awake()
+        {
+            SetOutline(false);
+            if (1 << gameObject.layer != interactionLayer)
+                Debug.LogWarning($"{gameObject} is not on interaction layer");
+        }
 
-    public void Interact(Player player)
-    {
-        player.CurrentInteractable = this;
-        InteractAction?.Invoke();
+        public void SetOutline(bool isActive)
+        {
+            outline.enabled = isActive;
+        }
+
+        public void Interact(Akkerman.FPS.Player player)
+        {
+            player.CurrentInteractable = this;
+            InteractAction?.Invoke();
+        }
     }
 }

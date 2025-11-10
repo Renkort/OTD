@@ -1,14 +1,17 @@
 using UnityEngine;
 
-public class CheckpointActivator : MonoBehaviour
+namespace Akkerman.SaveSystem
 {
-    [SerializeField] private Collider triggerCollider;
-    public string Id { get; private set; }
-
-    public void TriggerCheckpoint()
+    public class CheckpointActivator : MonoBehaviour
     {
-        Debug.Log($"Checkpoint...");
-        triggerCollider.enabled = false;
-        DataPersistenceManager.Instance.SaveGame();
+        [SerializeField] private Collider triggerCollider;
+        public string Id { get; private set; }
+
+        public void TriggerCheckpoint()
+        {
+            Debug.Log($"Checkpoint...");
+            triggerCollider.enabled = false;
+            DataPersistenceManager.Instance.SaveGame();
+        }
     }
 }

@@ -1,59 +1,62 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
+using Akkerman.SaveSystem;
+using Akkerman.FPS;
 
-[RequireComponent(typeof(Collider))]
-public class Zone : MonoBehaviour, IDataPersistance
+namespace Akkerman.InteractionSystem
 {
-    [SerializeField] private string Id;
-    [ContextMenu("Generate guid for id")]
-    private void GenerateGuid()
+    
+    [RequireComponent(typeof(Collider))]
+    public class Zone : MonoBehaviour, IDataPersistance
     {
-        Id = System.Guid.NewGuid().ToString();
-    }
-    [SerializeField] private LayerMask playerLayer;
-    [SerializeField] private bool playOnceOnEnter;
-    private bool wasTriggered = false;
-    public bool IsPlayerInside { get; private set; }
-    public UnityEvent OnPlayerEnter, OnPlayerExit;
-    void OnTriggerEnter(Collider other)
-    {
-        if (wasTriggered)
-            return;
-        if (other.CompareTag("Player") && other.gameObject.TryGetComponent(out Player player))
+        [SerializeField] private string Id;
+        [ContextMenu("Generate guid for id")]
+        private void GenerateGuid()
         {
-            IsPlayerInside = true;
-            OnPlayerEnter?.Invoke();
-            if (playOnceOnEnter)
-                wasTriggered = true;
+            Id = System.Guid.NewGuid().ToString();
         }
-    }
+        [SerializeField] private LayerMask playerLayer;
+        [SerializeField] private bool playOnceOnEnter;
+        private bool wasTriggered = false;
+        public bool IsPlayerInside { get; private set; }
+        public UnityEvent OnPlayerEnter, OnPlayerExit;
+        void OnTriggerEnter(Collider other)
+        {
+            if (wasTriggered)
+                return;
+            if (other.CompareTag("Player") && other.gameObject.TryGetComponent(out Player player))
+            {
+                IsPlayerInside = true;
+                OnPlayerEnter?.Invoke();
+                if (playOnceOnEnter)
+                    wasTriggered = true;
+            }
+        }
 
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player") && other.gameObject.TryGetComponent(out Player player))
+        void OnTriggerExit(Collider other)
         {
-            IsPlayerInside = false;
-            OnPlayerExit?.Invoke();
+            if (other.CompareTag("Player") && other.gameObject.TryGetComponent(out Player player))
+            {
+                IsPlayerInside = false;
+                OnPlayerExit?.Invoke();
+            }
         }
-    }
-    public void LoadData(GameData data)
-    {
-        data.ActiveZones.TryGetValue(Id, out wasTriggered);
-    }
+        public void LoadData(GameData data)
+        {
+            data.ActiveZones.TryGetValue(Id, out wasTriggered);
+        }
 
-    public void SaveData(ref GameData data)
-    {
-        if (!data.ActiveZones.ContainsKey(Id))
+        public void SaveData(ref GameData data)
         {
-            data.ActiveZones.Add(Id, wasTriggered);
+            if (!data.ActiveZones.ContainsKey(Id))
+            {
+                data.ActiveZones.Add(Id, wasTriggered);
+            }
+            else
+            {
+                data.ActiveZones[Id] = wasTriggered;
+            }
         }
-        else
-        {
-            data.ActiveZones[Id] = wasTriggered;
-        }
-    }
 
+    }
 }

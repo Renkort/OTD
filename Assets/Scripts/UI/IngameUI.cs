@@ -2,132 +2,139 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Profiling;
+using Akkerman.SaveSystem;
+using Akkerman.FPS;
+using Akkerman.FPS.Usables;
 
-public class IngameUI : MonoBehaviour, IDataPersistance
+namespace Akkerman.UI
 {
-    [SerializeField] private bool showDebugInfo = false;
-    [SerializeField] private GameObject deathScreen;
-    [SerializeField] private Animator whiteFadeScreen;
-    [SerializeField] private TextMeshProUGUI ammoDisplay;
-    [SerializeField] private Image weaponBulletIcon;
-    public Slider forceModifierSlider;
-    [SerializeField] private Throwable throwable;
-    private float deltaTime = 0.0f;
-    private Transform playerTransform;
-
-    public Animator WhiteFadeScreen => whiteFadeScreen;
-
-    void Start()
+    
+    public class IngameUI : MonoBehaviour, IDataPersistance
     {
-        playerTransform = Player.Instance.gameObject.GetComponent<Transform>();
+        [SerializeField] private bool showDebugInfo = false;
+        [SerializeField] private GameObject deathScreen;
+        [SerializeField] private Animator whiteFadeScreen;
+        [SerializeField] private TextMeshProUGUI ammoDisplay;
+        [SerializeField] private Image weaponBulletIcon;
+        public Slider forceModifierSlider;
+        [SerializeField] private Throwable throwable;
+        private float deltaTime = 0.0f;
+        private Transform playerTransform;
 
-        deathScreen.SetActive(false);
-        forceModifierSlider.maxValue = throwable.ForceModifierLimit;
-    }
+        public Animator WhiteFadeScreen => whiteFadeScreen;
 
-    void Update()
-    {
-        deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
-
-        HandleSaveGameInput();
-
-        if (Player.Instance.IsDead)
+        void Start()
         {
-            if (Input.GetMouseButtonDown(0))
+            playerTransform = Player.Instance.gameObject.GetComponent<Transform>();
+
+            deathScreen.SetActive(false);
+            forceModifierSlider.maxValue = throwable.ForceModifierLimit;
+        }
+
+        void Update()
+        {
+            deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+
+            HandleSaveGameInput();
+
+            if (Player.Instance.IsDead)
             {
-                Debug.Log($"Loading last game save...");
-                DataPersistenceManager.Instance.LoadGame();
+                if (Input.GetMouseButtonDown(0))
+                {
+                    Debug.Log($"Loading last game save...");
+                    DataPersistenceManager.Instance.LoadGame();
+                }
             }
         }
-    }
 
-    public void SetAmmoUI(string ammoDisplay, Sprite weaponBulletIcon)
-    {
-        this.ammoDisplay.text = ammoDisplay;
-        this.weaponBulletIcon.sprite = weaponBulletIcon;
-    }
-
-    public void DisplayForceModifierSlider(float sliderValue)
-    {
-        forceModifierSlider.value = sliderValue;
-    }
-
-    private void HandleSaveGameInput()
-    {
-        if (Input.GetKeyDown(KeyCode.F1))
+        public void SetAmmoUI(string ammoDisplay, Sprite weaponBulletIcon)
         {
-            showDebugInfo = !showDebugInfo;
-        }
-        if (Player.Instance.DialogueUI.IsOpen)
-        {
-            return;
-        }
-        if (Input.GetKeyDown(KeyCode.F5) && !Player.Instance.IsDead)
-        {
-            Debug.Log("QUICK SAVING...");
-            DataPersistenceManager.Instance.SaveGame();
+            this.ammoDisplay.text = ammoDisplay;
+            this.weaponBulletIcon.sprite = weaponBulletIcon;
         }
 
-        if (Input.GetKeyDown(KeyCode.F9))
+        public void DisplayForceModifierSlider(float sliderValue)
         {
-            Debug.Log("LOADING...");
-            DataPersistenceManager.Instance.LoadGame();
+            forceModifierSlider.value = sliderValue;
         }
 
-    }
-
-    public void ShowDeathScreen()
-    {
-        deathScreen.SetActive(true);
-    }
-
-    //Debug UI
-    private void OnGUI()
-    {
-        if (!showDebugInfo)
+        private void HandleSaveGameInput()
         {
-            return;
+            if (Input.GetKeyDown(KeyCode.F1))
+            {
+                showDebugInfo = !showDebugInfo;
+            }
+            if (Player.Instance.DialogueUI.IsOpen)
+            {
+                return;
+            }
+            if (Input.GetKeyDown(KeyCode.F5) && !Player.Instance.IsDead)
+            {
+                Debug.Log("QUICK SAVING...");
+                DataPersistenceManager.Instance.SaveGame();
+            }
+
+            if (Input.GetKeyDown(KeyCode.F9))
+            {
+                Debug.Log("LOADING...");
+                DataPersistenceManager.Instance.LoadGame();
+            }
+
         }
 
-        int w = Screen.width, h = Screen.height;
-        int uiSize = h * 2 / 100;
-        GUIStyle style = new GUIStyle();
-        style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = uiSize;
-        style.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        public void ShowDeathScreen()
+        {
+            deathScreen.SetActive(true);
+        }
 
-        Rect verRect = new Rect(0, 0, w, uiSize);
-        Rect fpsRect = new Rect(0, uiSize, w, uiSize);
-        Rect posRect = new Rect(0, uiSize * 2, w, uiSize);
-        Rect memoryRect = new Rect(0, uiSize * 3, w, uiSize);
+        //Debug UI
+        private void OnGUI()
+        {
+            if (!showDebugInfo)
+            {
+                return;
+            }
 
-        string verText = $"{Application.productName} ver. {Application.version}";
+            int w = Screen.width, h = Screen.height;
+            int uiSize = h * 2 / 100;
+            GUIStyle style = new GUIStyle();
+            style.alignment = TextAnchor.UpperLeft;
+            style.fontSize = uiSize;
+            style.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 
-        float msec = deltaTime * 1000.0f;
-        float fps = 1.0f / deltaTime;
-        string fpsText = string.Format("{0:0.0} ms ({1:0} fps), ", msec, fps);
+            Rect verRect = new Rect(0, 0, w, uiSize);
+            Rect fpsRect = new Rect(0, uiSize, w, uiSize);
+            Rect posRect = new Rect(0, uiSize * 2, w, uiSize);
+            Rect memoryRect = new Rect(0, uiSize * 3, w, uiSize);
 
-        float x = playerTransform.position.x, y = playerTransform.position.y, z = playerTransform.position.z;
-        string posText = string.Format("X: {0:0.00} Y: {1:0.00} Z: {2:0.00}", x, y, z);
+            string verText = $"{Application.productName} ver. {Application.version}";
 
-        long allocMemory = Profiler.GetTotalAllocatedMemoryLong();
-        string allocMemoryText = $"Allocated memory: {allocMemory / 1024 / 1024} MB";
+            float msec = deltaTime * 1000.0f;
+            float fps = 1.0f / deltaTime;
+            string fpsText = string.Format("{0:0.0} ms ({1:0} fps), ", msec, fps);
 
-        GUI.Label(verRect, verText, style); // game version
-        GUI.Label(fpsRect, fpsText, style); // fps
-        GUI.Label(posRect, posText, style); // player position
-        GUI.Label(memoryRect, allocMemoryText, style); // allocated memory
+            float x = playerTransform.position.x, y = playerTransform.position.y, z = playerTransform.position.z;
+            string posText = string.Format("X: {0:0.00} Y: {1:0.00} Z: {2:0.00}", x, y, z);
 
-    }
+            long allocMemory = Profiler.GetTotalAllocatedMemoryLong();
+            string allocMemoryText = $"Allocated memory: {allocMemory / 1024 / 1024} MB";
 
-    public void LoadData(GameData data)
-    {
-        showDebugInfo = data.ShowDebugInfo;
-        deathScreen.SetActive(data.IsDead);
-    }
+            GUI.Label(verRect, verText, style); // game version
+            GUI.Label(fpsRect, fpsText, style); // fps
+            GUI.Label(posRect, posText, style); // player position
+            GUI.Label(memoryRect, allocMemoryText, style); // allocated memory
 
-    public void SaveData(ref GameData data)
-    {
-        data.ShowDebugInfo = showDebugInfo;
+        }
+
+        public void LoadData(GameData data)
+        {
+            showDebugInfo = data.ShowDebugInfo;
+            deathScreen.SetActive(data.IsDead);
+        }
+
+        public void SaveData(ref GameData data)
+        {
+            data.ShowDebugInfo = showDebugInfo;
+        }
     }
 }

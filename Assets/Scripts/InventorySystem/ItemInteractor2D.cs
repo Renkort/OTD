@@ -1,60 +1,64 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ItemInteractor2D : MonoBehaviour
+namespace Akkerman.InventorySystem
 {
-    [Header("Collider required")]
-    [SerializeField] protected new Collider2D collider;
-    [SerializeField] protected GameObject interactIcon;
-    [SerializeField] private LayerMask playerLayer;
-    [SerializeField] protected List<ItemData> items;
-    protected InventoryUI inventory;
-    protected bool isPlayerNearby;
-
-    private void Start()
+    
+    public class ItemInteractor2D : MonoBehaviour
     {
-        inventory = FindObjectOfType<InventoryUI>();
-        interactIcon.SetActive(false);
-    }
+        [Header("Collider required")]
+        [SerializeField] protected new Collider2D collider;
+        [SerializeField] protected GameObject interactIcon;
+        [SerializeField] private LayerMask playerLayer;
+        [SerializeField] protected List<ItemData> items;
+        protected InventoryUI inventory;
+        protected bool isPlayerNearby;
 
-    private void Update()
-    {
-        CheckPlayer();
-    }
-
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
+        private void Start()
         {
-            isPlayerNearby = true;
-            interactIcon.SetActive(true);
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            isPlayerNearby = false;
+            inventory = FindObjectOfType<InventoryUI>();
             interactIcon.SetActive(false);
         }
-    }
-    private void CheckPlayer()
-    {
 
-        if (isPlayerNearby && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Joystick1Button0)))
+        private void Update()
         {
-            InteractWithItems();
+            CheckPlayer();
         }
-    }
 
-    public virtual void InteractWithItems()
-    {
-        foreach (ItemData item in items)
+
+        private void OnTriggerEnter2D(Collider2D collision)
         {
-            inventory.AddItemAtEmpty(item);
+            if (collision.CompareTag("Player"))
+            {
+                isPlayerNearby = true;
+                interactIcon.SetActive(true);
+            }
         }
-        Destroy(gameObject);
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            if (collision.CompareTag("Player"))
+            {
+                isPlayerNearby = false;
+                interactIcon.SetActive(false);
+            }
+        }
+        private void CheckPlayer()
+        {
+
+            if (isPlayerNearby && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Joystick1Button0)))
+            {
+                InteractWithItems();
+            }
+        }
+
+        public virtual void InteractWithItems()
+        {
+            foreach (ItemData item in items)
+            {
+                inventory.AddItemAtEmpty(item);
+            }
+            Destroy(gameObject);
+        }
     }
 }

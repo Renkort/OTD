@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-namespace DialogueSystem
+namespace Akkerman.DialogueSystem
 {
     [System.Serializable]
     public class Response

@@ -1,40 +1,45 @@
 using UnityEngine;
 
-public class MouseFollower : MonoBehaviour
+
+namespace Akkerman.InventorySystem
 {
-    public ItemUI itemUI;
-    [SerializeField] private Canvas canvas;
-
-    public void Awake()
+    
+    public class MouseFollower : MonoBehaviour
     {
-        if (canvas == null)
-            transform.root.GetComponent<Canvas>();
-        if (itemUI == null )
-            itemUI = GetComponentInChildren<ItemUI>();
-    }
+        public ItemUI itemUI;
+        [SerializeField] private Canvas canvas;
 
-    private void Update()
-    {
-        Vector2 position;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            (RectTransform)canvas.transform, 
-            Input.mousePosition,
-            canvas.worldCamera,  out position);
-        transform.position = canvas.transform.TransformPoint(position);
-    }
+        public void Awake()
+        {
+            if (canvas == null)
+                transform.root.GetComponent<Canvas>();
+            if (itemUI == null)
+                itemUI = GetComponentInChildren<ItemUI>();
+        }
 
-    public void SetData(Sprite sprite, int quantity)
-    {
-        itemUI.SetData(sprite, quantity);
-    }
+        private void Update()
+        {
+            Vector2 position;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                (RectTransform)canvas.transform,
+                Input.mousePosition,
+                canvas.worldCamera, out position);
+            transform.position = canvas.transform.TransformPoint(position);
+        }
 
-    public void ResetData()
-    {
-        itemUI.ResetData();
-    }
+        public void SetData(Sprite sprite, int quantity)
+        {
+            itemUI.SetData(sprite, quantity);
+        }
 
-    public void Toggle(bool value)
-    {
-        gameObject.SetActive(value);
+        public void ResetData()
+        {
+            itemUI.ResetData();
+        }
+
+        public void Toggle(bool value)
+        {
+            gameObject.SetActive(value);
+        }
     }
 }

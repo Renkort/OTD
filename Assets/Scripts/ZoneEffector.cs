@@ -1,26 +1,30 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Akkerman.FPS;
 
-public class ZoneEffector : MonoBehaviour
+namespace Akkerman.InteractionSystem
 {
-    [SerializeField] protected Player player;
-    [SerializeField] protected List<Zone> zones;
-
-    public UnityEvent OnPlayerEnter, OnPlayerExit;
-
-    void Awake()
+    
+    public class ZoneEffector : MonoBehaviour
     {
-        // Initialize();
-    }
+        [SerializeField] protected Player player;
+        [SerializeField] protected List<Zone> zones;
 
-    private void Initialize()
-    {
-        foreach (Zone zone in zones)
+        public UnityEvent OnPlayerEnter, OnPlayerExit;
+
+        void Awake()
         {
-            zone.OnPlayerEnter = OnPlayerEnter;
-            zone.OnPlayerExit = OnPlayerExit;
+            // Initialize();
+        }
+
+        private void Initialize()
+        {
+            foreach (Zone zone in zones)
+            {
+                zone.OnPlayerEnter = OnPlayerEnter;
+                zone.OnPlayerExit = OnPlayerExit;
+            }
         }
     }
 }

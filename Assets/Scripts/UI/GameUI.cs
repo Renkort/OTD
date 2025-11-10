@@ -1,85 +1,89 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Akkerman.SaveSystem;
+using Akkerman.FPS;
 
-public class GameUI : MonoBehaviour, IDataPersistance
+namespace Akkerman.UI
 {
-
-    [SerializeField] private bool IsMainMenu = false;
-    [Header("GAME UI PARTS")]
-    public static GameUI Instance;
-    public MainMenu MainMenu;
-    public IngameUI IngameUI;
-    public IngameMenu IngameMenu;
-    [SerializeField] private string lastOpenedScene;
-    public string LastOpenedScene => lastOpenedScene;
-
-    private bool activeGameMenu, activeIngameUI, activeMainMenu;
-
-    void Awake()
+    
+    public class GameUI : MonoBehaviour, IDataPersistance
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(this);
-        }
 
-        if (IsMainMenu)
-        {
-            IngameUI.gameObject.SetActive(false);
-            IngameMenu.gameObject.SetActive(false);
-        }
-        else
-        {
-            MainMenu.gameObject.SetActive(false);
-            IngameMenu.gameObject.SetActive(false);
-        }
-    }
+        [SerializeField] private bool IsMainMenu = false;
+        [Header("GAME UI PARTS")]
+        public static GameUI Instance;
+        public MainMenu MainMenu;
+        public IngameUI IngameUI;
+        public IngameMenu IngameMenu;
+        [SerializeField] private string lastOpenedScene;
+        public string LastOpenedScene => lastOpenedScene;
 
-    void Update()
-    {
-        HandleInput();
-    }
+        private bool activeGameMenu, activeIngameUI, activeMainMenu;
 
-    public void SetActiveIngameMenu(bool isActive)
-    {
-        IngameMenu.gameObject.SetActive(isActive);
-        activeGameMenu = isActive;
-        Player.Instance.SetCursorVisible(isActive);
-        Time.timeScale = isActive ? 0f : 1f;
-    }
-
-    private void HandleInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape) && !IsMainMenu)
+        void Awake()
         {
-            if (activeGameMenu)
+            if (Instance == null)
             {
-                SetActiveIngameMenu(false);
-
+                Instance = this;
             }
             else
             {
-                SetActiveIngameMenu(true);
+                Destroy(this);
+            }
+
+            if (IsMainMenu)
+            {
+                IngameUI.gameObject.SetActive(false);
+                IngameMenu.gameObject.SetActive(false);
+            }
+            else
+            {
+                MainMenu.gameObject.SetActive(false);
+                IngameMenu.gameObject.SetActive(false);
             }
         }
-    }
 
-    public void LoadData(GameData data)
-    {
-        lastOpenedScene = data.LastOpenedScene;
-    }
-    public void SaveData(ref GameData data)
-    {
-        if (!IsMainMenu)
+        void Update()
         {
-            lastOpenedScene = SceneManager.GetActiveScene().name;
-            data.LastOpenedScene = lastOpenedScene;    
+            HandleInput();
         }
-        //MainMenu.SaveLastOpenScene(lastOpenedScene);
+
+        public void SetActiveIngameMenu(bool isActive)
+        {
+            IngameMenu.gameObject.SetActive(isActive);
+            activeGameMenu = isActive;
+            Player.Instance.SetCursorVisible(isActive);
+            Time.timeScale = isActive ? 0f : 1f;
+        }
+
+        private void HandleInput()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape) && !IsMainMenu)
+            {
+                if (activeGameMenu)
+                {
+                    SetActiveIngameMenu(false);
+
+                }
+                else
+                {
+                    SetActiveIngameMenu(true);
+                }
+            }
+        }
+
+        public void LoadData(GameData data)
+        {
+            lastOpenedScene = data.LastOpenedScene;
+        }
+        public void SaveData(ref GameData data)
+        {
+            if (!IsMainMenu)
+            {
+                lastOpenedScene = SceneManager.GetActiveScene().name;
+                data.LastOpenedScene = lastOpenedScene;    
+            }
+            //MainMenu.SaveLastOpenScene(lastOpenedScene);
+        }
     }
 }

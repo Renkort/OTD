@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Akkerman.Localization;
 
-namespace DialogueSystem
+namespace Akkerman.DialogueSystem
 {
     [CreateAssetMenu(menuName = "Dialogue/DialogueObject")]
     public class DialogueObject : ScriptableObject

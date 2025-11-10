@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ButtonSFX : MonoBehaviour, IPointerEnterHandler
+namespace Akkerman.Audio
 {
-    [SerializeField] private AudioClip hoveringCursorSFX;
-    [SerializeField] private float volume = 0.2f;
-
-    public void OnPointerEnter(PointerEventData data)
+    public class ButtonSFX : MonoBehaviour, IPointerEnterHandler
     {
-        SoundFXHandler.Instance.PlaySoundFXClip(hoveringCursorSFX, AudioHandler.Instance.gameObject.transform, volume);
-    }
+        [SerializeField] private AudioClip hoveringCursorSFX;
+        [SerializeField] private float volume = 0.2f;
 
+        public void OnPointerEnter(PointerEventData data)
+        {
+            SoundFXHandler.Instance.PlaySoundFXClip(hoveringCursorSFX, AudioHandler.Instance.gameObject.transform, volume);
+        }
+
+    }    
 }

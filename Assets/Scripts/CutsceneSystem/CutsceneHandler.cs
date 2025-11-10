@@ -1,106 +1,109 @@
 using System.Collections;
 using System.Collections.Generic;
-using DialogueSystem;
-using DialogueSystem.Cutscenes;
+using Akkerman.DialogueSystem;
+using Akkerman.DialogueSystem.Cutscenes;
 using UnityEngine;
 
-public class CutsceneHandler : MonoBehaviour
+namespace Akkerman.CutsceneSystem
 {
-    private bool isPlaying = false;
-
-    public bool IsPlaying => isPlaying;
-    private CutsceneSegment[] cutsceneSegments;
-    private DialogueCutsceneEvents[] allEvents;
-    private DialogueCutsceneEvents currentEvents;
-
-    private void AddCutsceneEvents()
+    public class CutsceneHandler : MonoBehaviour
     {
-        if (currentEvents == null)
-            return;
-        this.cutsceneSegments = currentEvents.Events;
-        if (cutsceneSegments.Length == 0)
-            Debug.Log($"WARNIGN: Cutscene segments == 0");
-        //this.cutsceneSegments = cutsceneEvents;
-    }
-    public void AddCutsceneEvents(CutsceneSegment[] cutsceneSegments)
-    {
-        if (cutsceneSegments.Length == 0)
-            return;
-        this.cutsceneSegments = cutsceneSegments;
-    }
-    public void AddAllCutsceneEvents(DialogueCutsceneEvents[] allEvents)
-    {
-        if (allEvents.Length == 0)
-            return;
-        this.allEvents = allEvents;
-    }
+        private bool isPlaying = false;
 
+        public bool IsPlaying => isPlaying;
+        private CutsceneSegment[] cutsceneSegments;
+        private DialogueCutsceneEvents[] allEvents;
+        private DialogueCutsceneEvents currentEvents;
 
-    public void OnOpenSegment(int segmentIndex)
-    {
-        if (cutsceneSegments == null || cutsceneSegments.Length == 0)
-            return;
-        cutsceneSegments[segmentIndex].OnOpenSegment?.Invoke();
-    }
-
-    public void OnCloseSegment(int segmentIndex)
-    {
-        if (cutsceneSegments == null || cutsceneSegments.Length == 0)
-            return;
-        cutsceneSegments[segmentIndex].OnCloseSegment?.Invoke();
-    }
-
-    public void SetCurrentEvents(DialogueObject dialogueObject)
-    {
-        if (allEvents == null || allEvents.Length == 0)
-            return;
-        for (int i = 0; i < allEvents.Length; i++)
+        private void AddCutsceneEvents()
         {
-            if (allEvents[i].DialogueObject == dialogueObject)
-            {
-                currentEvents = allEvents[i];
-                break;
-            }
-            else
-            {
-                currentEvents = null;
-                cutsceneSegments = null;
-            }
+            if (currentEvents == null)
+                return;
+            this.cutsceneSegments = currentEvents.Events;
+            if (cutsceneSegments.Length == 0)
+                Debug.Log($"WARNIGN: Cutscene segments == 0");
+            //this.cutsceneSegments = cutsceneEvents;
         }
-        AddCutsceneEvents();
-    }
-    public void ClearCurrentEvents()
-    {
-        allEvents = null;
-        currentEvents = null;
-        cutsceneSegments = null;
-    }
-
-    public void ActivateGO(GameObject go)
-    {
-        go.SetActive(true);
-    }
-
-    public void DiactivateGO(GameObject go)
-    {
-        go.SetActive(false);
-    }
-
-    public void StartCutscene()
-    {
-        StartCoroutine(StepThroughCutscene());
-    }
-
-    private IEnumerator StepThroughCutscene()
-    {
-        for (int i = 0; i < cutsceneSegments.Length; i++)
+        public void AddCutsceneEvents(CutsceneSegment[] cutsceneSegments)
         {
-            CutsceneSegment currentSegment = cutsceneSegments[i];
-            cutsceneSegments[i].OnOpenSegment?.Invoke();
-            yield return new WaitForSeconds(currentSegment.SegmentTime);
-            cutsceneSegments[i].OnCloseSegment?.Invoke();
-            yield return new WaitForSeconds(currentSegment.TimeBeforeNextSegment);
+            if (cutsceneSegments.Length == 0)
+                return;
+            this.cutsceneSegments = cutsceneSegments;
         }
-        ClearCurrentEvents();
+        public void AddAllCutsceneEvents(DialogueCutsceneEvents[] allEvents)
+        {
+            if (allEvents.Length == 0)
+                return;
+            this.allEvents = allEvents;
+        }
+
+
+        public void OnOpenSegment(int segmentIndex)
+        {
+            if (cutsceneSegments == null || cutsceneSegments.Length == 0)
+                return;
+            cutsceneSegments[segmentIndex].OnOpenSegment?.Invoke();
+        }
+
+        public void OnCloseSegment(int segmentIndex)
+        {
+            if (cutsceneSegments == null || cutsceneSegments.Length == 0)
+                return;
+            cutsceneSegments[segmentIndex].OnCloseSegment?.Invoke();
+        }
+
+        public void SetCurrentEvents(DialogueObject dialogueObject)
+        {
+            if (allEvents == null || allEvents.Length == 0)
+                return;
+            for (int i = 0; i < allEvents.Length; i++)
+            {
+                if (allEvents[i].DialogueObject == dialogueObject)
+                {
+                    currentEvents = allEvents[i];
+                    break;
+                }
+                else
+                {
+                    currentEvents = null;
+                    cutsceneSegments = null;
+                }
+            }
+            AddCutsceneEvents();
+        }
+        public void ClearCurrentEvents()
+        {
+            allEvents = null;
+            currentEvents = null;
+            cutsceneSegments = null;
+        }
+
+        public void ActivateGO(GameObject go)
+        {
+            go.SetActive(true);
+        }
+
+        public void DiactivateGO(GameObject go)
+        {
+            go.SetActive(false);
+        }
+
+        public void StartCutscene()
+        {
+            StartCoroutine(StepThroughCutscene());
+        }
+
+        private IEnumerator StepThroughCutscene()
+        {
+            for (int i = 0; i < cutsceneSegments.Length; i++)
+            {
+                CutsceneSegment currentSegment = cutsceneSegments[i];
+                cutsceneSegments[i].OnOpenSegment?.Invoke();
+                yield return new WaitForSeconds(currentSegment.SegmentTime);
+                cutsceneSegments[i].OnCloseSegment?.Invoke();
+                yield return new WaitForSeconds(currentSegment.TimeBeforeNextSegment);
+            }
+            ClearCurrentEvents();
+        }
     }
 }

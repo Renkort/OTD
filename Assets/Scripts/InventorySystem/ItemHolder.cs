@@ -2,84 +2,89 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Akkerman.Localization;
 
-public class ItemHolder : MonoBehaviour
+namespace Akkerman.InventorySystem
 {
-    [SerializeField] private TextMeshProUGUI itemHint;
-    [SerializeField] private List<HandleItem> handleItems;
-
-    public static ItemHolder Instance;
-
-    void Awake()
+    
+    public class ItemHolder : MonoBehaviour
     {
-        if (Instance != null)
-        {
-            Destroy(this);
-            return;
-        }
-        Instance = this;
-    }
+        [SerializeField] private TextMeshProUGUI itemHint;
+        [SerializeField] private List<HandleItem> handleItems;
 
-    public void SetActiveItem(EquippableItemData itemData, bool isActive)
-    {
-        if (itemData == null)
-            return;
-        // DisableAllItems();
-        foreach(HandleItem handleItem in handleItems)
+        public static ItemHolder Instance;
+
+        void Awake()
         {
-            HandleItem? currentActiveItem = GetActiveHandleItemByEquipmentType(itemData.equipmentType);
-            if (currentActiveItem != null)
+            if (Instance != null)
             {
-                currentActiveItem?.GameObject.SetActive(false);
+                Destroy(this);
+                return;
+            }
+            Instance = this;
+        }
+
+        public void SetActiveItem(EquippableItemData itemData, bool isActive)
+        {
+            if (itemData == null)
+                return;
+            // DisableAllItems();
+            foreach (HandleItem handleItem in handleItems)
+            {
+                HandleItem? currentActiveItem = GetActiveHandleItemByEquipmentType(itemData.equipmentType);
+                if (currentActiveItem != null)
+                {
+                    currentActiveItem?.GameObject.SetActive(false);
+                }
+            }
+
+            foreach (HandleItem handleItem in handleItems)
+            {
+                if (handleItem.EquipableItem == itemData)
+                {
+                    handleItem.GameObject.SetActive(isActive);
+                    UpdateCurrentItemHint(handleItem, isActive);
+                    break;
+                }
             }
         }
 
-        foreach (HandleItem handleItem in handleItems)
+        private HandleItem? GetActiveHandleItemByEquipmentType(EquipmentCell.EquipmentType type)
         {
-            if (handleItem.EquipableItem == itemData)
+            foreach (HandleItem handleItem in handleItems)
             {
-                handleItem.GameObject.SetActive(isActive);
-                UpdateCurrentItemHint(handleItem, isActive);
-                break;
+                if (handleItem.GameObject.activeInHierarchy && handleItem.EquipableItem.equipmentType == type)
+                    return handleItem;
+            }
+            return null;
+        }
+        private void UpdateCurrentItemHint(HandleItem handleItem, bool isActive)
+        {
+            if (isActive)
+            {
+                string hintText = LocalizationLoader.Instance.GetLocalizedLine(handleItem.HintKey);
+                itemHint.text = hintText;
+            }
+            else
+            {
+                itemHint.text = "";
+            }
+        }
+
+        public void DisableAllItems()
+        {
+            foreach (HandleItem handleItem in handleItems)
+            {
+                handleItem.GameObject.SetActive(false);
             }
         }
     }
 
-    private HandleItem? GetActiveHandleItemByEquipmentType(EquipmentCell.EquipmentType type)
+    [System.Serializable]
+    public struct HandleItem
     {
-        foreach (HandleItem handleItem in handleItems)
-        {
-            if (handleItem.GameObject.activeInHierarchy && handleItem.EquipableItem.equipmentType == type)
-                return handleItem;
-        }
-        return null;
+        public EquippableItemData EquipableItem;
+        public GameObject GameObject;
+        public string HintKey;
     }
-    private void UpdateCurrentItemHint(HandleItem handleItem, bool isActive)
-    {
-        if (isActive)
-        {
-            string hintText = LocalizationLoader.Instance.GetLocalizedLine(handleItem.HintKey);
-            itemHint.text = hintText;
-        }
-        else
-        {
-            itemHint.text = "";
-        }
-    }
-
-    public void DisableAllItems()
-    {
-        foreach(HandleItem handleItem in handleItems)
-        {
-            handleItem.GameObject.SetActive(false);
-        }
-    }
-}
-
-[System.Serializable]
-public struct HandleItem
-{
-    public EquippableItemData EquipableItem;
-    public GameObject GameObject;
-    public string HintKey;
 }

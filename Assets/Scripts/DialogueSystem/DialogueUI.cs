@@ -2,10 +2,11 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using DialogueSystem.Cutscenes;
+using Akkerman.DialogueSystem.Cutscenes;
+using Akkerman.CutsceneSystem;
 using System.Collections.Generic;
 
-namespace DialogueSystem
+namespace Akkerman.DialogueSystem
 {
     public class DialogueUI : MonoBehaviour
     {
@@ -30,7 +31,7 @@ namespace DialogueSystem
 
         public void ShowDialogue(DialogueObject dialogueObject)
         {
-            Player.Instance.FreezePlayerActions(true, false);
+            FPS.Player.Instance.FreezePlayerActions(true, false);
             IsOpen = true;
             dialogueBox.SetActive(true);
             StartCoroutine(StepThroughDialogue(dialogueObject));
@@ -87,7 +88,7 @@ namespace DialogueSystem
             else
             {
                 cutsceneHandler.ClearCurrentEvents();
-                Player.Instance.FreezePlayerActions(false, false);
+                FPS.Player.Instance.FreezePlayerActions(false, false);
                 CloseDialogueBox();
             }
 

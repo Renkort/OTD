@@ -1,8 +1,9 @@
-using DialogueSystem.Cutscenes;
+using Akkerman.DialogueSystem.Cutscenes;
 using UnityEngine;
+using Akkerman.InteractionSystem;
+using Akkerman.SaveSystem;
 
-
-namespace DialogueSystem
+namespace Akkerman.DialogueSystem
 {
     public class DialogueActivator3D : InteractableObject, IDataPersistance
     {
@@ -28,7 +29,7 @@ namespace DialogueSystem
 
         private void UpdateDialogueEvents()
         {
-            Player player = Player.Instance;
+            FPS.Player player = FPS.Player.Instance;
             if (dialogueObject == null)
             {
                 Debug.Log($"Dialogue object is null! Game object: {gameObject.name}");
@@ -50,8 +51,8 @@ namespace DialogueSystem
         {
             UpdateDialogueEvents();
 
-            Player.Instance.ToggleInteractText(false);
-            Player.Instance.DialogueUI.ShowDialogue(dialogueObject);
+            FPS.Player.Instance.ToggleInteractText(false);
+            FPS.Player.Instance.DialogueUI.ShowDialogue(dialogueObject);
         }
 
         public void LoadData(GameData data)

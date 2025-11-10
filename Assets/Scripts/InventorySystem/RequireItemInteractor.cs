@@ -4,38 +4,42 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Events;
 
-public class RequireItemInteractor : ItemInteractor2D
+namespace Akkerman.InventorySystem
 {
-    [SerializeField] private int itemQuantity;
-    [SerializeField] private List<TextMeshProUGUI> itemRequireText;
-    [SerializeField] private UnityEvent OnUsedInteractorEnd;
-    private int current;
-    public override void InteractWithItems()
+    
+    public class RequireItemInteractor : ItemInteractor2D
     {
-        for (int i = 0; i < items.Count; i++)
+        [SerializeField] private int itemQuantity;
+        [SerializeField] private List<TextMeshProUGUI> itemRequireText;
+        [SerializeField] private UnityEvent OnUsedInteractorEnd;
+        private int current;
+        public override void InteractWithItems()
         {
-            
-            if (inventory.RemoveItems(items[i], itemQuantity))
+            for (int i = 0; i < items.Count; i++)
             {
-                itemRequireText[i].text = "";
-                interactIcon.SetActive(false);
-                //Destroy(this);
-                OnUsedInteractorEnd?.Invoke();
-            }
-            else
-            {
-                current = i;
-                StopAllCoroutines();
-                StartCoroutine(RedText());
-            }
-        }
-        
-    }
 
-    private IEnumerator RedText()
-    {
-        itemRequireText[current].color = Color.red;
-        yield return new WaitForSeconds(1);
-        itemRequireText[current].color = Color.white;
+                if (inventory.RemoveItems(items[i], itemQuantity))
+                {
+                    itemRequireText[i].text = "";
+                    interactIcon.SetActive(false);
+                    //Destroy(this);
+                    OnUsedInteractorEnd?.Invoke();
+                }
+                else
+                {
+                    current = i;
+                    StopAllCoroutines();
+                    StartCoroutine(RedText());
+                }
+            }
+
+        }
+
+        private IEnumerator RedText()
+        {
+            itemRequireText[current].color = Color.red;
+            yield return new WaitForSeconds(1);
+            itemRequireText[current].color = Color.white;
+        }
     }
 }

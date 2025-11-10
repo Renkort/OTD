@@ -1,16 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class MessageUI : MonoBehaviour
+namespace Akkerman.Notifications
 {
-    [HideInInspector] public MessageData data;
-    public TextMeshProUGUI MessageLabel;
-
-    public void InitUI(MessageData data)
+    public class MessageUI : MonoBehaviour
     {
-        this.data = data;
-        MessageLabel.text = data.Message;
+        [HideInInspector] public MessageData data;
+        public TextMeshProUGUI MessageLabel;
+
+        public void InitUI(MessageData data)
+        {
+            this.data = data;
+            MessageLabel.text = data.Message;
+        }
     }
 }

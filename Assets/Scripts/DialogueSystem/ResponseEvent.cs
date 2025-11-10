@@ -1,11 +1,14 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-[System.Serializable]
-public class ResponseEvent
+namespace Akkerman.DialogueSystem
 {
-    [HideInInspector] public string name;
-    [SerializeField] private UnityEvent onPickedResponse;
+    [System.Serializable]
+    public class ResponseEvent
+    {
+        [HideInInspector] public string name;
+        [SerializeField] private UnityEvent onPickedResponse;
 
-    public UnityEvent OnPickedResponse => onPickedResponse;
+        public UnityEvent OnPickedResponse => onPickedResponse;
+    }    
 }

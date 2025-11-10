@@ -3,8 +3,10 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.Events;
+using Akkerman.Localization;
+using Akkerman.Audio;
 
-namespace DialogueSystem
+namespace Akkerman.DialogueSystem
 {
     public class ResponseHandler : MonoBehaviour
     {
@@ -110,16 +112,16 @@ namespace DialogueSystem
             responseBox.sizeDelta = new Vector2(responseBox.sizeDelta.x, responseBoxHeight);
             responseBox.gameObject.SetActive(true);
 
-            Player.Instance.SetCursorVisible(true);
-            Player.Instance.FreezePlayerActions(true, true);
+            FPS.Player.Instance.SetCursorVisible(true);
+            FPS.Player.Instance.FreezePlayerActions(true, true);
         }
 
         private void OnPickedResponse(Response response, int responseIndex)
         {
             responseBox.gameObject.SetActive(false);
-            Player.Instance.SetCursorVisible(false);
-            Player.Instance.FreezePlayerActions(true, false);
-            SoundFXHandler.Instance.PlaySoundFXClip(selectResponseSFX, Player.Instance.gameObject.transform, 0.2f);
+            FPS.Player.Instance.SetCursorVisible(false);
+            FPS.Player.Instance.FreezePlayerActions(true, false);
+            SoundFXHandler.Instance.PlaySoundFXClip(selectResponseSFX, FPS.Player.Instance.gameObject.transform, 0.2f);
 
             foreach (GameObject responseButton in tempResponseButtons)
             {
@@ -140,7 +142,7 @@ namespace DialogueSystem
             }
             else
             {
-                Player.Instance.FreezePlayerActions(false, false);
+                FPS.Player.Instance.FreezePlayerActions(false, false);
                 dialogueUI.CloseDialogueBox();
             }
 

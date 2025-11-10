@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public interface IDataPersistance
+namespace Akkerman.SaveSystem
 {
-    void LoadData(GameData data);
-    void SaveData(ref GameData data);
+    public interface IDataPersistance
+    {
+        void LoadData(GameData data);
+        void SaveData(ref GameData data);
+    }
 }

@@ -3,23 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class SoundMixerHandler : MonoBehaviour
+namespace Akkerman.Audio
 {
-    [SerializeField] private AudioMixer audioMixer;
-
-    public void SetMasterVolume(float level)
+    public class SoundMixerHandler : MonoBehaviour
     {
-        audioMixer.SetFloat("masterVolume", Mathf.Log10(level) * 20f);
-    }
+        [SerializeField] private AudioMixer audioMixer;
 
-    public void SetSoundFXVolume(float level)
-    {
-        audioMixer.SetFloat("soundFXVolume", Mathf.Log10(level) * 20f);
+        public void SetMasterVolume(float level)
+        {
+            audioMixer.SetFloat("masterVolume", Mathf.Log10(level) * 20f);
+        }
 
-    }
+        public void SetSoundFXVolume(float level)
+        {
+            audioMixer.SetFloat("soundFXVolume", Mathf.Log10(level) * 20f);
 
-    public void SetMusicVolume(float level)
-    {
-        audioMixer.SetFloat("musicVolume", Mathf.Log10(level) * 20f);
-    }
+        }
+
+        public void SetMusicVolume(float level)
+        {
+            audioMixer.SetFloat("musicVolume", Mathf.Log10(level) * 20f);
+        }
+    }    
 }

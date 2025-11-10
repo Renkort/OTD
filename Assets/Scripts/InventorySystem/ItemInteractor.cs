@@ -1,26 +1,31 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Akkerman.InteractionSystem;
+using Akkerman.Audio;
 
-public class ItemInteractor : InteractionPoint
+namespace Akkerman.InventorySystem
 {
-    [SerializeField] private AudioClip pickUpSFX;
-    [SerializeField] private string InteractText;
-    [SerializeField] private List<ItemData> items;
-    void Start()
-    {
-        OnInteract += PickUpItems;
-        SetInteractText(InteractText);
-    }
 
-    private void PickUpItems()
+    public class ItemInteractor : InteractionPoint
     {
-        foreach (ItemData item in items)
+        [SerializeField] private AudioClip pickUpSFX;
+        [SerializeField] private string InteractText;
+        [SerializeField] private List<ItemData> items;
+        void Start()
         {
-            InventoryUI.Instance.AddItemAtEmpty(item);
+            OnInteract += PickUpItems;
+            SetInteractText(InteractText);
         }
-        //play pick up sound FX
-        SoundFXHandler.Instance.PlaySoundFXClip(pickUpSFX, transform, 1f);
-        Destroy(gameObject);
+
+        private void PickUpItems()
+        {
+            foreach (ItemData item in items)
+            {
+                InventoryUI.Instance.AddItemAtEmpty(item);
+            }
+            //play pick up sound FX
+            SoundFXHandler.Instance.PlaySoundFXClip(pickUpSFX, transform, 1f);
+            Destroy(gameObject);
+        }
     }
 }

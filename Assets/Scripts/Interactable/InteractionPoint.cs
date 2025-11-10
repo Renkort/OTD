@@ -1,39 +1,43 @@
 using System;
 using UnityEngine;
 
-public class InteractionPoint : MonoBehaviour, IInteractable
+namespace Akkerman.InteractionSystem
 {
-    public Action OnInteract { get; set; }
-    private string interactText = string.Empty;
-    void OnTriggerEnter(Collider other)
+    
+    public class InteractionPoint : MonoBehaviour, IInteractable
     {
-        if (other.CompareTag("Player") && other.TryGetComponent(out Player player))
+        public Action OnInteract { get; set; }
+        private string interactText = string.Empty;
+        void OnTriggerEnter(Collider other)
         {
-            player.Interactable = this;
-            Player.Instance.ToggleInteractText(true, interactText);
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player") && other.TryGetComponent(out Player player))
-        {
-            if (player.Interactable is InteractionPoint interactionPoint && interactionPoint == this)
+            if (other.CompareTag("Player") && other.TryGetComponent(out FPS.Player player))
             {
-                player.Interactable = null;
-                Player.Instance.ToggleInteractText(false);
+                player.Interactable = this;
+                FPS.Player.Instance.ToggleInteractText(true, interactText);
             }
         }
-    }
 
-    public void SetInteractText(string newText)
-    {
-        interactText = $"[E] {newText}";
-    }
+        void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Player") && other.TryGetComponent(out FPS.Player player))
+            {
+                if (player.Interactable is InteractionPoint interactionPoint && interactionPoint == this)
+                {
+                    player.Interactable = null;
+                    FPS.Player.Instance.ToggleInteractText(false);
+                }
+            }
+        }
 
-    public void Interact(Player player)
-    {
-        Player.Instance.ToggleInteractText(false, interactText);
-        OnInteract?.Invoke();
+        public void SetInteractText(string newText)
+        {
+            interactText = $"[E] {newText}";
+        }
+
+        public void Interact(FPS.Player player)
+        {
+            FPS.Player.Instance.ToggleInteractText(false, interactText);
+            OnInteract?.Invoke();
+        }
     }
 }

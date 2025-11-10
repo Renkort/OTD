@@ -3,36 +3,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Usable Item Data", menuName = "Inventory/Item Data/Usable Item")]
-public class UsableItem : ItemData, IItemAction, IDestroyableItem
+namespace Akkerman.InventorySystem
 {
-    [SerializeField] private List<ModifierData> modifiersDatas = new List<ModifierData>();
-    public AudioClip actionSFX => throw new NotImplementedException();
-
-    public bool PerformAction(GameObject character, List<ItemParameter> itemState = null)
+    
+    [CreateAssetMenu(fileName = "Usable Item Data", menuName = "Inventory/Item Data/Usable Item")]
+    public class UsableItem : ItemData, IItemAction, IDestroyableItem
     {
-        foreach (ModifierData data in modifiersDatas)
+        [SerializeField] private List<ModifierData> modifiersDatas = new List<ModifierData>();
+        public AudioClip actionSFX => throw new NotImplementedException();
+
+        public bool PerformAction(GameObject character, List<ItemParameter> itemState = null)
         {
-            data.statModifier.AffectCharacter(character, data.value);
+            foreach (ModifierData data in modifiersDatas)
+            {
+                data.statModifier.AffectCharacter(character, data.value);
+            }
+            return true;
         }
-        return true;
     }
-}
 
-public interface IDestroyableItem
-{
+    public interface IDestroyableItem
+    {
 
-}
+    }
 
-public interface IItemAction
-{
-    public AudioClip actionSFX { get; }
-    bool PerformAction(GameObject character, List<ItemParameter> itemState);
-}
+    public interface IItemAction
+    {
+        public AudioClip actionSFX { get; }
+        bool PerformAction(GameObject character, List<ItemParameter> itemState);
+    }
 
-[Serializable]
-public class ModifierData
-{
-    public CharacterStatModifierSO statModifier;
-    public float value;
+    [Serializable]
+    public class ModifierData
+    {
+        public CharacterStatModifierSO statModifier;
+        public float value;
+    }
 }

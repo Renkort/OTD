@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EquipmentCell : CellUI
+namespace Akkerman.InventorySystem
 {
-    public enum EquipmentType
+    public class EquipmentCell : CellUI
     {
-        LeftHand, RightHand, Body, Head
-    }
+        public enum EquipmentType
+        {
+            LeftHand, RightHand, Body, Head
+        }
 
-    public EquipmentType equipmentType;
+        public EquipmentType equipmentType;
+    }
 }

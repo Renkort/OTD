@@ -3,7 +3,7 @@ using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace DialogueSystem
+namespace Akkerman.DialogueSystem
 {
     public class TypewriterEffect : MonoBehaviour
     {

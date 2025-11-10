@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
+using Akkerman.CutsceneSystem;
 
-namespace DialogueSystem.Cutscenes
+namespace Akkerman.DialogueSystem.Cutscenes
 {
     public class DialogueCutsceneEvents : MonoBehaviour
     {

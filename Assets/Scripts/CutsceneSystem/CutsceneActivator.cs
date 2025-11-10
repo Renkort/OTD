@@ -2,29 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CutsceneActivator : MonoBehaviour
-{
-    [SerializeField] private bool playOnAwake = false;
-    [SerializeField] private float startDelay = 0f;
-    [SerializeField] private CutsceneSegment[] segments;
-
-    void Start()
+namespace Akkerman.CutsceneSystem
+{    
+    public class CutsceneActivator : MonoBehaviour
     {
-        if (playOnAwake)
-            StartCoroutine(Activate());
-    }
+        [SerializeField] private bool playOnAwake = false;
+        [SerializeField] private float startDelay = 0f;
+        [SerializeField] private CutsceneSegment[] segments;
 
-    private IEnumerator Activate()
-    {
-        yield return new WaitForSeconds(startDelay);
-        ActivateCutscene();
-    }
+        void Start()
+        {
+            if (playOnAwake)
+                StartCoroutine(Activate());
+        }
 
-    public void ActivateCutscene()
-    {
-        if (segments.Length == 0)
-            return;
-        Player.Instance.CutsceneHandler.AddCutsceneEvents(segments);
-        Player.Instance.CutsceneHandler.StartCutscene();
+        private IEnumerator Activate()
+        {
+            yield return new WaitForSeconds(startDelay);
+            ActivateCutscene();
+        }
+
+        public void ActivateCutscene()
+        {
+            if (segments.Length == 0)
+                return;
+            FPS.Player.Instance.CutsceneHandler.AddCutsceneEvents(segments);
+            FPS.Player.Instance.CutsceneHandler.StartCutscene();
+        }
     }
 }

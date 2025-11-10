@@ -1,27 +1,31 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TrainBoardingZone : MonoBehaviour
+namespace Akkerman.InteractionSystem
 {
-    [SerializeField] private TrainMovement trainMovement;
-    [SerializeField] UnityEvent OnPlayerBoards, OnPlayerExits;
-    private GameObject currentPlayer;
-
-    private void OnTriggerEnter(Collider other)
+    
+    public class TrainBoardingZone : MonoBehaviour
     {
-        if (other.CompareTag("Player") && currentPlayer == null)
+        [SerializeField] private TrainMovement trainMovement;
+        [SerializeField] UnityEvent OnPlayerBoards, OnPlayerExits;
+        private GameObject currentPlayer;
+
+        private void OnTriggerEnter(Collider other)
         {
-            currentPlayer = other.gameObject;
-            trainMovement.PlayerBoardsTrain(other.transform);
+            if (other.CompareTag("Player") && currentPlayer == null)
+            {
+                currentPlayer = other.gameObject;
+                trainMovement.PlayerBoardsTrain(other.transform);
+            }
         }
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player") && other.gameObject == currentPlayer)
+        private void OnTriggerExit(Collider other)
         {
-            trainMovement.PlayerExitsTrain();
-            currentPlayer = null;
+            if (other.CompareTag("Player") && other.gameObject == currentPlayer)
+            {
+                trainMovement.PlayerExitsTrain();
+                currentPlayer = null;
+            }
         }
     }
 }

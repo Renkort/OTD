@@ -2,41 +2,45 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoundFXHandler : MonoBehaviour
+namespace Akkerman.Audio
 {
-    public static SoundFXHandler Instance;
-    [SerializeField] private AudioSource soundFXObject;
-
-    void Awake()
+    
+    public class SoundFXHandler : MonoBehaviour
     {
-        if (Instance == null)
+        public static SoundFXHandler Instance;
+        [SerializeField] private AudioSource soundFXObject;
+
+        void Awake()
         {
-            Instance = this;
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(this);
+            }
         }
-        else
+
+        public void PlaySoundFXClip(AudioClip audioClip)
         {
-            Destroy(this);
+            PlaySoundFXClip(audioClip, FPS.Player.Instance.gameObject.transform, 1f);
         }
-    }
 
-    public void PlaySoundFXClip(AudioClip audioClip)
-    {
-        PlaySoundFXClip(audioClip, Player.Instance.gameObject.transform, 1f);
-    }
+        public void PlaySoundFXClip(AudioClip audioClip, Transform spawnTransform, float volume)
+        {
+            AudioSource audioSource = Instantiate(soundFXObject, spawnTransform.position, Quaternion.identity);
+            audioSource.clip = audioClip;
+            audioSource.volume = volume;
+            audioSource.Play();
+            float clipLength = audioSource.clip.length;
+            Destroy(audioSource.gameObject, clipLength);
+        }
 
-    public void PlaySoundFXClip(AudioClip audioClip, Transform spawnTransform, float volume)
-    {
-        AudioSource audioSource = Instantiate(soundFXObject, spawnTransform.position, Quaternion.identity);
-        audioSource.clip = audioClip;
-        audioSource.volume = volume;
-        audioSource.Play();
-        float clipLength = audioSource.clip.length;
-        Destroy(audioSource.gameObject, clipLength);
-    }
-
-    public void PlayRandomSoundFXClip(AudioClip[] audioClips, Transform spawnTransform, float volume)
-    {
-        int rand = Random.Range(0, audioClips.Length);
-        PlaySoundFXClip(audioClips[rand], spawnTransform, volume);
+        public void PlayRandomSoundFXClip(AudioClip[] audioClips, Transform spawnTransform, float volume)
+        {
+            int rand = Random.Range(0, audioClips.Length);
+            PlaySoundFXClip(audioClips[rand], spawnTransform, volume);
+        }
     }
 }

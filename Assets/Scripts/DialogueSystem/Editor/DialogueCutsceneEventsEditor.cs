@@ -1,18 +1,21 @@
 using UnityEditor;
 using UnityEngine;
-using DialogueSystem.Cutscenes;
+using Akkerman.DialogueSystem.Cutscenes;
 
-[CustomEditor(typeof(DialogueCutsceneEvents))]
-public class DialogueCutsceneEventsEditor : Editor
+namespace Akkerman.CutsceneSystem
 {
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(DialogueCutsceneEvents))]
+    public class DialogueCutsceneEventsEditor : Editor
     {
-        DrawDefaultInspector();
-        DialogueCutsceneEvents cutsceneEvents = (DialogueCutsceneEvents)target;
-
-        if (GUILayout.Button("Refresh"))
+        public override void OnInspectorGUI()
         {
-            cutsceneEvents.OnValidate();
+            DrawDefaultInspector();
+            DialogueCutsceneEvents cutsceneEvents = (DialogueCutsceneEvents)target;
+
+            if (GUILayout.Button("Refresh"))
+            {
+                cutsceneEvents.OnValidate();
+            }
         }
     }
 }

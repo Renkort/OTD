@@ -1,6 +1,8 @@
 using UnityEngine;
-using DialogueSystem.Cutscenes;
-namespace DialogueSystem
+using Akkerman.DialogueSystem.Cutscenes;
+using Akkerman.InteractionSystem;
+
+namespace Akkerman.DialogueSystem
 {
     public class DialogueActivator2D : MonoBehaviour, IInteractable
     {
@@ -14,14 +16,14 @@ namespace DialogueSystem
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.CompareTag("Player") && collision.TryGetComponent(out Player player))
+            if (collision.CompareTag("Player") && collision.TryGetComponent(out FPS.Player player))
             {
                 player.Interactable = this;
             }
         }
         private void OnTriggerExit2D(Collider2D collision)
         {
-            if (collision.CompareTag("Player") && collision.TryGetComponent(out Player player))
+            if (collision.CompareTag("Player") && collision.TryGetComponent(out FPS.Player player))
             {
                 if (player.Interactable is DialogueActivator2D dialogueActivator && dialogueActivator == this)
                 {
@@ -29,7 +31,7 @@ namespace DialogueSystem
                 }
             }
         }
-        public void Interact(Player player)
+        public void Interact(FPS.Player player)
         {
             if (dialogueObject == null)
             {
