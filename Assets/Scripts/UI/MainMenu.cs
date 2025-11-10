@@ -9,7 +9,6 @@ using System.IO;
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] private string startScene;
-    [SerializeField] private string lastOpenedScene;
     [SerializeField] private GameObject optionsUI;
     [SerializeField] private SoundMixerHandler soundMixerHandler;
     [SerializeField] private TextMeshProUGUI gameVerLabel;
@@ -108,15 +107,16 @@ public class MainMenu : MonoBehaviour
     {
         DataPersistenceManager.Instance.LoadGame();
         DisableMenuButtons();
-        SceneManager.LoadSceneAsync(lastOpenedScene);
+        Debug.Log($"[DEBUG] Last opened scene: {GameUI.Instance.LastOpenedScene}");
+        SceneManager.LoadSceneAsync(GameUI.Instance.LastOpenedScene);
     }
 
     public void OnLoadGameClicked()
     {
-        if (PlayerPrefs.HasKey("SavedLevel"))
+        if (!string.IsNullOrEmpty(GameUI.Instance.LastOpenedScene))
         {
-            lastOpenedScene = PlayerPrefs.GetString("SavedLevel");
-            SceneManager.LoadSceneAsync(lastOpenedScene);
+            // lastOpenedScene = PlayerPrefs.GetString("SavedLevel");
+            SceneManager.LoadSceneAsync(GameUI.Instance.LastOpenedScene);
         }
         else
         {
@@ -170,12 +170,6 @@ public class MainMenu : MonoBehaviour
         newGameButton.interactable = false;
         continueGameButton.interactable = false;
     }
-
-    public void SaveLastOpenScene(string sceneName)
-    {
-        lastOpenedScene = sceneName;
-    }
-
     public void PlayClickSFX()
     {
         audioSource.PlayOneShot(buttonClickSfx);

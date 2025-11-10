@@ -37,6 +37,7 @@ namespace DialogueSystem.Cutscenes
                 if (events[i] != null)
                 {
                     events[i].name = dialogueObject.Keys[i];
+                    continue;
                 }
                 events[i] = new CutsceneSegment() {name = dialogueObject.Keys[i]};
             } 

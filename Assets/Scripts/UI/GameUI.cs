@@ -13,6 +13,7 @@ public class GameUI : MonoBehaviour, IDataPersistance
     public IngameUI IngameUI;
     public IngameMenu IngameMenu;
     [SerializeField] private string lastOpenedScene;
+    public string LastOpenedScene => lastOpenedScene;
 
     private bool activeGameMenu, activeIngameUI, activeMainMenu;
 
@@ -71,12 +72,14 @@ public class GameUI : MonoBehaviour, IDataPersistance
     public void LoadData(GameData data)
     {
         lastOpenedScene = data.LastOpenedScene;
-        MainMenu.SaveLastOpenScene(lastOpenedScene);
     }
     public void SaveData(ref GameData data)
     {
-        lastOpenedScene = SceneManager.GetActiveScene().name;
-        data.LastOpenedScene = lastOpenedScene;
-        MainMenu.SaveLastOpenScene(lastOpenedScene);
+        if (!IsMainMenu)
+        {
+            lastOpenedScene = SceneManager.GetActiveScene().name;
+            data.LastOpenedScene = lastOpenedScene;    
+        }
+        //MainMenu.SaveLastOpenScene(lastOpenedScene);
     }
 }

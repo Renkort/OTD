@@ -10,8 +10,10 @@ public class LocalizationLoader : MonoBehaviour
 
     private Dictionary<string, DialogueSentence> currentLanguageData;
     private Dictionary<string, PortraitEntry> portraitData;
+    private Dictionary<string, string> languageData;
 
     [SerializeField] private string currentLanguage = "ru";
+    [SerializeField] private Language language;
 
     private void Awake()
     {
@@ -22,6 +24,7 @@ public class LocalizationLoader : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(this.gameObject);
+        LoadLocalizedDialogues(currentLanguage);
         LoadLanguage(currentLanguage);
         LoadPortraits();
 
@@ -30,15 +33,44 @@ public class LocalizationLoader : MonoBehaviour
     public void LoadLanguage(string languageCode)
     {
         currentLanguage = languageCode;
+        languageData = new Dictionary<string, string>();
+
+        TextAsset languageFileUI = Resources.Load<TextAsset>($"Localization/{languageCode}/ui_{languageCode}");
+        if (languageFileUI == null)
+        {
+            Debug.LogError($"Language file not found: ui_{languageCode}");
+            return;
+        }
+        string[] lines = languageFileUI.text.Split('\n');
+        string[] headers = lines[0].Split(new char[] { ';', '\n', '\r' });
+        int keyIndex = Array.IndexOf(headers, "key");
+        int valueIndex = Array.IndexOf(headers, "value");
+        
+        for (int i = 0; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) continue;
+
+            string[] fields = lines[i].Split(new char[]{';', '\n', '\r'});
+            if (fields.Length < 2) continue;
+
+            languageData[fields[keyIndex]] = fields[valueIndex];
+        }
+
+    }
+
+    public void LoadLocalizedDialogues(string languageCode)
+    {
+        currentLanguage = languageCode;
         currentLanguageData = new Dictionary<string, DialogueSentence>();
 
-        TextAsset languageFile = Resources.Load<TextAsset>($"Localization/dialogues_{languageCode}");
-        if (languageFile == null)
+        TextAsset languageFileDialogues = Resources.Load<TextAsset>($"Localization/{languageCode}/dialogues_{languageCode}");
+        
+        if (languageFileDialogues == null)
         {
             Debug.LogError($"Language file not found: dialogues_{languageCode}");
             return;
         }
-        string[] lines = languageFile.text.Split('\n');
+        string[] lines = languageFileDialogues.text.Split('\n');
         string[] headers = lines[0].Split(new char[]{';', '\n', '\r'});
 
         int keyIndex = Array.IndexOf(headers, "key");
@@ -138,6 +170,21 @@ public class LocalizationLoader : MonoBehaviour
                 sentences.Add(sentence);
         }
         return sentences;
+    }
+
+    public string GetLocalizedLine(string key)
+    {
+        if (languageData.ContainsKey(key))
+        {
+            return languageData[key];
+        }
+        Debug.LogError($"Localized line not found for key: {key}");
+        return key;
+    }
+
+    public enum Language
+    {
+        ru, en
     }
 }
 

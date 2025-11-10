@@ -67,6 +67,7 @@ public class FPSPlayerController : MonoBehaviour, IDataPersistance
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        yRotation = gameObject.transform.localRotation.eulerAngles.y;
 
         if (PlayerPrefs.HasKey("masterSensitivity"))
             mouseSensitivity = 25 * PlayerPrefs.GetFloat("masterSensitivity");

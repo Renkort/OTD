@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ItemHolder : MonoBehaviour
 {
+    [SerializeField] private TextMeshProUGUI itemHint;
     [SerializeField] private List<HandleItem> handleItems;
 
     public static ItemHolder Instance;
@@ -37,11 +39,12 @@ public class ItemHolder : MonoBehaviour
             if (handleItem.EquipableItem == itemData)
             {
                 handleItem.GameObject.SetActive(isActive);
+                UpdateCurrentItemHint(handleItem, isActive);
                 break;
             }
         }
     }
-    
+
     private HandleItem? GetActiveHandleItemByEquipmentType(EquipmentCell.EquipmentType type)
     {
         foreach (HandleItem handleItem in handleItems)
@@ -51,7 +54,19 @@ public class ItemHolder : MonoBehaviour
         }
         return null;
     }
-    
+    private void UpdateCurrentItemHint(HandleItem handleItem, bool isActive)
+    {
+        if (isActive)
+        {
+            string hintText = LocalizationLoader.Instance.GetLocalizedLine(handleItem.HintKey);
+            itemHint.text = hintText;
+        }
+        else
+        {
+            itemHint.text = "";
+        }
+    }
+
     public void DisableAllItems()
     {
         foreach(HandleItem handleItem in handleItems)
@@ -66,4 +81,5 @@ public struct HandleItem
 {
     public EquippableItemData EquipableItem;
     public GameObject GameObject;
+    public string HintKey;
 }
