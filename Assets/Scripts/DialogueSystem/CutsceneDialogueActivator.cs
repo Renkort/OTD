@@ -1,4 +1,5 @@
 using System.Collections;
+using Akkerman.FPS;
 using UnityEngine;
 
 namespace Akkerman.DialogueSystem
@@ -19,7 +20,7 @@ namespace Akkerman.DialogueSystem
 
         private IEnumerator PlayOnAwake()
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(Player.StartFreezeTime + 0.05f);
 
             isPlayed = true;
             FPS.Player player = FindObjectOfType<FPS.Player>();
