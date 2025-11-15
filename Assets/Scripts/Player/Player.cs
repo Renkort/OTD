@@ -116,13 +116,24 @@ namespace Akkerman.FPS
             viewRay = ray;
             // Debug.DrawRay(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0)), new Vector3(0, 0, maxInteractionDistance), Color.blue);
 
-            if (Physics.Raycast(ray, out hit, maxInteractionDistance, interactionLayer))
+            if (Physics.Raycast(ray, out hit, maxInteractionDistance/*, interactionLayer*/))
             {
                 GameObject objectHitByRaycast = hit.transform.gameObject;
                 if (objectHitByRaycast == lastRaycastObject)
+                {
                     return;
+                }
+                else if (1 << objectHitByRaycast.layer != interactionLayer)
+                {
+                    CurrentInteractable?.SetOutline(false);
+                    ToggleInteractText(false);
+                    CurrentInteractable = null;
+                    lastRaycastObject = null;
+                    
+                    return;
+                }
                 if (lastRaycastObject)
-                    lastRaycastObject.GetComponentInParent<InteractableObject>().SetOutline(false);
+                    lastRaycastObject.GetComponentInParent<InteractableObject>()?.SetOutline(false);
                 lastRaycastObject = objectHitByRaycast;
 
                 CurrentInteractable = objectHitByRaycast.gameObject.GetComponentInParent<InteractableObject>();
@@ -131,10 +142,6 @@ namespace Akkerman.FPS
             }
             else if (CurrentInteractable)
             {
-                CurrentInteractable.SetOutline(false);
-                ToggleInteractText(false);
-                CurrentInteractable = null;
-                lastRaycastObject = null;
             }
         }
 

@@ -180,7 +180,6 @@ namespace Akkerman.FPS
             xRotation = Mathf.Clamp(xRotation, -90f, 90f);
             yRotation += mouseX;
 
-            // Камера покачивается при повороте
 
             // Quaternion targetRotation = Quaternion.Euler(xRotation, 0f, tilt);
             // playerCamera.localRotation = Quaternion.Lerp(
@@ -413,6 +412,12 @@ namespace Akkerman.FPS
         public void OnEnablePhysics(bool usePhysics)
         {
             this.usePhysics = usePhysics;
+        }
+
+        public void SetRotationAsGO()
+        {
+            yRotation = transform.localRotation.eulerAngles.y;
+            xRotation = transform.localRotation.eulerAngles.x;
         }
 
         public void KillPlayer()
