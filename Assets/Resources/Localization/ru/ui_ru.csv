@@ -1,0 +1,21 @@
+key;value
+
+itemHolder_coffee;Пить [ЛКМ]
+itemHolder_granade;Бросить [ЛКМ]
+itemHolder_flashlight;Включить/выключить [F]
+
+mainMenu_continue;ПРОДОЛЖИТЬ
+mainMenu_load;ЗАГРУЗИТЬ
+mainMenu_start;НАЧАТЬ
+mainMenu_settings;НАСТРОЙКИ
+mainMenu_quit;ВЫЙТИ
+
+mainMenu_set_graphics;Графика
+mainMenu_set_sound;Звук
+mainMenu_set_game;Игра
+mainMenu_set_back;Назад
+mainMenu_set_default;По умолчанию.
+
+
+mainMenu_set_sound_title;Настройки звука
+

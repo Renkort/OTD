@@ -1,0 +1,16 @@
+key;value
+
+itemHolder_coffee;Drink [LMB]
+itemHolder_granade;Throw [LMB]
+itemHolder_flashlight;Turn On/Off [F]
+
+mainMenu_continue;CONTINUE
+mainMenu_load;LOAD
+mainMenu_start;START
+mainMenu_settings;SETTINGS
+mainMenu_quit;QUIT
+
+mainMenu_set_graphics;
+mainMenu_set_sound;
+mainMenu_set_game;
+mainMenu_set_back;
