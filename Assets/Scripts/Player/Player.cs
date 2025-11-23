@@ -14,7 +14,9 @@ namespace Akkerman.FPS
     [RequireComponent(typeof(AudioSource))]
     public class Player : MonoBehaviour, IDataPersistance
     {
-        public ActionFPSController fpsController;
+        [Header("REFERENCES")]
+        [field: SerializeField] public ActionFPSController FpsController;
+        [field: SerializeField] public PlayerHealth PlayerHealth;
         [field: SerializeField] public DialogueUI DialogueUI { get; set; }
         [field: SerializeField] public CutsceneHandler CutsceneHandler { get; set; }
 
@@ -69,17 +71,17 @@ namespace Akkerman.FPS
 
         public void FreezePlayerActions(bool isFreezedMovement, bool isFreezedLook)
         {
-            fpsController.FreezeMovement(!isFreezedMovement, !isFreezedLook);
+            FpsController.FreezeMovement(!isFreezedMovement, !isFreezedLook);
         }
 
         public void FreezePlayerActions(bool isFreezedMovement, bool isFreezedLook, float duration)
         {
-            fpsController.FreezeMovement(!isFreezedMovement, !isFreezedLook, duration);
+            FpsController.FreezeMovement(!isFreezedMovement, !isFreezedLook, duration);
         }
 
         public void OnEnablePhysics(bool isActive)
         {
-            fpsController.OnEnablePhysics(isActive);
+            FpsController.OnEnablePhysics(isActive);
         }
 
         public void ToggleInteractText(bool state, string text = "")
@@ -93,7 +95,7 @@ namespace Akkerman.FPS
             GetComponent<AudioSource>().PlayOneShot(deathSFX);
             IsDead = true;
             gameUI.IngameUI.ShowDeathScreen();
-            fpsController.KillPlayer();
+            FpsController.KillPlayer();
             OnPlayerDied?.Invoke();
         }
 

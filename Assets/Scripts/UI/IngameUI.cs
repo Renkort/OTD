@@ -18,13 +18,16 @@ namespace Akkerman.UI
         [SerializeField] private List<CrossData> crosses;
 
         [Header("FPS UI")]
+        [SerializeField] private TextMeshProUGUI playerHealthDisplay;
         [SerializeField] private TextMeshProUGUI ammoDisplay;
         [SerializeField] private Image weaponBulletIcon;
         public Slider forceModifierSlider;
         [SerializeField] private Throwable throwable;
         [SerializeField] private TextMeshProUGUI itemHolderHint;
+        [SerializeField] private Color defaultUIColor;
         private float deltaTime = 0.0f;
         private Transform playerTransform;
+        private const int lowHealthBound = 25;
 
         public Animator WhiteFadeScreen => whiteFadeScreen;
 
@@ -49,6 +52,22 @@ namespace Akkerman.UI
                     Debug.Log($"Loading last game save...");
                     DataPersistenceManager.Instance.LoadGame();
                 }
+            }
+        }
+
+        public void SetHealthUI(int currentHealth)
+        {
+            if (currentHealth < 0)
+                currentHealth = 0;
+            playerHealthDisplay.text = "+" + currentHealth.ToString();
+            if (currentHealth <= lowHealthBound)
+            {
+                defaultUIColor = playerHealthDisplay.color;
+                playerHealthDisplay.color = Color.red;
+            }
+            else
+            {
+                playerHealthDisplay.color = defaultUIColor;
             }
         }
 

@@ -155,7 +155,7 @@ namespace Akkerman.FPS
         {
             bulletsLeft--;
             muzzleEffect.Play();
-            Player.Instance.fpsController.ShakeCameraRotation(0.2f, 3f);
+            Player.Instance.FpsController.ShakeCameraRotation(0.2f, 3f);
 
             if (isADS)
             {

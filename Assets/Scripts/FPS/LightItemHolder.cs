@@ -13,8 +13,8 @@ namespace Akkerman.FPS
 
         [Header("CAMERA FOLLOWING")]
         [SerializeField] private Transform playerCamera;
-        [SerializeField] private float rotationSpeed = 2f;
-        [SerializeField] private float positionSpeed = 5f;
+        [SerializeField] private float rotationSpeed = 4f;
+        [SerializeField] private float positionSpeed = 10f;
         [SerializeField] private Vector3 positionOffset;
         [SerializeField] private Vector3 rotationOffset;
         private Vector3 rotationVelocity;
@@ -103,7 +103,7 @@ namespace Akkerman.FPS
                 return;
 
             targetPosition = playerCamera.TransformPoint(positionOffset);
-            transform.position = Vector3.SmoothDamp(
+            holdableItems[currentItemIndex].holder.transform.position = Vector3.SmoothDamp(
                 holdableItems[currentItemIndex].holder.transform.position,
                 targetPosition,
                 ref positionVelocity,
@@ -115,8 +115,8 @@ namespace Akkerman.FPS
             Vector3 targetEuler = targetRotation.eulerAngles + rotationOffset;
             targetRotation = Quaternion.Euler(targetEuler);
 
-            transform.rotation = QuaternionUtil.SmoothDamp(
-                transform.rotation,
+            holdableItems[currentItemIndex].holder.transform.rotation = QuaternionUtil.SmoothDamp(
+                holdableItems[currentItemIndex].holder.transform.rotation,
                 targetRotation,
                 ref rotationVelocity,
                 rotationSpeed * Time.deltaTime
