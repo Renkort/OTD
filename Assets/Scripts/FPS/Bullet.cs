@@ -1,39 +1,89 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
 namespace Akkerman.FPS
 {
     
-    public class Bullet : MonoBehaviour
+    public abstract class Bullet : MonoBehaviour
     {
-        [SerializeField] private int damage;
+        [Header("BASIC SETTINGS")]
+        [SerializeField] protected int damage;
+        [SerializeField] protected float moveSpeed = 100f;
+        [SerializeField] private float lifeTime = 5f;
+        [SerializeField] protected LayerMask collisionHitMask;
         [SerializeField] private List<ImpactSurfaceType> impactEffects;
-        private void OnCollisionEnter(Collision collision)
+
+        protected float timer;
+        protected Vector3 startPosition;
+
+        protected virtual void Start()
         {
-            bool hasEffect = false;
-            foreach (var effect in impactEffects)
-            {
-                if (collision.gameObject.CompareTag(effect.SurfaceTag))
-                {
-                    CreateBulletImpactEffect(collision, effect.ImpactEffect);
-                    hasEffect = true;
-                    break;
-                }
-            }
-            if (!hasEffect)
-                CreateBulletImpactEffect(collision, impactEffects[0].ImpactEffect);
-            if (collision.gameObject.CompareTag("Enemy"))
-            {
-                // collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
-            }
-            Destroy(gameObject);
+            startPosition = transform.position;
+            timer = lifeTime;
         }
 
-        void CreateBulletImpactEffect(Collision collision, GameObject impactEffect)
+        protected virtual void Update()
         {
-            ContactPoint contact = collision.contacts[0];
+            timer -= Time.deltaTime;
+            if (timer <= 0f)
+            {
+                Destroy(gameObject);
+            }
+
+            Move();
+        } 
+
+        protected abstract void Move();
+
+        protected virtual void OnHit(Collider other)
+        {
+            IDamagable damagable = other.GetComponent<IDamagable>();
+            if (damagable != null)
+            {
+                damagable.TakeDamage(damage);
+            }
+
+            // spawn hit VFX (instantiate bullet impact)
+            // bool hasEffect = false;
+            // foreach (var effect in impactEffects)
+            // {
+            //     if (other.gameObject.CompareTag(effect.SurfaceTag))
+            //     {
+            //         CreateBulletImpactEffect(collision, effect.ImpactEffect);
+            //         hasEffect = true;
+            //         break;
+            //     }
+            // }
+            // if (!hasEffect) // create default hit effect
+            //     CreateBulletImpactEffect(collision, impactEffects[0].ImpactEffect);
+            // if (other.gameObject.CompareTag("Enemy"))
+            // {
+            //     // collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
+            // }
+
+            Destroy(gameObject);
+        }
+        // protected virtual void OnCollisionEnter(Collision collision)
+        // {
+        //     if ( ((1 << collision.gameObject.layer) & collisionHitMask) != 0)
+        //     {
+        //         OnHit(collision.collider);
+        //     }
+        // }
+
+        protected virtual void OnTriggerEnter(Collider other)
+        {
+            if ( ((1 << other.gameObject.layer) & collisionHitMask) != 0)
+            {
+                OnHit(other);
+            }
+        }
+
+        protected virtual void CreateBulletImpactEffect(Collision collision, GameObject impactEffect)
+        {
+            // ContactPoint contact = collision.contacts[0];
+            ContactPoint contact = collision.GetContact(0);
 
             GameObject hole = Instantiate(
                 impactEffect,
@@ -50,5 +100,10 @@ namespace Akkerman.FPS
     {
         public string SurfaceTag;
         public GameObject ImpactEffect;
+    }
+
+    public interface IDamagable
+    {
+        void TakeDamage(int damage);
     }
 }

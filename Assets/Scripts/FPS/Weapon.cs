@@ -28,7 +28,9 @@ namespace Akkerman.FPS
         [SerializeField] private ParticleSystem muzzleEffect;
 
         [Header("Bullet Settings")]
-        [SerializeField] private GameObject bulletPrefab;
+        [SerializeField] private GameObject hitscanBulletPrefab;
+        [SerializeField] private GameObject physicsBulletPrefab;
+        [SerializeField] private bool usePhysicsBullets = true;
         [SerializeField] private Transform bulletSpawn;
         [SerializeField] private float bulletVelocity = 100f;
         [SerializeField] private float bulletPrefabLifeTime = 3f;
@@ -172,10 +174,11 @@ namespace Akkerman.FPS
             Vector3 shootingDirection = CalculateDirectionAndSpread().normalized;
 
 
+            GameObject bulletPrefab = usePhysicsBullets ? physicsBulletPrefab : hitscanBulletPrefab;
             GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.identity);
             bullet.transform.forward = shootingDirection;
-            bullet.GetComponent<Rigidbody>().AddForce(shootingDirection * bulletVelocity, ForceMode.Impulse);
-            StartCoroutine(DestroyBulletAfterTime(bullet, bulletPrefabLifeTime));
+            // bullet.GetComponent<Rigidbody>().AddForce(shootingDirection * bulletVelocity, ForceMode.Impulse);
+            // StartCoroutine(DestroyBulletAfterTime(bullet, bulletPrefabLifeTime));
 
             if (allowReset)
             {
