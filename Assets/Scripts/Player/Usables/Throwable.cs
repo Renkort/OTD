@@ -111,6 +111,8 @@ namespace Akkerman.FPS.Usables
                     direction.Normalize();
                     rb.AddForce(direction * explosionForce, ForceMode.Impulse);
                 }
+                if (objectInRange is CharacterController)
+                    continue;
                 // enemy takes damage over here
                 IDamagable parentDamagable = objectInRange.GetComponentInParent<IDamagable>();
                 if (objectInRange.TryGetComponent<IDamagable>(out IDamagable damagable))
@@ -125,6 +127,7 @@ namespace Akkerman.FPS.Usables
                     float distance = Vector3.Distance(objectInRange.transform.position, transform.position);
                     int finalDamage = damage - (int)distance;
                     Debug.Log($"DEGUG: EXPLOSION DISTANCE TO OBJECT: {objectInRange.gameObject.name}:{distance}");
+                    Debug.Log($"DEGUG: EXPLOSION COMPONENT IN PARENT");
                     parentDamagable.TakeDamage(finalDamage);
                 }
             }
