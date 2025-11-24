@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 
@@ -11,7 +12,6 @@ namespace Akkerman.FPS
         [SerializeField] protected int damage;
         [SerializeField] protected float moveSpeed = 100f;
         [SerializeField] private float lifeTime = 5f;
-        [SerializeField] protected LayerMask collisionHitMask;
         [SerializeField] private List<ImpactSurfaceType> impactEffects;
 
         protected float timer;
@@ -36,31 +36,48 @@ namespace Akkerman.FPS
 
         protected abstract void Move();
 
-        protected virtual void OnHit(Collider other)
+        protected virtual void OnHit(Collider other, Vector3 hitPosition, Vector3 hitNormal)
         {
-            IDamagable damagable = other.GetComponent<IDamagable>();
+            IDamagable damagable = other.GetComponentInParent<IDamagable>();
+            if (damagable != null)
+            {
+                damagable.TakeDamage(damage);
+            }
+            bool hasEffect = false;
+            foreach (var effect in impactEffects)
+            {
+                if (other.gameObject.CompareTag(effect.SurfaceTag))
+                {
+                    CreateBulletImpactEffect(hitPosition, hitNormal, effect.ImpactEffect);
+                    hasEffect = true;
+                    break;
+                }
+            }
+            if (!hasEffect) // create default hit effect
+                CreateBulletImpactEffect(hitPosition, hitNormal, impactEffects[0].ImpactEffect);
+
+            Destroy(gameObject, 0.1f);
+        }
+        protected virtual void OnHit(Collision collision)
+        {
+            IDamagable damagable = collision.collider.GetComponentInParent<IDamagable>();
             if (damagable != null)
             {
                 damagable.TakeDamage(damage);
             }
 
-            // spawn hit VFX (instantiate bullet impact)
-            // bool hasEffect = false;
-            // foreach (var effect in impactEffects)
-            // {
-            //     if (other.gameObject.CompareTag(effect.SurfaceTag))
-            //     {
-            //         CreateBulletImpactEffect(collision, effect.ImpactEffect);
-            //         hasEffect = true;
-            //         break;
-            //     }
-            // }
-            // if (!hasEffect) // create default hit effect
-            //     CreateBulletImpactEffect(collision, impactEffects[0].ImpactEffect);
-            // if (other.gameObject.CompareTag("Enemy"))
-            // {
-            //     // collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
-            // }
+            bool hasEffect = false;
+            foreach (var effect in impactEffects)
+            {
+                if (collision.gameObject.CompareTag(effect.SurfaceTag))
+                {
+                    CreateBulletImpactEffect(collision, effect.ImpactEffect);
+                    hasEffect = true;
+                    break;
+                }
+            }
+            if (!hasEffect) // create default hit effect
+                CreateBulletImpactEffect(collision, impactEffects[0].ImpactEffect);
 
             Destroy(gameObject);
         }
@@ -71,14 +88,6 @@ namespace Akkerman.FPS
         //         OnHit(collision.collider);
         //     }
         // }
-
-        protected virtual void OnTriggerEnter(Collider other)
-        {
-            if ( ((1 << other.gameObject.layer) & collisionHitMask) != 0)
-            {
-                OnHit(other);
-            }
-        }
 
         protected virtual void CreateBulletImpactEffect(Collision collision, GameObject impactEffect)
         {
@@ -92,6 +101,16 @@ namespace Akkerman.FPS
             );
 
             hole.transform.SetParent(collision.gameObject.transform);
+        }
+        protected virtual void CreateBulletImpactEffect(Vector3 hitPoint, Vector3 hitNormal, GameObject impactEffect)
+        {
+            // ContactPoint contact = collision.contacts[0];
+
+            GameObject hole = Instantiate(
+                impactEffect,
+                hitPoint,
+                Quaternion.LookRotation(hitNormal)
+            );
         }
     }
 

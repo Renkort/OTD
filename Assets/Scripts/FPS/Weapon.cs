@@ -9,6 +9,7 @@ namespace Akkerman.FPS
     public class Weapon : HoldableItem
     {
         [SerializeField] private WeaponSO weaponData;
+        [SerializeField] private bool useADS = false;
         [SerializeField] private AudioSource shootingChanel;
         [SerializeField] private AudioSource reloadingChanel;
 
@@ -86,12 +87,12 @@ namespace Akkerman.FPS
             if (!IsUsing)
                 return;
 
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(1) && useADS)
             {
                 EnterADS();
             }
 
-            if (Input.GetMouseButtonUp(1))
+            if (Input.GetMouseButtonUp(1) && useADS)
             {
                 ExitADS();
             }

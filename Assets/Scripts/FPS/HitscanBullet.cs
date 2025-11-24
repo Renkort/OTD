@@ -20,11 +20,11 @@ namespace Akkerman.FPS
 
             trailTimer = trailLifetime;
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward, out hit, maxDistance, collisionHitMask))
+            if (Physics.Raycast(transform.position, transform.forward, out hit, maxDistance))
             {
                 hasHit = true;
                 hitPoint = hit.point;
-                OnHit(hit.collider);
+                OnHit(hit.collider, hitPoint, hit.normal);
             }
             else
             {
@@ -43,7 +43,6 @@ namespace Akkerman.FPS
             base.Update();
             
             trailTimer -= Time.deltaTime;
-            trailRenderer.widthCurve.keys[0].value = trailTimer;
             if (trailTimer <= 0f)
                 trailRenderer.enabled = false;
         }

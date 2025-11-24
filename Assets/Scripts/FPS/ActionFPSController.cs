@@ -387,7 +387,7 @@ namespace Akkerman.FPS
         }
         private void HandleKick()
         {
-            if (Input.GetKeyDown(KeyCode.F) && Time.time >= lastKickTime + kickCooldown)
+            if (Input.GetKeyDown(KeyCode.Mouse1) && Time.time >= lastKickTime + kickCooldown)
             {
                 lastKickTime = Time.time;
                 ShakeCameraRotation(0.3f, 8f);

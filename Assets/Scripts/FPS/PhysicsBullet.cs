@@ -27,28 +27,25 @@ namespace Akkerman.FPS
             transform.rotation = Quaternion.LookRotation(velocity.normalized);
         }
 
-        protected override void OnTriggerEnter(Collider other)
+        protected virtual void OnCollisionEnter(Collision collision)
         {
             // base.OnTriggerEnter(other);
 
-            if (((1 << other.gameObject.layer) & collisionHitMask) != 0)
+            if (bounceCount < maxBounces)
             {
-                if (bounceCount < maxBounces)
-                {
-                    Bounce(other);
-                    bounceCount++;
-                }
-                else
-                {
-                    base.OnHit(other);
-                }
+                Bounce(collision);
+                bounceCount++;
+            }
+            else
+            {
+                base.OnHit(collision);
             }
         }
 
-        private void Bounce(Collider other)
+        private void Bounce(Collision collision)
         {
             RaycastHit hit;
-            if (Physics.Raycast(transform.position - velocity.normalized * 0.1f, velocity.normalized, out hit, 0.2f, collisionHitMask))
+            if (Physics.Raycast(transform.position - velocity.normalized * 0.1f, velocity.normalized, out hit, 0.2f))
             {
                 velocity = Vector3.Reflect(velocity, hit.normal);
                 transform.rotation = Quaternion.LookRotation(velocity.normalized);

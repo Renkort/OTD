@@ -1,16 +1,16 @@
 using UnityEngine;
 using System.Collections;
+using Akkerman.FPS;
 
 namespace Akkerman.AI
 {
-    public class TurretAI : MonoBehaviour
+    public class TurretAI : MonoBehaviour, IDamagable
     {
         [Header("References")]
         [SerializeField] private Transform head;
         [SerializeField] private Transform muzzle;
         [SerializeField] private LineRenderer laserLine;
         [SerializeField] private Transform laserPoint;
-        [SerializeField] private LayerMask playerLayer;
         [SerializeField] private string playerTag = "Player";
 
         [Header("Settings")]
@@ -20,6 +20,11 @@ namespace Akkerman.AI
         [SerializeField] private float timeBeforeShoot = 0.6f;
         [SerializeField] private float fireRate = 1f;
         // [SerializeField] private float laserDuration = 0.2f;
+        [SerializeField] private bool canTakeDamage = true;
+        [SerializeField] private int currentHealth;
+        [SerializeField] private int maxHealth = 80;
+        [SerializeField] private GameObject explosionPrefab;
+        [SerializeField] private GameObject hitVFXPrefab;
 
         [Header("Idle Behavior")]
         [SerializeField] private Transform idleTargetPoint;
@@ -43,6 +48,7 @@ namespace Akkerman.AI
         {
             player = FPS.Player.Instance.gameObject.transform;
 
+            currentHealth = maxHealth;
             if (laserLine != null)
                 laserLine.useWorldSpace = true;
 
@@ -110,6 +116,29 @@ namespace Akkerman.AI
         {
             isOn = isActive;
             laserLine.enabled = isActive;
+        }
+
+        public void TakeDamage(int damage)
+        {
+            Debug.Log($"Take damage: {damage}");
+            if (!canTakeDamage)
+                return;
+            currentHealth -= damage;
+            GameObject effect = Instantiate(hitVFXPrefab, transform.position, Quaternion.identity);
+
+            Destroy(effect, 0.2f);
+            if (currentHealth <= 0)
+            {
+                currentHealth = 0;
+                Die();
+            }
+        }
+
+        private void Die()
+        {
+            GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity, transform);
+
+            Destroy(gameObject, explosion.GetComponent<ParticleSystem>().main.duration - 0.5f);
         }
 
         private void IdleBehavior()
@@ -225,6 +254,7 @@ namespace Akkerman.AI
             }
             return false;
         }
+
 
         private void OnDrawGizmosSelected()
         {
