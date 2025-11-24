@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Akkerman.FPS
 {
     
-    public class PlayerHealth : MonoBehaviour
+    public class PlayerHealth : MonoBehaviour, IDamagable
     {
         [SerializeField] private int maxHealth = 100;
         private int currentHealth;

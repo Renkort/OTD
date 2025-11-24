@@ -48,13 +48,13 @@ namespace Akkerman.FPS
             {
                 if (other.gameObject.CompareTag(effect.SurfaceTag))
                 {
-                    CreateBulletImpactEffect(hitPosition, hitNormal, effect.ImpactEffect);
+                    CreateBulletImpactEffect(hitPosition, hitNormal, effect.ImpactEffect, other);
                     hasEffect = true;
                     break;
                 }
             }
             if (!hasEffect) // create default hit effect
-                CreateBulletImpactEffect(hitPosition, hitNormal, impactEffects[0].ImpactEffect);
+                CreateBulletImpactEffect(hitPosition, hitNormal, impactEffects[0].ImpactEffect, other);
 
             Destroy(gameObject, 0.1f);
         }
@@ -102,15 +102,14 @@ namespace Akkerman.FPS
 
             hole.transform.SetParent(collision.gameObject.transform);
         }
-        protected virtual void CreateBulletImpactEffect(Vector3 hitPoint, Vector3 hitNormal, GameObject impactEffect)
+        protected virtual void CreateBulletImpactEffect(Vector3 hitPoint, Vector3 hitNormal, GameObject impactEffect, Collider collider)
         {
-            // ContactPoint contact = collision.contacts[0];
-
             GameObject hole = Instantiate(
                 impactEffect,
                 hitPoint,
                 Quaternion.LookRotation(hitNormal)
             );
+            hole.transform.SetParent(collider.gameObject.transform);
         }
     }
 

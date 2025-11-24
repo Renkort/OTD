@@ -99,6 +99,7 @@ namespace Akkerman.FPS.Usables
         {
             GameObject explosionEffect = Instantiate(explodeEffect, transform.position, explodeEffect.transform.rotation);// change rotation
             Collider[] colliders = Physics.OverlapSphere(transform.position, damageRadius);
+            Player.Instance.FpsController.ShakeCamera(0.1f, 0.1f);
             foreach (Collider objectInRange in colliders)
             {
                 Rigidbody rb = objectInRange.GetComponent<Rigidbody>();
@@ -111,10 +112,21 @@ namespace Akkerman.FPS.Usables
                     rb.AddForce(direction * explosionForce, ForceMode.Impulse);
                 }
                 // enemy takes damage over here
-                // if (objectInRange.TryGetComponent<Enemy>(out Enemy enemy))
-                // {
-                //     enemy.TakeDamage(damage);
-                // }
+                IDamagable parentDamagable = objectInRange.GetComponentInParent<IDamagable>();
+                if (objectInRange.TryGetComponent<IDamagable>(out IDamagable damagable))
+                {
+                    float distance = Vector3.Distance(objectInRange.transform.position, transform.position);
+                    Debug.Log($"DEGUG: EXPLOSION DISTANCE TO OBJECT: {objectInRange.gameObject.name}:{distance}");
+                    int finalDamage = damage - (int)distance;
+                    damagable.TakeDamage(finalDamage);
+                }
+                else if (parentDamagable != null)
+                {
+                    float distance = Vector3.Distance(objectInRange.transform.position, transform.position);
+                    int finalDamage = damage - (int)distance;
+                    Debug.Log($"DEGUG: EXPLOSION DISTANCE TO OBJECT: {objectInRange.gameObject.name}:{distance}");
+                    parentDamagable.TakeDamage(finalDamage);
+                }
             }
             Destroy(explosionEffect, explosionEffect.GetComponent<ParticleSystem>().main.duration);
         }

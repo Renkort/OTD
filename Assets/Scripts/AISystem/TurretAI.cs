@@ -19,6 +19,7 @@ namespace Akkerman.AI
         [SerializeField] private float aimTime = 3f;
         [SerializeField] private float timeBeforeShoot = 0.6f;
         [SerializeField] private float fireRate = 1f;
+        [SerializeField] private int damage = 40;
         // [SerializeField] private float laserDuration = 0.2f;
         [SerializeField] private bool canTakeDamage = true;
         [SerializeField] private int currentHealth;
@@ -196,9 +197,7 @@ namespace Akkerman.AI
             {
                 if (hit.collider.tag == playerTag)
                 {
-                    Debug.Log("Player Hit!");
-                    // player.GetComponent<PlayerHealth>().TakeDamage(damage);
-                    FPS.Player.Instance.Kill();
+                    player.GetComponent<PlayerHealth>().TakeDamage(damage);
                 }
             }
 
