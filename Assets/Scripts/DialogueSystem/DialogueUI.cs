@@ -15,8 +15,6 @@ namespace Akkerman.DialogueSystem
         [SerializeField] private TextMeshProUGUI textLabel;
         [SerializeField] private Image portraitLabel;
         public bool IsOpen { get; private set; }
-        public Dictionary<DialogueObject, string> dialogueIds = new();
-        public Dictionary<string, DialogueObject> dialogueObjects = new();
         private ResponseHandler responseHandler;
         private TypewriterEffect typewriterEffect;
         private CutsceneHandler cutsceneHandler;
