@@ -10,6 +10,7 @@ namespace Akkerman.FPS
     {
         [SerializeField] private WeaponSO weaponData;
         [SerializeField] private bool useADS = false;
+        [SerializeField] private bool infiniteAmmo = false;
         [SerializeField] private AudioSource shootingChanel;
         [SerializeField] private AudioSource reloadingChanel;
 
@@ -97,7 +98,7 @@ namespace Akkerman.FPS
                 ExitADS();
             }
                 
-            if (bulletsLeft == 0 && isShooting)
+            if (bulletsLeft == 0 && isShooting && !infiniteAmmo)
             {
                 //SoundManager.Instance.dryfireSoundA3500X.Play();
                 Reload();
@@ -113,7 +114,7 @@ namespace Akkerman.FPS
                 isShooting = Input.GetKeyDown(KeyCode.Mouse0);
             }
 
-            if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize)
+            if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize && !infiniteAmmo)
             {
                 Reload();
             }
@@ -122,7 +123,7 @@ namespace Akkerman.FPS
                 //Reload();
             }
 
-            if (readyToShoot && isShooting && bulletsLeft > 0 && !isReloading)
+            if (readyToShoot && isShooting && (bulletsLeft > 0 || infiniteAmmo) && !isReloading)
             {
                 burstBulletsLeft = bulletsPerBurst;
                 FireWeapon();
@@ -135,7 +136,8 @@ namespace Akkerman.FPS
             if (!IsUsing)
                 return;
 
-            string ammoText = $"{bulletsLeft/bulletsPerBurst} | {bulletsAmount/bulletsPerBurst}";
+            string ammoText = infiniteAmmo ? "" : 
+            $"{bulletsLeft/bulletsPerBurst} | {bulletsAmount/bulletsPerBurst}";
             GameUI.Instance.IngameUI.SetAmmoUI(ammoText, weaponData.bulletIcon);
         }
 
@@ -197,7 +199,7 @@ namespace Akkerman.FPS
 
         private void Reload()
         {
-            if (bulletsAmount <= 0)
+            if (bulletsAmount <= 0 || infiniteAmmo)
                 return;
             reloadingChanel.PlayOneShot(weaponData.ReloadSound);
             animator.SetTrigger("RELOAD");
@@ -248,11 +250,6 @@ namespace Akkerman.FPS
             float y = Random.Range(-spreadIntensity, spreadIntensity);
 
             return direction + new Vector3(x, y, 0f);
-        }
-        private IEnumerator DestroyBulletAfterTime(GameObject bullet, float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            Destroy(bullet);
         }
 
         public void EnableWeapon()

@@ -36,6 +36,7 @@ namespace Akkerman.FPS
         [SerializeField] private float kickRange = 2f;
         [SerializeField] private float kickForce = 200f;
         [SerializeField] private float kickCooldown = 1f;
+        [SerializeField] private int kickDamage = 20;
         [SerializeField] private GameObject kickVFX;
 
         [Header("Camera")]
@@ -406,8 +407,15 @@ namespace Akkerman.FPS
                         );
                         kickPlace.transform.SetParent(hit.collider.gameObject.transform);
                     }
-                    
-                    // Можно добавить другие эффекты (звук, анимация, урон врагам и т.д.)
+                    IDamagable parentDamagable = hit.collider.GetComponentInParent<IDamagable>();
+                    if (hit.collider.gameObject.TryGetComponent<IDamagable>(out IDamagable damagable))
+                    {
+                        damagable.TakeDamage(kickDamage);
+                    }
+                    else if (parentDamagable != null)
+                    {
+                        parentDamagable.TakeDamage(kickDamage);
+                    }
                 }
             }
         }

@@ -121,7 +121,6 @@ namespace Akkerman.AI
 
         public void TakeDamage(int damage)
         {
-            Debug.Log($"Take damage: {damage}");
             if (!canTakeDamage)
                 return;
             currentHealth -= damage;
