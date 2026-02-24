@@ -125,7 +125,7 @@ namespace Akkerman.FPS
             HandleMouseLook();
             HandleJump();
             // HandleCrouch();
-            // HandleHeadBob();
+            HandleHeadBob();
             HandleCameraTilt();
             HandleFootsteps();
 
