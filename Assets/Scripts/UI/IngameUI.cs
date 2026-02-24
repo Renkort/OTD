@@ -76,6 +76,10 @@ namespace Akkerman.UI
             this.ammoDisplay.text = ammoDisplay;
             this.weaponBulletIcon.sprite = weaponBulletIcon;
         }
+        public void SetAmmoBarcode(string barcode)
+        {
+            ammoDisplay.text = barcode;
+        }
 
         public void DisplayForceModifierSlider(float sliderValue)
         {
