@@ -8,17 +8,9 @@ namespace Akkerman.AI
     {
         [Header("SETTINGS")]
         [SerializeField] private Transform player;
-        [SerializeField] private float chaseRange = 20f;
-        [SerializeField] private float attackRange = 5f;
-        [SerializeField] private float timeBetweenAttacks = 4f;
+        [SerializeField] private EnemyData enemyData;
         [SerializeField] private float jumpForceHorizontal = 20f;
         [SerializeField] private float jumpForceVertical = 35f;
-        [SerializeField] private int damage = 5;
-        [SerializeField] private LayerMask groundLayer = 1;
-
-        [SerializeField] private int maxHealth = 40;
-        [SerializeField] private int currentHealth;
-        [SerializeField] private ParticleSystem bloodSplash;
         private bool isDead = false;
 
         [Header("COMPONENTS")]
@@ -40,16 +32,16 @@ namespace Akkerman.AI
 
         void Start()
         {
-            currentHealth = maxHealth;
-            agent.stoppingDistance = attackRange;
+            enemyData.currentHealth = enemyData.maxHealth;
+            agent.stoppingDistance = enemyData.attackRange;
             damageCollider.enabled = false;
             if (player == null) player = GameObject.FindWithTag("Player").transform;
-            attackTimer = timeBetweenAttacks;
+            attackTimer = enemyData.timeBetweenAttacks;
         }
 
         void Update()
         {
-            grounded = Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, 1.2f, groundLayer);
+            grounded = Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, 1.2f, enemyData.groundLayer);
 
             attackTimer -= Time.deltaTime;
 
@@ -72,10 +64,10 @@ namespace Akkerman.AI
         void ChaseState()
         {
             float distToPlayer = Vector3.Distance(transform.position, player.position);
-            if (distToPlayer < chaseRange)
+            if (distToPlayer < enemyData.chaseRange)
             {
 
-                if (distToPlayer < attackRange && grounded && attackTimer <= 0)
+                if (distToPlayer < enemyData.attackRange && grounded && attackTimer <= 0)
                 {
                     Debug.Log("DEBUG: [1] JUMP STATE");
                     currentState = MonsterState.JumpAttack;
@@ -105,7 +97,7 @@ namespace Akkerman.AI
         {
             isDead = true;
             animator.SetTrigger("Die");
-            Instantiate(bloodSplash, gameObject.transform.position, Quaternion.identity);
+            Instantiate(enemyData.bloodSplash, gameObject.transform.position, Quaternion.identity);
             //bloodSplash.transform.position = transform.position + Vector3.up;
             // bloodSplash.Play();
             Destroy(gameObject, 2.0f);
@@ -130,7 +122,7 @@ namespace Akkerman.AI
             Vector3 jumpVector = new Vector3(dirToPlayer.x * jumpForceHorizontal, jumpForceVertical, dirToPlayer.z * jumpForceHorizontal);
 
             rb.AddForce(jumpVector, ForceMode.Impulse);
-            Invoke(nameof(ResetJump), timeBetweenAttacks);
+            Invoke(nameof(ResetJump), enemyData.timeBetweenAttacks);
             
         }
 
@@ -143,7 +135,7 @@ namespace Akkerman.AI
             rb.isKinematic = true;
             // rb.linearVelocity = Vector3.zero;
             currentState = MonsterState.Chase;
-            attackTimer = timeBetweenAttacks;
+            attackTimer = enemyData.timeBetweenAttacks;
         }
 
         void OnTriggerEnter(Collider other)
@@ -151,13 +143,13 @@ namespace Akkerman.AI
             if (other.CompareTag("Player"))
             {
                 PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
-                if (playerHealth != null) playerHealth.TakeDamage(damage);
+                if (playerHealth != null) playerHealth.TakeDamage(enemyData.damage);
             }
         }
 
         void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.layer == groundLayer.value)
+            if (collision.gameObject.layer == enemyData.groundLayer.value)
             {
                 CancelInvoke(nameof(ResetJump));
                 ResetJump();
@@ -166,10 +158,10 @@ namespace Akkerman.AI
 
         public void TakeDamage(int damage)
         {
-            currentHealth -= damage;
-            if (currentHealth <= 0)
+            enemyData.currentHealth -= damage;
+            if (enemyData.currentHealth <= 0)
             {
-                currentHealth = 0;
+                enemyData.currentHealth = 0;
                 currentState = MonsterState.Dead;
             }
         }
@@ -177,9 +169,9 @@ namespace Akkerman.AI
         void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(gameObject.transform.position, attackRange);
+            Gizmos.DrawWireSphere(gameObject.transform.position, enemyData.attackRange);
             Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(gameObject.transform.position, chaseRange);
+            Gizmos.DrawWireSphere(gameObject.transform.position, enemyData.chaseRange);
         }
     }
 }

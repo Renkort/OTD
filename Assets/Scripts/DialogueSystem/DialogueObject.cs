@@ -5,7 +5,7 @@ using Akkerman.Localization;
 
 namespace Akkerman.DialogueSystem
 {
-    [CreateAssetMenu(menuName = "Dialogue/DialogueObject")]
+    [CreateAssetMenu(fileName="New Dialogue", menuName = "Akkerman/DialogueSystem/Dialogue Object")]
     public class DialogueObject : ScriptableObject
     {
         [SerializeField] private List<string> dialogueKeys;
