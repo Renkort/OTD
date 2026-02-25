@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Akkerman.FPS;
+using NUnit.Framework;
 
 namespace Akkerman.AI
 {
@@ -8,6 +9,7 @@ namespace Akkerman.AI
     {
         [Header("SETTINGS")]
         [SerializeField] private Transform player;
+        [SerializeField] private Transform groundCheck;
         [SerializeField] private EnemyData enemyData;
         [SerializeField] private float jumpForceHorizontal = 20f;
         [SerializeField] private float jumpForceVertical = 35f;
@@ -18,10 +20,11 @@ namespace Akkerman.AI
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private Rigidbody rb; // mass = 5
         [SerializeField] private Animator animator;
+        private int currentHealth;
         private float attackTimer;
         private bool isJumping = false;
-        private bool grounded;
-        private MonsterState currentState = MonsterState.Chase;
+        [SerializeField] private bool grounded;
+        [SerializeField] private MonsterState currentState = MonsterState.Chase;
 
         public enum MonsterState
         {
@@ -32,8 +35,10 @@ namespace Akkerman.AI
 
         void Start()
         {
-            enemyData.currentHealth = enemyData.maxHealth;
+            currentHealth = enemyData.maxHealth;
             agent.stoppingDistance = enemyData.attackRange;
+            agent.speed = enemyData.speed;
+
             damageCollider.enabled = false;
             if (player == null) player = GameObject.FindWithTag("Player").transform;
             attackTimer = enemyData.timeBetweenAttacks;
@@ -41,8 +46,7 @@ namespace Akkerman.AI
 
         void Update()
         {
-            grounded = Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, 1.2f, enemyData.groundLayer);
-
+            grounded = Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, 1.0f, enemyData.groundLayer);
             attackTimer -= Time.deltaTime;
 
             switch (currentState)
@@ -110,6 +114,8 @@ namespace Akkerman.AI
 
             if (!isJumping)
                 Jump();
+            else if (isJumping && grounded && attackTimer <= 0)
+                ResetJump();
         }
 
         void Jump()
@@ -117,12 +123,14 @@ namespace Akkerman.AI
             Debug.Log("DEBUG: [2] JUMP!!!");
             isJumping = true;
             damageCollider.enabled = true;
+            
+            attackTimer = enemyData.timeBetweenAttacks;
 
             Vector3 dirToPlayer = (player.position - transform.position).normalized;
             Vector3 jumpVector = new Vector3(dirToPlayer.x * jumpForceHorizontal, jumpForceVertical, dirToPlayer.z * jumpForceHorizontal);
 
             rb.AddForce(jumpVector, ForceMode.Impulse);
-            Invoke(nameof(ResetJump), enemyData.timeBetweenAttacks);
+            //Invoke(nameof(ResetJump), enemyData.timeBetweenAttacks);
             
         }
 
@@ -135,7 +143,7 @@ namespace Akkerman.AI
             rb.isKinematic = true;
             // rb.linearVelocity = Vector3.zero;
             currentState = MonsterState.Chase;
-            attackTimer = enemyData.timeBetweenAttacks;
+            // attackTimer = enemyData.timeBetweenAttacks;
         }
 
         void OnTriggerEnter(Collider other)
@@ -158,10 +166,10 @@ namespace Akkerman.AI
 
         public void TakeDamage(int damage)
         {
-            enemyData.currentHealth -= damage;
-            if (enemyData.currentHealth <= 0)
+            currentHealth -= damage;
+            if (currentHealth <= 0)
             {
-                enemyData.currentHealth = 0;
+                currentHealth = 0;
                 currentState = MonsterState.Dead;
             }
         }

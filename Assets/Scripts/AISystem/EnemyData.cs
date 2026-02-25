@@ -8,12 +8,12 @@ namespace Akkerman.AI
     public class EnemyData : ScriptableObject
     {
         [Header("MOVEMENT")]
+        public float speed = 3.5f;
         public float chaseRange = 20f;
         public float attackRange = 5f;
 
         [Header("HEALTH")]
         public int maxHealth = 40;
-        public int currentHealth;
         public ParticleSystem bloodSplash;
 
         [Header("ATTACK")]

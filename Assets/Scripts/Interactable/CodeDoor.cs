@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,31 +10,20 @@ namespace Akkerman.InteractionSystem
     {
         [SerializeField] private string password;
         [SerializeField] private bool isLocked = true;
+        [SerializeField] private float moveTime = 3.0f;
         [SerializeField] private Material redMaterial;
         [SerializeField] private UnityEvent onIncorrectPassword, onCorrectPassword;
+        [SerializeField] private UnityEvent onOpenDoor, onCloseDoor;
         private string currentInput;
-        private bool isMoving = false;
-        private float moveTimer;
-        private float moveTime = 3.0f;
-        private int moveSpeed = 1;
+        private bool isOpen;
 
         void Start()
         {
             currentInput = "";
+            if (!isLocked && !isOpen)
+                TriggerDoor(true);
         }
 
-
-        void Update()
-        {
-            if (isMoving)
-            {
-                
-                if (moveTimer <= Time.time)
-                    isMoving = false;
-                Vector3 moveDirection = Vector3.down * moveSpeed;
-                gameObject.transform.position -= moveDirection * Time.deltaTime;
-            }
-        }
 
         public void EnterSign(string sign)
         {
@@ -45,25 +35,43 @@ namespace Akkerman.InteractionSystem
                 if (isCorrect)
                 {
                     onCorrectPassword?.Invoke();
-                    OpenDoor();
-                    Debug.Log("Password's correct!");
+                    TriggerDoor(true);
+                    Debug.Log("DEBUG: OPEN DOOR");
                 }
                 else
                 {
-
                     onIncorrectPassword?.Invoke();
-                    Debug.Log("Password is incorrect!");
+                    Debug.Log("DEBUG: INCORRECT PASSWORD");
                 }
                 currentInput = "";
             }
         }
-
-        private void OpenDoor()
+        public void TriggerDoor(bool isOpen)
         {
-            // Vector3 movePos = gameObject.transform.position - gameObject.transform.localScale;
-            // gameObject.transform.position = movePos;
-            moveTimer = Time.time + moveTime;
-            isMoving = true;
+            StartCoroutine(EffectDoor(isOpen));
+        }
+
+        private IEnumerator EffectDoor(bool isOpen)
+        {
+            Vector3 moveDirection = isOpen ? Vector3.up : Vector3.down;
+            float elapsed = moveTime;
+            Vector3 targetPos = transform.position + new Vector3(0.0f, transform.localScale.y, 0.0f) * moveDirection.y;
+            float moveDistance = Mathf.Abs(transform.position.y - targetPos.y);
+            float coef = moveDistance / moveTime;
+            
+            while(elapsed > 0)
+            {
+                transform.position += coef * Time.deltaTime * moveDirection;
+                elapsed -= Time.deltaTime;
+                yield return null;
+            }
+
+            transform.position = targetPos;
+            this.isOpen = isOpen;
+            if (isOpen)
+                onOpenDoor?.Invoke();
+            else
+                onCloseDoor?.Invoke();
         }
 
         public void BlinkRedMaterial(GameObject gameObject)
