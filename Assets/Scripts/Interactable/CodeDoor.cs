@@ -48,6 +48,8 @@ namespace Akkerman.InteractionSystem
         }
         public void TriggerDoor(bool isOpen)
         {
+            if (this.isOpen == isOpen)
+                return;
             StartCoroutine(EffectDoor(isOpen));
         }
 
