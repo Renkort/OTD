@@ -19,7 +19,7 @@ namespace Akkerman.UI
 
         [Header("FPS UI")]
         [SerializeField] private TextMeshProUGUI playerHealthDisplay;
-        [SerializeField] private TextMeshProUGUI ammoDisplay;
+        [SerializeField] private TextMeshProUGUI ammoText;
         [SerializeField] private Image weaponBulletIcon;
         public Slider forceModifierSlider;
         [SerializeField] private Throwable throwable;
@@ -73,12 +73,12 @@ namespace Akkerman.UI
 
         public void SetAmmoUI(string ammoDisplay, Sprite weaponBulletIcon)
         {
-            this.ammoDisplay.text = ammoDisplay;
+            this.ammoText.text = ammoDisplay;
             this.weaponBulletIcon.sprite = weaponBulletIcon;
         }
         public void SetAmmoBarcode(string barcode)
         {
-            ammoDisplay.text = barcode;
+            ammoText.text = barcode;
         }
 
         public void DisplayForceModifierSlider(float sliderValue)

@@ -29,7 +29,7 @@ namespace Akkerman.FPS
         [SerializeField] private float slideDuration = 1f;
         [SerializeField] private float slideCooldown = 1.5f;
         [Header("Wall Jump Settings")]
-        [SerializeField] private float wallJumpForce = 10f;
+        [SerializeField] private float wallJumpForce = 5.0f;
         [SerializeField] private float wallCheckDistance = 0.6f;
         [SerializeField] private LayerMask wallLayerMask = 1;
         [Header("Kick Settings")]

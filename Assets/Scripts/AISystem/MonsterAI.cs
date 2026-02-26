@@ -92,7 +92,6 @@ namespace Akkerman.AI
 
         void DeadState()
         {
-            agent.enabled = false;
             if (!isDead)
                 Die();
         }
@@ -100,6 +99,9 @@ namespace Akkerman.AI
         void Die()
         {
             isDead = true;
+            agent.enabled = false;
+            damageCollider.enabled = false;
+
             animator.SetTrigger("Die");
             Instantiate(enemyData.bloodSplash, gameObject.transform.position, Quaternion.identity);
             //bloodSplash.transform.position = transform.position + Vector3.up;
@@ -174,7 +176,7 @@ namespace Akkerman.AI
             }
         }
 
-        void OnDrawGizmos()
+        void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(gameObject.transform.position, enemyData.attackRange);
