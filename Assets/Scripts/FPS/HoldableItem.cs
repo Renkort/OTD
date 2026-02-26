@@ -1,11 +1,10 @@
 using UnityEngine;
 
-public abstract class HoldableItem : MonoBehaviour
-{
-    public abstract void UpdateUI();
-}
 
-public class EmptyHoldableItem : HoldableItem
+namespace Akkerman.FPS
 {
-    public override void UpdateUI() { }
+    public abstract class HoldableItem : MonoBehaviour
+    {
+        public abstract void UpdateUI();
+    }
 }

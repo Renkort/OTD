@@ -9,6 +9,7 @@ namespace Akkerman.FPS
     public class LightItemHolder : MonoBehaviour
     {
         [SerializeField] private int currentItemIndex = 0;
+        [SerializeField] private List<int> avaliableItems;
         [SerializeField] private List<HoldableItemData> holdableItems;
 
         [Header("CAMERA FOLLOWING")]
@@ -43,6 +44,13 @@ namespace Akkerman.FPS
             FollowCamera();
         }
 
+        public void AddAvailableItem(int itemKeyIndex)
+        {
+            if (avaliableItems.Contains(itemKeyIndex)) return;
+
+            avaliableItems.Add(itemKeyIndex);
+        }
+
         private void HandlePlayerInput()
         {
             int previousActiveItem = currentItemIndex;
@@ -62,16 +70,18 @@ namespace Akkerman.FPS
                     currentItemIndex--;
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha1) && holdableItems.Count >= 1)
+            if (Input.GetKeyDown(KeyCode.Alpha0) && holdableItems.Count >= 1)
             { currentItemIndex = 0; }
-            if (Input.GetKeyDown(KeyCode.Alpha2) && holdableItems.Count >= 2)
+            if (Input.GetKeyDown(KeyCode.Alpha1) && holdableItems.Count >= 2)
             { currentItemIndex = 1; }
-            if (Input.GetKeyDown(KeyCode.Alpha3) && holdableItems.Count >= 3)
+            if (Input.GetKeyDown(KeyCode.Alpha2) && holdableItems.Count >= 3)
             { currentItemIndex = 2; }
-            if (Input.GetKeyDown(KeyCode.Alpha4) && holdableItems.Count >= 4)
+            if (Input.GetKeyDown(KeyCode.Alpha3) && holdableItems.Count >= 4)
             { currentItemIndex = 3; }
-            if (Input.GetKeyDown(KeyCode.Alpha5) && holdableItems.Count >= 5)
+            if (Input.GetKeyDown(KeyCode.Alpha4) && holdableItems.Count >= 5)
             { currentItemIndex = 4; }
+            if (Input.GetKeyDown(KeyCode.Alpha5) && holdableItems.Count >= 6)
+            { currentItemIndex = 5; }
 
             if (previousActiveItem != currentItemIndex)
                 SelectItem();
@@ -79,12 +89,12 @@ namespace Akkerman.FPS
 
         private void SelectItem()
         {
-            if (currentItemIndex == -1)
+            if (currentItemIndex == -1 || !avaliableItems.Contains(currentItemIndex))
                 return;
 
             for (int i = 0; i < holdableItems.Count; i++)
             {
-                if (holdableItems[i].ButtonNum - 1 == currentItemIndex)
+                if (holdableItems[i].ButtonNum == currentItemIndex)
                 {
                     holdableItems[i].holder.gameObject.SetActive(true);
                     GameUI.Instance.IngameUI.SetActiveCrossUI(holdableItems[i].CrossUIType, true);
