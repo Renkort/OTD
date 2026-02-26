@@ -6,6 +6,7 @@ using Akkerman.SaveSystem;
 using Akkerman.FPS;
 using Akkerman.FPS.Usables;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Akkerman.UI
 {
@@ -19,6 +20,7 @@ namespace Akkerman.UI
 
         [Header("FPS UI")]
         [SerializeField] private TextMeshProUGUI playerHealthDisplay;
+        [SerializeField] private GameObject ammoDisplay;
         [SerializeField] private TextMeshProUGUI ammoText;
         [SerializeField] private Image weaponBulletIcon;
         public Slider forceModifierSlider;
@@ -36,6 +38,7 @@ namespace Akkerman.UI
             playerTransform = Player.Instance.gameObject.GetComponent<Transform>();
 
             deathScreen.SetActive(false);
+            ammoDisplay.SetActive(false);
             forceModifierSlider.maxValue = throwable.ForceModifierLimit;
         }
 
@@ -71,14 +74,35 @@ namespace Akkerman.UI
             }
         }
 
-        public void SetAmmoUI(string ammoDisplay, Sprite weaponBulletIcon)
+        public void SetAmmoUI(string ammoText, Sprite weaponBulletIcon)
         {
-            this.ammoText.text = ammoDisplay;
+            if (!ammoDisplay.activeInHierarchy)
+                ammoDisplay.SetActive(true);
+            this.ammoText.text = ammoText;
             this.weaponBulletIcon.sprite = weaponBulletIcon;
+
+            if (ammoText == "")
+                ammoDisplay.SetActive(false);
         }
         public void SetAmmoBarcode(string barcode)
         {
+            StopAllCoroutines();
+            StartCoroutine(DisplayBarcode(barcode));
+        }
+
+        private IEnumerator DisplayBarcode(string barcode)
+        {
+            if (!ammoDisplay.activeInHierarchy)
+                ammoDisplay.SetActive(true);
+            float displayTime = 10f;
+
             ammoText.text = barcode;
+            float defaultFontSize = ammoText.fontSize;
+            ammoText.fontSize = defaultFontSize + defaultFontSize / 4;
+            yield return new WaitForSeconds(0.6f);
+            ammoText.fontSize = defaultFontSize;
+            yield return new WaitForSeconds(displayTime);
+            ammoDisplay.SetActive(false);
         }
 
         public void DisplayForceModifierSlider(float sliderValue)
