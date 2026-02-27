@@ -11,6 +11,7 @@ namespace Akkerman.FPS
         [SerializeField] private int currentItemIndex = 0;
         [SerializeField] private List<int> avaliableItems;
         [SerializeField] private List<HoldableItemData> holdableItems;
+        private List<int> earlierAvaliableItems = new List<int>();
 
         [Header("CAMERA FOLLOWING")]
         [SerializeField] private Transform playerCamera;
@@ -49,6 +50,18 @@ namespace Akkerman.FPS
             if (avaliableItems.Contains(itemKeyIndex)) return;
 
             avaliableItems.Add(itemKeyIndex);
+
+            if (!earlierAvaliableItems.Contains(itemKeyIndex))
+            {
+                earlierAvaliableItems.Add(itemKeyIndex);
+                currentItemIndex = itemKeyIndex;
+                SelectItem();
+            }
+        }
+
+        public void RemoveAvailableItem(int itemKeyIndex)
+        {
+            avaliableItems.Remove(itemKeyIndex);
         }
 
         private void HandlePlayerInput()

@@ -35,12 +35,24 @@ namespace Akkerman.FPS.Usables
         void Update()
         {
             if (playerCamera == null) return;
-
+            
             FollowCamera();
+
+            if (Player.Instance.DialogueUI.IsOpen) return;
             if (Input.GetMouseButtonDown(0) && !isUsing && amount > 0)
             {
                 StartCoroutine(Use());
             }
+        }
+
+        public void Add(int amount)
+        {
+            this.amount += amount;
+        }
+
+        public void Remove(int amount)
+        {
+            this.amount -= amount;
         }
 
         private void FollowCamera()

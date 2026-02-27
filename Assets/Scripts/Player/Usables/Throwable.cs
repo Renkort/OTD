@@ -54,6 +54,8 @@ namespace Akkerman.FPS.Usables
             }
             if (!isUsing)
                 return;
+            else if (Player.Instance.DialogueUI.IsOpen)
+                return;
             if (Input.GetMouseButton(0) && forceMultiplier < forceMultiplierLimit && amount > 0)
             {
                 forceMultiplier += Time.deltaTime * throwForce;

@@ -87,6 +87,8 @@ namespace Akkerman.FPS
         {
             if (!IsUsing)
                 return;
+            else if (Player.Instance.DialogueUI.IsOpen)
+                return;
 
             if (Input.GetMouseButtonDown(1) && useADS)
             {
