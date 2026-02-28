@@ -33,6 +33,9 @@ namespace Akkerman.FPS
         [SerializeField] private float wallCheckDistance = 0.6f;
         [SerializeField] private LayerMask wallLayerMask = 1;
         [Header("Kick Settings")]
+        [SerializeField] private Animator animator;
+        [SerializeField] private Transform kickOrigin;
+        [SerializeField] private LayerMask dynamicLayer;
         [SerializeField] private float kickRange = 2f;
         [SerializeField] private float kickForce = 200f;
         [SerializeField] private float kickCooldown = 1f;
@@ -111,7 +114,7 @@ namespace Akkerman.FPS
 
         private void Update()
         {
-            if (isLoading)
+            if (isLoading || !gameObject.activeInHierarchy)
                 return;
             if (isDead)
             {
@@ -155,7 +158,7 @@ namespace Akkerman.FPS
             }
             else if (!isGrounded)
             {
-                characterController.stepOffset = 0;
+                characterController.stepOffset = 0.1f;
             }
         }
 
@@ -170,7 +173,7 @@ namespace Akkerman.FPS
             }
             else if (!isGrounded)
             {
-                characterController.stepOffset = 0;
+                characterController.stepOffset = 0.1f;
             }
 
             float horizontal = Input.GetAxis("Horizontal");
@@ -205,7 +208,8 @@ namespace Akkerman.FPS
 
             Vector3 move = transform.right * horizontal + transform.forward * vertical;
             //characterController.Move(move * currentSpeed * Time.deltaTime);
-            characterController.Move(currentVelocity * Time.deltaTime);
+            if (characterController.enabled)
+                characterController.Move(currentVelocity * Time.deltaTime);
         }
 
         private void HandleMouseLook()
@@ -348,7 +352,8 @@ namespace Akkerman.FPS
                 // Vector3 dashDirection = moveDirection.magnitude > 0.1f ? moveDirection : transform.forward;
                 Vector3 dashDirection = transform.right * horizontal + transform.forward * vertical;
                 dashDirection = Vector3.ClampMagnitude(dashDirection, 1f);
-                characterController.Move(dashDirection * dashForce * Time.deltaTime);
+                if (characterController.enabled)
+                    characterController.Move(dashDirection * dashForce * Time.deltaTime);
                 
                 if (dashTimeRemaining <= 0f)
                 {
@@ -369,7 +374,9 @@ namespace Akkerman.FPS
                 slideTimeRemaining -= Time.deltaTime;
                 
                 Vector3 slideDirection = currentVelocity.magnitude > 0.1f ? currentVelocity.normalized : transform.forward;
-                characterController.Move(slideDirection * slideForce * Time.deltaTime);
+                
+                if (characterController.enabled)
+                    characterController.Move(slideDirection * slideForce * Time.deltaTime);
                 
                 if (Input.GetKeyUp(KeyCode.LeftControl) || slideTimeRemaining <= 0f /*(|| !isGrounded*/)
                 {
@@ -389,26 +396,37 @@ namespace Akkerman.FPS
         private void HandleKick()
         {
             if (Input.GetKeyDown(KeyCode.Mouse1) && Time.time >= lastKickTime + kickCooldown)
+                PerformKick();
+            
+        }
+        private void PerformKick()
+        {
+            animator.SetTrigger("Kick");
+            lastKickTime = Time.time;
+            ShakeCameraRotation(0.3f, 8f);
+            RaycastHit hit;
+            // if (Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, kickRange))
+            Collider[] kickedObjects = Physics.OverlapSphere(kickOrigin.position, kickRange, dynamicLayer);
+            if (kickedObjects.Length > 0)
             {
-                lastKickTime = Time.time;
-                ShakeCameraRotation(0.3f, 8f);
-                RaycastHit hit;
-                if (Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, kickRange))
+                for (int i = 0; i < kickedObjects.Length; i++)
                 {
-                    Rigidbody rb = hit.collider.GetComponent<Rigidbody>();
+                    Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, kickRange);
+                    Rigidbody rb = kickedObjects[i].GetComponent<Rigidbody>();
                     if (rb != null)
                     {
-                        rb.AddForce(playerCamera.forward * kickForce, ForceMode.Impulse);
-                        Debug.Log("Kicked object: " + hit.collider.name);
+                        // rb.AddForce(playerCamera.forward * kickForce, ForceMode.Impulse);
+                        rb.AddForce(kickOrigin.forward * kickForce, ForceMode.Impulse);
+                        Debug.Log("Kicked object: " + kickedObjects[i].name);
                         GameObject kickPlace = Instantiate(
                             kickVFX,
                             hit.point,
                             Quaternion.LookRotation(hit.point)
                         );
-                        kickPlace.transform.SetParent(hit.collider.gameObject.transform);
+                        kickPlace.transform.SetParent(kickedObjects[i].gameObject.transform);
                     }
-                    IDamagable parentDamagable = hit.collider.GetComponentInParent<IDamagable>();
-                    if (hit.collider.gameObject.TryGetComponent<IDamagable>(out IDamagable damagable))
+                    IDamagable parentDamagable = kickedObjects[i].GetComponentInParent<IDamagable>();
+                    if (kickedObjects[i].gameObject.TryGetComponent(out IDamagable damagable))
                     {
                         damagable.TakeDamage(kickDamage);
                     }
@@ -429,7 +447,9 @@ namespace Akkerman.FPS
                 moveDirection.y = Mathf.Sqrt(wallJumpForce * -2f * gravity);
             
                 Vector3 wallJumpDirection = (wallNormal + Vector3.up + Vector3.back).normalized;
-                characterController.Move(wallJumpDirection * wallJumpForce * 0.5f * Time.deltaTime);
+
+                if (characterController.enabled)
+                    characterController.Move(wallJumpDirection * wallJumpForce * 0.5f * Time.deltaTime);
                 
                 wallJumpsRemaining--;
                 
@@ -514,8 +534,10 @@ namespace Akkerman.FPS
 
         private void ApplyFinalMovements()
         {
-            if (!usePhysics)
-                return;
+            if (!usePhysics) return;
+            if (!characterController.enabled) return;
+            if (!gameObject.activeInHierarchy) return;
+
             characterController.Move(moveDirection * Time.deltaTime);
         }
 
@@ -621,6 +643,8 @@ namespace Akkerman.FPS
         {
             isDead = true;
             FreezeMovement(false, false);
+            characterController.enabled = false;
+
             ShakeCamera(0.2f, 0.02f);
         }
 
@@ -637,6 +661,8 @@ namespace Akkerman.FPS
             usePhysics = data.UsePhysics;
             isDead = data.IsDead;
             playerCamera.localRotation = Quaternion.Euler(data.CameraRotation);
+            isSliding = data.IsSliding;
+            isDashing = data.IsDashing;
 
             characterController.enabled = true;
             isLoading = false;
@@ -653,7 +679,15 @@ namespace Akkerman.FPS
             data.CanLookAround = canLookAround;
             data.UsePhysics = usePhysics;
             data.CameraRotation = playerCamera.localRotation.eulerAngles;
+            data.IsSliding = isSliding;
+            data.IsDashing = isDashing;
             isLoading = false;
+        }
+
+        public void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(kickOrigin.position, kickRange);
         }
 
         [System.Serializable]
