@@ -208,8 +208,7 @@ namespace Akkerman.FPS
 
             Vector3 move = transform.right * horizontal + transform.forward * vertical;
             //characterController.Move(move * currentSpeed * Time.deltaTime);
-            if (characterController.enabled)
-                characterController.Move(currentVelocity * Time.deltaTime);
+            characterController.Move(currentVelocity * Time.deltaTime);
         }
 
         private void HandleMouseLook()
@@ -352,8 +351,8 @@ namespace Akkerman.FPS
                 // Vector3 dashDirection = moveDirection.magnitude > 0.1f ? moveDirection : transform.forward;
                 Vector3 dashDirection = transform.right * horizontal + transform.forward * vertical;
                 dashDirection = Vector3.ClampMagnitude(dashDirection, 1f);
-                if (characterController.enabled)
-                    characterController.Move(dashDirection * dashForce * Time.deltaTime);
+
+                characterController.Move(dashDirection * dashForce * Time.deltaTime);
                 
                 if (dashTimeRemaining <= 0f)
                 {
@@ -374,9 +373,8 @@ namespace Akkerman.FPS
                 slideTimeRemaining -= Time.deltaTime;
                 
                 Vector3 slideDirection = currentVelocity.magnitude > 0.1f ? currentVelocity.normalized : transform.forward;
-                
-                if (characterController.enabled)
-                    characterController.Move(slideDirection * slideForce * Time.deltaTime);
+
+                characterController.Move(slideDirection * slideForce * Time.deltaTime);
                 
                 if (Input.GetKeyUp(KeyCode.LeftControl) || slideTimeRemaining <= 0f /*(|| !isGrounded*/)
                 {
@@ -448,8 +446,7 @@ namespace Akkerman.FPS
             
                 Vector3 wallJumpDirection = (wallNormal + Vector3.up + Vector3.back).normalized;
 
-                if (characterController.enabled)
-                    characterController.Move(wallJumpDirection * wallJumpForce * 0.5f * Time.deltaTime);
+                characterController.Move(wallJumpDirection * wallJumpForce * 0.5f * Time.deltaTime);
                 
                 wallJumpsRemaining--;
                 

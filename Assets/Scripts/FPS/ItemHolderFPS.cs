@@ -6,12 +6,11 @@ using Akkerman.UI;
 namespace Akkerman.FPS
 {
 
-    public class LightItemHolder : MonoBehaviour
+    public class ItemHolderFPS : MonoBehaviour
     {
-        [SerializeField] private int currentItemIndex = 0;
-        [SerializeField] private List<int> avaliableItems;
+
+        [SerializeField] private ItemHolderFPSData data;
         [SerializeField] private List<HoldableItemData> holdableItems;
-        private List<int> earlierAvaliableItems = new List<int>();
 
         [Header("CAMERA FOLLOWING")]
         [SerializeField] private Transform playerCamera;
@@ -22,7 +21,7 @@ namespace Akkerman.FPS
         private Vector3 rotationVelocity;
         private Vector3 positionVelocity;
         private Vector3 targetPosition;
-        public static LightItemHolder Instance;
+        public static ItemHolderFPS Instance;
 
         void Awake()
         {
@@ -47,67 +46,67 @@ namespace Akkerman.FPS
 
         public void AddAvailableItem(int itemKeyIndex)
         {
-            if (avaliableItems.Contains(itemKeyIndex)) return;
+            if (data.avaliableItems.Contains(itemKeyIndex)) return;
 
-            avaliableItems.Add(itemKeyIndex);
+            data.avaliableItems.Add(itemKeyIndex);
 
-            if (!earlierAvaliableItems.Contains(itemKeyIndex))
+            if (!data.earlierAvaliableItems.Contains(itemKeyIndex))
             {
-                earlierAvaliableItems.Add(itemKeyIndex);
-                currentItemIndex = itemKeyIndex;
+                data.earlierAvaliableItems.Add(itemKeyIndex);
+                data.currentItemIndex = itemKeyIndex;
                 SelectItem();
             }
         }
 
         public void RemoveAvailableItem(int itemKeyIndex)
         {
-            avaliableItems.Remove(itemKeyIndex);
+            data.avaliableItems.Remove(itemKeyIndex);
         }
 
         private void HandlePlayerInput()
         {
-            int previousActiveItem = currentItemIndex;
+            int previousActiveItem = data.currentItemIndex;
 
             if (Input.GetAxis("Mouse ScrollWheel") > 0f)
             {
-                if (currentItemIndex >= holdableItems.Count - 1)
-                    currentItemIndex = 0;
+                if (data.currentItemIndex >= holdableItems.Count - 1)
+                    data.currentItemIndex = 0;
                 else
-                    currentItemIndex++;
+                    data.currentItemIndex++;
             }
             else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
             {
-                if (currentItemIndex <= 0)
-                    currentItemIndex = holdableItems.Count - 1;
+                if (data.currentItemIndex <= 0)
+                    data.currentItemIndex = holdableItems.Count - 1;
                 else
-                    currentItemIndex--;
+                    data.currentItemIndex--;
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha0) && holdableItems.Count >= 1)
-            { currentItemIndex = 0; }
+            { data.currentItemIndex = 0; }
             if (Input.GetKeyDown(KeyCode.Alpha1) && holdableItems.Count >= 2)
-            { currentItemIndex = 1; }
+            { data.currentItemIndex = 1; }
             if (Input.GetKeyDown(KeyCode.Alpha2) && holdableItems.Count >= 3)
-            { currentItemIndex = 2; }
+            { data.currentItemIndex = 2; }
             if (Input.GetKeyDown(KeyCode.Alpha3) && holdableItems.Count >= 4)
-            { currentItemIndex = 3; }
+            { data.currentItemIndex = 3; }
             if (Input.GetKeyDown(KeyCode.Alpha4) && holdableItems.Count >= 5)
-            { currentItemIndex = 4; }
+            { data.currentItemIndex = 4; }
             if (Input.GetKeyDown(KeyCode.Alpha5) && holdableItems.Count >= 6)
-            { currentItemIndex = 5; }
+            { data.currentItemIndex = 5; }
 
-            if (previousActiveItem != currentItemIndex)
+            if (previousActiveItem != data.currentItemIndex)
                 SelectItem();
         }
 
         private void SelectItem()
         {
-            if (currentItemIndex == -1 || !avaliableItems.Contains(currentItemIndex))
+            if (data.currentItemIndex == -1 || !data.avaliableItems.Contains(data.currentItemIndex))
                 return;
 
             for (int i = 0; i < holdableItems.Count; i++)
             {
-                if (holdableItems[i].ButtonNum == currentItemIndex)
+                if (holdableItems[i].ButtonNum == data.currentItemIndex)
                 {
                     holdableItems[i].holder.gameObject.SetActive(true);
                     GameUI.Instance.IngameUI.SetActiveCrossUI(holdableItems[i].CrossUIType, true);
@@ -122,12 +121,12 @@ namespace Akkerman.FPS
 
         private void FollowCamera()
         {
-            if (currentItemIndex >= holdableItems.Count)
+            if (data.currentItemIndex >= holdableItems.Count)
                 return;
 
             targetPosition = playerCamera.TransformPoint(positionOffset);
-            holdableItems[currentItemIndex].holder.transform.position = Vector3.SmoothDamp(
-                holdableItems[currentItemIndex].holder.transform.position,
+            holdableItems[data.currentItemIndex].holder.transform.position = Vector3.SmoothDamp(
+                holdableItems[data.currentItemIndex].holder.transform.position,
                 targetPosition,
                 ref positionVelocity,
                 positionSpeed * Time.deltaTime
@@ -138,8 +137,8 @@ namespace Akkerman.FPS
             Vector3 targetEuler = targetRotation.eulerAngles + rotationOffset;
             targetRotation = Quaternion.Euler(targetEuler);
 
-            holdableItems[currentItemIndex].holder.transform.rotation = QuaternionUtil.SmoothDamp(
-                holdableItems[currentItemIndex].holder.transform.rotation,
+            holdableItems[data.currentItemIndex].holder.transform.rotation = QuaternionUtil.SmoothDamp(
+                holdableItems[data.currentItemIndex].holder.transform.rotation,
                 targetRotation,
                 ref rotationVelocity,
                 rotationSpeed * Time.deltaTime

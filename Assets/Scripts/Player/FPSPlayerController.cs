@@ -117,7 +117,7 @@ namespace Akkerman.FPS
             }
             else if (!isGrounded)
             {
-                characterController.stepOffset = 0;
+                characterController.stepOffset = 1;
             }
         }
 
@@ -132,7 +132,7 @@ namespace Akkerman.FPS
             }
             else if (!isGrounded)
             {
-                characterController.stepOffset = 0;
+                characterController.stepOffset = 1;
             }
 
             float horizontal = Input.GetAxis("Horizontal");

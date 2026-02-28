@@ -21,6 +21,8 @@ namespace Akkerman.FPS
 
         public void TakeDamage(int damage)
         {
+            if (Player.Instance.IsDead) return;
+            
             currentHealth -= damage;
             if (currentHealth <= 0 )
             {

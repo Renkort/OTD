@@ -22,6 +22,9 @@ namespace Akkerman.SaveSystem
         public bool CanLookAround;
         public bool UsePhysics;
         public bool IsDead;
+        public bool IsSliding;
+        public bool IsDashing;
+
 
         // [ UI ]
         public bool ShowDebugInfo;

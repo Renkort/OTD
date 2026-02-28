@@ -89,6 +89,7 @@ namespace Akkerman.SaveSystem
 
         public void SaveGame()
         {
+            Debug.Log($"Saving game...");
             if (this.gameData == null && initializeDataIfNull)
             {
                 NewGame();
