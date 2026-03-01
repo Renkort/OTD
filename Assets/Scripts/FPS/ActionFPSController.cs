@@ -397,20 +397,25 @@ namespace Akkerman.FPS
                 PerformKick();
             
         }
+        private int kickCount = 0;
         private void PerformKick()
         {
             animator.SetTrigger("Kick");
+            Debug.Log($"DEBUG: Kick START [{kickCount}]");
             lastKickTime = Time.time;
             ShakeCameraRotation(0.3f, 8f);
-            RaycastHit hit;
             // if (Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, kickRange))
             Collider[] kickedObjects = Physics.OverlapSphere(kickOrigin.position, kickRange, dynamicLayer);
             if (kickedObjects.Length > 0)
             {
                 for (int i = 0; i < kickedObjects.Length; i++)
                 {
-                    Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, kickRange);
+                    // Ray ray = new Ray (playerCamera.position, playerCamera.forward);
+                    // Physics.Raycast(ray, out hit, kickRange);
                     Rigidbody rb = kickedObjects[i].GetComponent<Rigidbody>();
+                    Vector3 hitPoint = kickedObjects[i].ClosestPoint(kickOrigin.position);
+                    Vector3 hitDirection = (kickedObjects[i].transform.position - kickOrigin.position).normalized;
+                    Vector3 hitNormal = -hitDirection;
                     if (rb != null)
                     {
                         // rb.AddForce(playerCamera.forward * kickForce, ForceMode.Impulse);
@@ -418,19 +423,19 @@ namespace Akkerman.FPS
                         Debug.Log("Kicked object: " + kickedObjects[i].name);
                         GameObject kickPlace = Instantiate(
                             kickVFX,
-                            hit.point,
-                            Quaternion.LookRotation(hit.point)
+                            hitPoint,
+                            Quaternion.LookRotation(hitNormal)
                         );
                         kickPlace.transform.SetParent(kickedObjects[i].gameObject.transform);
                     }
                     IDamagable parentDamagable = kickedObjects[i].GetComponentInParent<IDamagable>();
                     if (kickedObjects[i].gameObject.TryGetComponent(out IDamagable damagable))
                     {
-                        damagable.TakeDamage(kickDamage);
+                        damagable.TakeDamage(kickDamage, hitPoint, hitNormal, hitDirection);
                     }
                     else if (parentDamagable != null)
                     {
-                        parentDamagable.TakeDamage(kickDamage);
+                        parentDamagable.TakeDamage(kickDamage, hitPoint, hitNormal, hitDirection);
                     }
                 }
             }

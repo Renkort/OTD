@@ -38,7 +38,7 @@ namespace Akkerman.FPS
             }
             else
             {
-                base.OnHit(collision);
+                base.OnHit(collision, velocity.normalized);
             }
         }
 

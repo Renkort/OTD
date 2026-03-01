@@ -16,6 +16,7 @@ namespace Akkerman.FPS.Usables
         [SerializeField] private float explosionForce = 1600f;
         [SerializeField] private GameObject explodeEffect;
         [SerializeField] private float throwForce = 10f;
+        [SerializeField] private LayerMask damageableLayer;
         private float forceMultiplier = 0f;
         private float forceMultiplierLimit = 5f;
         public float ForceModifierLimit => forceMultiplierLimit;
@@ -99,41 +100,45 @@ namespace Akkerman.FPS.Usables
 
         private void ExplodeEffect()
         {
-            GameObject explosionEffect = Instantiate(explodeEffect, transform.position, explodeEffect.transform.rotation);// change rotation
-            Collider[] colliders = Physics.OverlapSphere(transform.position, damageRadius);
+            GameObject explosionEffect = Instantiate(explodeEffect, transform.position, explodeEffect.transform.rotation);
             Player.Instance.FpsController.ShakeCamera(0.1f, 0.1f);
-            foreach (Collider objectInRange in colliders)
+            
+            Collider[] colliders = Physics.OverlapSphere(transform.position, damageRadius, damageableLayer);
+            foreach (Collider collider in colliders)
             {
-                Rigidbody rb = objectInRange.GetComponent<Rigidbody>();
+                Rigidbody rb = collider.attachedRigidbody; // faster than GetComponent
+                Vector3 hitDirection = (collider.transform.position - transform.position).normalized;
+                float distance = Vector3.Distance(transform.position, collider.transform.position);
+                float forceFalloff =  Mathf.Pow(1f - distance / damageRadius, 2f); // квадратичный спад урона; // [0, 1] 
+
                 if (rb != null)
                 {
-                    Debug.Log($"Detected object name: {objectInRange.gameObject.name}");
-                    //rb.AddExplosionForce(explosionForce, transform.position, damageRadius);
-                    Vector3 direction = -(transform.position - objectInRange.gameObject.transform.position);
-                    direction.Normalize();
-                    rb.AddForce(direction * explosionForce, ForceMode.Impulse);
+                    Debug.Log($"Detected object name: {collider.gameObject.name}");
+                    //rb.AddExplosionForce(explosionForce, transform.position, damageRadius, 1f);
+                    rb.AddForce(hitDirection * explosionForce * forceFalloff, ForceMode.Impulse);
                 }
-                if (objectInRange is CharacterController)
+                if (collider is CharacterController)
                     continue;
-                // enemy takes damage over here
-                IDamagable parentDamagable = objectInRange.GetComponentInParent<IDamagable>();
-                if (objectInRange.TryGetComponent<IDamagable>(out IDamagable damagable))
+                float finalDamage = damage * forceFalloff;
+
+                IDamagable parentDamagable = collider.GetComponentInParent<IDamagable>();
+                Vector3 hitPoint = collider.ClosestPoint(transform.position);
+                Vector3 hitNormal = -hitDirection; // from center to outer
+                if (collider.TryGetComponent<IDamagable>(out IDamagable damagable))
                 {
-                    float distance = Vector3.Distance(objectInRange.transform.position, transform.position);
-                    Debug.Log($"DEGUG: EXPLOSION DISTANCE TO OBJECT: {objectInRange.gameObject.name}:{distance}");
-                    int finalDamage = damage - (int)distance;
-                    damagable.TakeDamage(finalDamage);
+                    Debug.Log($"DEGUG: EXPLOSION DISTANCE TO OBJECT: {collider.gameObject.name}:{distance}");
+                    damagable.TakeDamage(finalDamage, hitPoint, hitNormal, hitDirection);
+                    continue;
                 }
                 else if (parentDamagable != null)
                 {
-                    float distance = Vector3.Distance(objectInRange.transform.position, transform.position);
-                    int finalDamage = damage - (int)distance;
-                    Debug.Log($"DEGUG: EXPLOSION DISTANCE TO OBJECT: {objectInRange.gameObject.name}:{distance}");
+                    Debug.Log($"DEGUG: EXPLOSION DISTANCE TO OBJECT: {collider.gameObject.name}:{distance}");
                     Debug.Log($"DEGUG: EXPLOSION COMPONENT IN PARENT");
-                    parentDamagable.TakeDamage(finalDamage);
+                    parentDamagable.TakeDamage(finalDamage, hitPoint, hitNormal, hitDirection);
                 }
             }
             Destroy(explosionEffect, explosionEffect.GetComponent<ParticleSystem>().main.duration);
+            Destroy(gameObject);
         }
         public override void UpdateUI()
         {

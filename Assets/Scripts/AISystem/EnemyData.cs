@@ -13,7 +13,7 @@ namespace Akkerman.AI
         public float attackRange = 5f;
 
         [Header("HEALTH")]
-        public int maxHealth = 40;
+        public float maxHealth = 40.0f;
         public ParticleSystem bloodSplash;
 
         [Header("ATTACK")]

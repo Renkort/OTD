@@ -58,7 +58,7 @@ namespace Akkerman.UI
             }
         }
 
-        public void SetHealthUI(int currentHealth)
+        public void SetHealthUI(float currentHealth)
         {
             if (currentHealth < 0)
                 currentHealth = 0;

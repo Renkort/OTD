@@ -35,12 +35,12 @@ namespace Akkerman.FPS
 
         protected abstract void Move();
 
-        protected virtual void OnHit(Collider other, Vector3 hitPosition, Vector3 hitNormal)
+        protected virtual void OnHit(Collider other, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection)
         {
             IDamagable damagable = other.GetComponentInParent<IDamagable>();
             if (damagable != null)
             {
-                damagable.TakeDamage(damage);
+                damagable.TakeDamage(damage, hitPosition, hitNormal, hitDirection);
             }
             bool hasEffect = false;
             foreach (var effect in impactEffects)
@@ -57,12 +57,13 @@ namespace Akkerman.FPS
 
             Destroy(gameObject, 0.1f);
         }
-        protected virtual void OnHit(Collision collision)
+        protected virtual void OnHit(Collision collision, Vector3 hitDirection)
         {
             IDamagable damagable = collision.collider.GetComponentInParent<IDamagable>();
             if (damagable != null)
             {
-                damagable.TakeDamage(damage);
+                damagable.TakeDamage(damage, collision.contacts[0].point, collision.contacts[0].normal,
+                hitDirection);
             }
 
             bool hasEffect = false;
@@ -121,6 +122,6 @@ namespace Akkerman.FPS
 
     public interface IDamagable
     {
-        void TakeDamage(int damage);
+        void TakeDamage(float damage, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection);
     }
 }

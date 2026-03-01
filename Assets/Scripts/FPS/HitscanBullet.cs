@@ -20,11 +20,13 @@ namespace Akkerman.FPS
 
             trailTimer = trailLifetime;
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward, out hit, maxDistance))
+            Ray ray = new Ray(transform.position, transform.forward);
+            // if (Physics.Raycast(transform.position, transform.forward, out hit, maxDistance))
+            if (Physics.Raycast(ray, out hit, maxDistance))
             {
                 hasHit = true;
                 hitPoint = hit.point;
-                OnHit(hit.collider, hitPoint, hit.normal);
+                OnHit(hit.collider, hitPoint, hit.normal, ray.direction.normalized);
             }
             else
             {

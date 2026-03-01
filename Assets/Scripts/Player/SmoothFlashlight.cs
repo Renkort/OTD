@@ -73,7 +73,6 @@ namespace Akkerman.FPS.Usables
 
         public void SaveData(ref GameData data)
         {
-            Debug.Log($"Is Flashlight enabled: {flashlightLight.enabled}");
             data.IsFlashlightActive = flashlightLight.enabled;
         }
 

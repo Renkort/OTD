@@ -22,8 +22,8 @@ namespace Akkerman.AI
         [SerializeField] private int damage = 40;
         // [SerializeField] private float laserDuration = 0.2f;
         [SerializeField] private bool canTakeDamage = true;
-        [SerializeField] private int currentHealth;
-        [SerializeField] private int maxHealth = 80;
+        [SerializeField] private float currentHealth;
+        [SerializeField] private float maxHealth = 80.0f;
         [SerializeField] private GameObject explosionPrefab;
         [SerializeField] private GameObject hitVFXPrefab;
 
@@ -119,21 +119,6 @@ namespace Akkerman.AI
             laserLine.enabled = isActive;
         }
 
-        public void TakeDamage(int damage)
-        {
-            if (!canTakeDamage)
-                return;
-            currentHealth -= damage;
-            GameObject effect = Instantiate(hitVFXPrefab, transform.position, Quaternion.identity);
-
-            Destroy(effect, 0.2f);
-            if (currentHealth <= 0)
-            {
-                currentHealth = 0;
-                Die();
-            }
-        }
-
         private void Die()
         {
             GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity, transform);
@@ -190,13 +175,13 @@ namespace Akkerman.AI
             // 2. Визуальный эффект выстрела (опционально)
             // Здесь можно добавить Particle System или вспышку
 
-            // 3. Логика нанесения урона/выстрела
             RaycastHit hit;
-            if (Physics.Raycast(muzzle.position, muzzle.forward, out hit, visionRange))
+            Ray ray = new Ray(muzzle.position, muzzle.forward);
+            if (Physics.Raycast(ray, out hit, visionRange))
             {
                 if (hit.collider.tag == playerTag)
                 {
-                    player.GetComponent<PlayerHealth>().TakeDamage(damage);
+                    player.GetComponent<PlayerHealth>().TakeDamage(damage, hit.point, hit.normal, ray.direction.normalized);
                 }
             }
 
@@ -262,6 +247,21 @@ namespace Akkerman.AI
             Gizmos.color = Color.green;
             if (muzzle != null && idleTargetPoint != null)
                 Gizmos.DrawLine(muzzle.position, idleTargetPoint.position);
+        }
+
+        public void TakeDamage(float damage, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection)
+        {
+            if (!canTakeDamage)
+                return;
+            currentHealth -= damage;
+            GameObject effect = Instantiate(hitVFXPrefab, transform.position, Quaternion.identity);
+
+            Destroy(effect, 0.2f);
+            if (currentHealth <= 0)
+            {
+                currentHealth = 0;
+                Die();
+            }
         }
     }
 }

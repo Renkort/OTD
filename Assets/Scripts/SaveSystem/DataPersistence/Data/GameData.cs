@@ -17,6 +17,8 @@ namespace Akkerman.SaveSystem
         public Vector3 PlayerPosition;
         public Vector3 PlayerRotation;
         public Vector3 CameraRotation;
+
+        public float PlayerCurrentHealth;
         public bool IsFlashlightActive;
         public bool CanMove;
         public bool CanLookAround;

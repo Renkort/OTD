@@ -1,13 +1,14 @@
+using Akkerman.SaveSystem;
 using Akkerman.UI;
 using UnityEngine;
 
 namespace Akkerman.FPS
 {
     
-    public class PlayerHealth : MonoBehaviour, IDamagable
+    public class PlayerHealth : MonoBehaviour, IDamagable, IDataPersistance
     {
-        [SerializeField] private int maxHealth = 100;
-        private int currentHealth;
+        [SerializeField] private float maxHealth = 100.0f;
+        private float currentHealth;
 
         void Awake()
         {
@@ -19,10 +20,22 @@ namespace Akkerman.FPS
             GameUI.Instance.IngameUI.SetHealthUI(currentHealth);
         }
 
-        public void TakeDamage(int damage)
+        public void LoadData(GameData data)
+        {
+            currentHealth = data.PlayerCurrentHealth;
+
+            GameUI.Instance.IngameUI.SetHealthUI(currentHealth);
+        }
+
+        public void SaveData(ref GameData data)
+        {
+            data.PlayerCurrentHealth = currentHealth;
+        }
+
+        public void TakeDamage(float damage, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection)
         {
             if (Player.Instance.IsDead) return;
-            
+
             currentHealth -= damage;
             if (currentHealth <= 0 )
             {

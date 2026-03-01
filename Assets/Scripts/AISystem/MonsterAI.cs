@@ -20,7 +20,7 @@ namespace Akkerman.AI
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private Rigidbody rb; // mass = 5
         [SerializeField] private Animator animator;
-        private int currentHealth;
+        private float currentHealth;
         private float attackTimer;
         private bool isJumping = false;
         [SerializeField] private bool grounded;
@@ -150,11 +150,7 @@ namespace Akkerman.AI
 
         void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Player"))
-            {
-                PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
-                if (playerHealth != null) playerHealth.TakeDamage(enemyData.damage);
-            }
+            // player takes damage here
         }
 
         void OnCollisionEnter(Collision collision)
@@ -164,9 +160,15 @@ namespace Akkerman.AI
                 CancelInvoke(nameof(ResetJump));
                 ResetJump();
             }
+
+            if (collision.collider.CompareTag("Player"))
+            {
+                PlayerHealth playerHealth = collision.collider.GetComponent<PlayerHealth>();
+                if (playerHealth != null) playerHealth.TakeDamage(enemyData.damage, collision.contacts[0].point, collision.contacts[0].normal, rb.linearVelocity.normalized);
+            }
         }
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(float damage, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection)
         {
             currentHealth -= damage;
             if (currentHealth <= 0)
