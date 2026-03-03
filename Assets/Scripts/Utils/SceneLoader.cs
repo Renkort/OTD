@@ -24,6 +24,9 @@ namespace Akkerman.Utils
 
         public void LoadScene(string sceneName)
         {
+            
+            if (loadingScreen != null)
+                loadingScreen.SetActive(true);
             StartCoroutine(LoadSceneAsync(sceneName));
         }
 
@@ -37,8 +40,6 @@ namespace Akkerman.Utils
 
         IEnumerator LoadSceneAsync(string sceneName)
         {
-            if (loadingScreen != null)
-                loadingScreen.SetActive(true);
 
             Akkerman.FPS.Player.Instance.FreezePlayerActions(true, true);
             // Time.timeScale = 0f;

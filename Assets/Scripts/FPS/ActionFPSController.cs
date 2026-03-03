@@ -59,7 +59,7 @@ namespace Akkerman.FPS
 
         [Header("Audio")]
         [SerializeField] private SurfaceFootsteps[] footstepSounds;
-        [SerializeField] private float footstepInterval = 0.5f;
+        [SerializeField] private float footstepInterval = 0.3f;
         [SerializeField] private Transform footstepOrigin;
         [SerializeField] private float raycastDistance = 0.2f;
         [SerializeField] private LayerMask groundLayer;
@@ -402,6 +402,7 @@ namespace Akkerman.FPS
         {
             animator.SetTrigger("Kick");
             Debug.Log($"DEBUG: Kick START [{kickCount}]");
+            kickCount++;
             lastKickTime = Time.time;
             ShakeCameraRotation(0.3f, 8f);
             // if (Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, kickRange))

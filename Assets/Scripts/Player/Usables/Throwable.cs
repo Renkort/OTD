@@ -137,7 +137,7 @@ namespace Akkerman.FPS.Usables
                     parentDamagable.TakeDamage(finalDamage, hitPoint, hitNormal, hitDirection);
                 }
             }
-            Destroy(explosionEffect, explosionEffect.GetComponent<ParticleSystem>().main.duration);
+            Destroy(explosionEffect, explosionEffect.GetComponent<ParticleSystem>().main.duration - 0.1f);
             Destroy(gameObject);
         }
         public override void UpdateUI()

@@ -62,7 +62,7 @@ namespace Akkerman.UI
         {
             if (currentHealth < 0)
                 currentHealth = 0;
-            playerHealthDisplay.text = "+" + currentHealth.ToString();
+            playerHealthDisplay.text = "+" + Mathf.RoundToInt(currentHealth).ToString();
             if (currentHealth <= lowHealthBound)
             {
                 defaultUIColor = playerHealthDisplay.color;

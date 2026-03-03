@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Akkerman.FPS;
-using NUnit.Framework;
-
 namespace Akkerman.AI
 {
     public class MonsterAI : MonoBehaviour, IDamagable
@@ -13,6 +11,8 @@ namespace Akkerman.AI
         [SerializeField] private EnemyData enemyData;
         [SerializeField] private float jumpForceHorizontal = 20f;
         [SerializeField] private float jumpForceVertical = 35f;
+
+        [SerializeField] private float damageForceImpact = 100f;
         private bool isDead = false;
 
         [Header("COMPONENTS")]
@@ -171,6 +171,8 @@ namespace Akkerman.AI
         public void TakeDamage(float damage, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection)
         {
             currentHealth -= damage;
+            float forceFalloff = Mathf.Pow(1f - rb.mass / damageForceImpact, 2f);
+            rb.AddForce(hitDirection * damageForceImpact * forceFalloff, ForceMode.Impulse);
             if (currentHealth <= 0)
             {
                 currentHealth = 0;
