@@ -5,16 +5,23 @@ namespace Akkerman.AI
     public class FlyingMovement : MonoBehaviour, IMovement
     {
         private float flySpeed;
-        private float height = 5f;
+        private float flyHeight;
+        private float attackRange;
+        Enemy enemy;
 
-        public void Initialize(float flySpeed)
+        public void Initialize(EnemyConfig config)
         {
-            this.flySpeed = flySpeed;
-            transform.position = new Vector3(transform.position.x, height, transform.position.z);
+            flySpeed = config.flySpeed;
+            flyHeight = config.flyHeight;
+            attackRange = config.attackRange;
+
+            transform.position = new Vector3(transform.position.x, flyHeight, transform.position.z);
+
+            enemy = GetComponent<Enemy>();
         }
         public void MoveTo(Vector3 target)
         {
-            target.y = height;
+            target.y = flyHeight;
             Vector3 direction = (target - transform.position).normalized;
             transform.position += direction * flySpeed * Time.deltaTime;
 
@@ -27,12 +34,18 @@ namespace Akkerman.AI
             }
 
             transform.LookAt(target);
+
+            enemy.SetMovementSpeed(GetNormalizedSpeed());
+            if (Vector3.Distance(transform.position, target) < attackRange)
+                enemy.SetAIState(2); // hover/attack state
         }
 
         public void Jump(Vector3 direction)
         {
             throw new System.NotImplementedException();
         }
+
+        public float GetNormalizedSpeed() => flySpeed > 0 ? 1f : 0f;
 
     }
 }

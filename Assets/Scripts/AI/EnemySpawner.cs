@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Akkerman.AI
@@ -6,11 +7,12 @@ namespace Akkerman.AI
     {
         [SerializeField] private GameObject enemyPrefab; // one for all enemies
         [SerializeField] private EnemyConfig[] allEnemyConfigs;
-        [SerializeField] private float spawnRandomRange = 3f;
+        [SerializeField] private float spawnRandomRange = 0f;
+        [SerializeField] private Utils.KeyValuePair<EnemyConfig, int>[] enemiesToSpawn;
 
         void Start()
         {
-            Spawn("BoxerConfig"); // for tests
+            TestSpawn();
         }
 
         public void Spawn(string configName)
@@ -19,7 +21,19 @@ namespace Akkerman.AI
             if (config == null) return;
 
             GameObject enemyGO = Instantiate(enemyPrefab, Random.insideUnitSphere * spawnRandomRange + transform.position, Quaternion.identity);
+            enemyGO.transform.SetParent(gameObject.transform);
             enemyGO.GetComponent<Enemy>().Initialize(config);
+        }
+
+        private void TestSpawn()
+        {
+            for (int i = 0; i < enemiesToSpawn.Length; i++)
+            {
+                for (int j = 0; j < enemiesToSpawn[i].Value; j++)
+                {
+                   Spawn(enemiesToSpawn[i].Key.name); 
+                }
+            }
         }
 
         void OnDrawGizmosSelected()

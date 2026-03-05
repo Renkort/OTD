@@ -122,6 +122,7 @@ namespace Akkerman.FPS
 
     public interface IDamagable
     {
+        void TakeDamage(float damage);
         void TakeDamage(float damage, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection);
     }
 }

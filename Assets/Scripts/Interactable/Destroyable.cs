@@ -7,9 +7,16 @@ namespace Akkerman.InteractionSystem
     {
         public UnityEvent OnTakeDamage;
 
-        public void TakeDamage(float damage, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection)
+        public void TakeDamage(float damage)
         {
             OnTakeDamage?.Invoke();
         }
+
+        public void TakeDamage(float damage, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection)
+        {
+            TakeDamage(damage);
+        }
+
+        
     }
 }

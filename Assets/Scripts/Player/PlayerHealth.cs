@@ -32,7 +32,7 @@ namespace Akkerman.FPS
             data.PlayerCurrentHealth = currentHealth;
         }
 
-        public void TakeDamage(float damage, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection)
+        public void TakeDamage(float damage)
         {
             if (Player.Instance.IsDead) return;
 
@@ -45,5 +45,11 @@ namespace Akkerman.FPS
             
             GameUI.Instance.IngameUI.SetHealthUI(currentHealth);
         }
+
+        public void TakeDamage(float damage, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection)
+        {
+            TakeDamage(damage);
+        }
+        
     }
 }

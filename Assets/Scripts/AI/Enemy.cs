@@ -1,6 +1,7 @@
 using Akkerman.FPS;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
 
 namespace Akkerman.AI
 {
@@ -8,7 +9,7 @@ namespace Akkerman.AI
     {
         [SerializeField] private EnemyConfig config;
         [SerializeField] private Transform player;
-        [SerializeField] private Transform modelParent;
+        private Transform model;
 
         public EnemyConfig Config => config;
         public Transform Player => player;
@@ -18,6 +19,7 @@ namespace Akkerman.AI
         private IAIBrain brain;
         private SensorySystem perceprion;
         private Health health;
+        private Animator animator;
 
         void Awake()
         {
@@ -39,11 +41,13 @@ namespace Akkerman.AI
             brain = gameObject.AddComponent<SimpleFSM>();
             ((SimpleFSM)brain).Initialize(this, config.aiType);
 
-            health.OnDeath += () => Destroy(gameObject); // or pool
-            
-            Instantiate(config.modelPrefab, modelParent);
+            health.OnDeath += Die; // TODO: pool
 
+            model = Instantiate(config.modelPrefab, transform).transform;
 
+            animator = model.GetComponent<Animator>();
+            if (animator == null) animator = model.gameObject.AddComponent<Animator>();
+            animator.runtimeAnimatorController = config.animatorController;
         }
 
         private void SetupMovement()
@@ -52,20 +56,22 @@ namespace Akkerman.AI
             {
                 case EnemyConfig.MovementType.Ground:
                     var agent = gameObject.AddComponent<NavMeshAgent>();
-                    agent.speed = config.speed;
+                    var rb = gameObject.GetComponent<Rigidbody>() ?? gameObject.AddComponent<Rigidbody>();
                     movement = gameObject.AddComponent<GroundMovement>();
-                    ((GroundMovement)movement).Initialize(agent, config.speed);
+                    ((GroundMovement)movement).Initialize(agent, rb, config);
                     break;
                 case EnemyConfig.MovementType.Flying:
                     movement = gameObject.AddComponent<FlyingMovement>();
-                    ((FlyingMovement)movement).Initialize(config.flySpeed);
+                    ((FlyingMovement)movement).Initialize(config);
                     break;
                 case EnemyConfig.MovementType.Jumping:
-                    var rb = gameObject.GetComponent<Rigidbody>() ?? gameObject.AddComponent<Rigidbody>();
-                    var groundMove = gameObject.AddComponent<GroundMovement>();
-                    groundMove.Initialize(null, config.speed); // TODO: use nav mesh agent
+                    var jumpAgent = gameObject.AddComponent<NavMeshAgent>();
+                    // var groundMove = gameObject.AddComponent<GroundMovement>();
+                    // groundMove.Initialize(jumpAgent, config.speed);
                     movement = gameObject.AddComponent<JumpingMovement>();
-                    ((JumpingMovement)movement).Initialize(rb, config.jumpForce);
+                    var rbJump = gameObject.GetComponent<Rigidbody>() ?? gameObject.AddComponent<Rigidbody>();
+                    ((JumpingMovement)movement).Initialize(jumpAgent, rbJump, config);
+                    ((JumpingMovement)movement).Initialize( config);
                     break;
             }
         }
@@ -73,10 +79,26 @@ namespace Akkerman.AI
         private void Update()
         {
             if (health.IsDead) return;
+
             bool canSeePlayer = perceprion.CanSeeTarget(player);
-            Debug.Log($"DEBUG: Can see player: {canSeePlayer}");
+            // Debug.Log($"DEBUG: Can see player: {canSeePlayer}");
             brain?.UpdateAI(canSeePlayer ? player.position : Vector3.zero);
             movement?.MoveTo(brain?.GetTargetPosition() ?? transform.position);
+
+            if (movement is GroundMovement ground)
+                SetMovementSpeed(ground.GetNormalizedSpeed());
+
+        }
+
+        public void SetMovementSpeed(float speed) => animator.SetFloat("Speed", speed, 0.1f, 0.1f); // normalized speed
+        public void SetAIState(int stateId) => animator.SetInteger("State", stateId); // 0=Patrol, 1=Chase, 2=Attack
+        public void TriggerAction(string trigger) => animator.SetTrigger(trigger);
+        public void IsInTransition() => animator.IsInTransition(0);
+
+        public void Die()
+        {
+            animator.SetTrigger("Death");
+            Destroy(gameObject, 3.0f);
         }
 
         private void OnDrawGizmos()

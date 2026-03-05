@@ -187,5 +187,10 @@ namespace Akkerman.AI
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(gameObject.transform.position, enemyData.chaseRange);
         }
+
+        public void TakeDamage(float damage)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

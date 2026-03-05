@@ -23,10 +23,6 @@ namespace Akkerman.AI
                 case State.Patrol:
                     if (playerPosition.HasValue && Vector3.Distance(transform.position, playerPosition.Value) < enemy.Config.detectionRange)
                         currentState = State.Chase;
-                    float distToPlayer = Vector3.Distance(transform.position, playerPosition.Value);
-                    // Debug.Log($"DEBUG: Dist to Player: {distToPlayer}");
-                    // Debug.Log($"DEBUG: Dist less than detect range: {distToPlayer < enemy.Config.detectionRange}");
-                    // Debug.Log($"DEBUG: Player pos HasValue: {playerPosition.HasValue}");
                     break;
                 case State.Chase:
                     if (!playerPosition.HasValue) currentState = State.Patrol;
@@ -39,7 +35,11 @@ namespace Akkerman.AI
 
                     // attack animation, VFX, Player damage
                     break;
+
             }
+
+            enemy.SetAIState((int)currentState);
+            if (currentState == State.Attack) enemy.TriggerAction("Attack");
         }
 
         public Vector3? GetTargetPosition()

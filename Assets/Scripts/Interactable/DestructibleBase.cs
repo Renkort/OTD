@@ -30,9 +30,15 @@ namespace Akkerman.InteractionSystem
             }
         }
 
-        public virtual void TakeDamage(float damage, Vector3 hitPoint, Vector3 hitNormal, Vector3 hitDirection)
+        public void TakeDamage(float damage)
         {
             currentHealth -= damage;
+        }
+
+        public virtual void TakeDamage(float damage, Vector3 hitPoint, Vector3 hitNormal, Vector3 hitDirection)
+        {
+            TakeDamage(damage);
+            
             if (currentHealth <= 0)
             {
                 DestroyObject(hitPoint, hitNormal, hitDirection);
