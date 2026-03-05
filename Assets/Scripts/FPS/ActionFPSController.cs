@@ -109,7 +109,7 @@ namespace Akkerman.FPS
             yRotation = gameObject.transform.localRotation.eulerAngles.y;
 
             if (PlayerPrefs.HasKey("masterSensitivity"))
-                mouseSensitivity = 25 * PlayerPrefs.GetFloat("masterSensitivity");
+                mouseSensitivity = PlayerPrefs.GetFloat("masterSensitivity");
         }
 
         private void Update()
@@ -215,21 +215,12 @@ namespace Akkerman.FPS
         {
             if (!canLookAround)
                 return;
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
             xRotation -= mouseY;
             xRotation = Mathf.Clamp(xRotation, -90f, 90f);
             yRotation += mouseX;
-
-
-            // Quaternion targetRotation = Quaternion.Euler(xRotation, 0f, tilt);
-            // playerCamera.localRotation = Quaternion.Lerp(
-            //     playerCamera.localRotation, 
-            //     targetRotation, 
-            //     tiltSpeed * Time.deltaTime
-            // );
-            // transform.Rotate(Vector3.up * mouseX);
 
             playerCamera.localRotation = Quaternion.Euler(xRotation + xShakeRotation, 0, 0);
             transform.localRotation = Quaternion.Euler(0, yRotation + yShakeRotation, 0);
