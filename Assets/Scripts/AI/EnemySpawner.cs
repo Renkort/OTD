@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Akkerman.AI
@@ -6,7 +5,6 @@ namespace Akkerman.AI
     public class EnemySpawner : MonoBehaviour
     {
         [SerializeField] private GameObject enemyPrefab; // one for all enemies
-        [SerializeField] private EnemyConfig[] allEnemyConfigs;
         [SerializeField] private float spawnRandomRange = 0f;
         [SerializeField] private Utils.KeyValuePair<EnemyConfig, int>[] enemiesToSpawn;
 
@@ -15,12 +13,11 @@ namespace Akkerman.AI
             TestSpawn();
         }
 
-        public void Spawn(string configName)
+        public void Spawn(EnemyConfig config)
         {
-            EnemyConfig config = System.Array.Find(allEnemyConfigs, c => c.name == configName);
-            if (config == null) return;
-
             GameObject enemyGO = Instantiate(enemyPrefab, Random.insideUnitSphere * spawnRandomRange + transform.position, Quaternion.identity);
+            string enemyName = config.modelPrefab.name;
+            enemyGO.name = enemyName.Remove(enemyName.IndexOf("Model"));
             enemyGO.transform.SetParent(gameObject.transform);
             enemyGO.GetComponent<Enemy>().Initialize(config);
         }
@@ -31,7 +28,7 @@ namespace Akkerman.AI
             {
                 for (int j = 0; j < enemiesToSpawn[i].Value; j++)
                 {
-                   Spawn(enemiesToSpawn[i].Key.name); 
+                   Spawn(enemiesToSpawn[i].Key); 
                 }
             }
         }

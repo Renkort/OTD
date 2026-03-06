@@ -85,6 +85,11 @@ namespace Akkerman.FPS.Usables
     {
         public static Quaternion SmoothDamp(Quaternion current, Quaternion target, ref Vector3 velocity, float smoothTime)
         {
+            if (Time.deltaTime <= 0.00001f)
+                return current;
+            if (smoothTime <= 0.00001f)
+                return target;
+                
             Vector3 c = current.eulerAngles;
             Vector3 t = target.eulerAngles;
             return Quaternion.Euler(
