@@ -116,7 +116,7 @@ namespace Akkerman.SaveSystem
 
         private List<IDataPersistance> FindAllDataPersistanceObjects()
         {
-            IEnumerable<IDataPersistance> dataPersistanceObjects = FindObjectsOfType<MonoBehaviour>()
+            IEnumerable<IDataPersistance> dataPersistanceObjects = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
             .OfType<IDataPersistance>();
 
             return new List<IDataPersistance>(dataPersistanceObjects);

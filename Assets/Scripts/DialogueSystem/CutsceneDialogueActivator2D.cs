@@ -21,7 +21,7 @@ namespace Akkerman.DialogueSystem
             yield return new WaitForSeconds(0.5f);
 
             isPlayed = true;
-            FPS.Player player = FindObjectOfType<FPS.Player>();
+            FPS.Player player = FindFirstObjectByType<FPS.Player>();
             //player.Interactable = this;
             Interact(player);
         }

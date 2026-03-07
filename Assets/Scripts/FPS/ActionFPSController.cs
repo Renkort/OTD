@@ -53,7 +53,7 @@ namespace Akkerman.FPS
         [SerializeField] private float walkBobAmount = 0.05f;
         [SerializeField] private float runBobSpeed = 18f;
         [SerializeField] private float runBobAmount = 0.1f;
-        [SerializeField] private float landBobAmount = 0.02f;
+        // [SerializeField] private float landBobAmount = 0.02f;
         private float defaultCameraY;
         private float headBobTimer;
 

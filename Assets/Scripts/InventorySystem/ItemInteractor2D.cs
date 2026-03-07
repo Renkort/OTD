@@ -16,7 +16,7 @@ namespace Akkerman.InventorySystem
 
         private void Start()
         {
-            inventory = FindObjectOfType<InventoryUI>();
+            inventory = FindFirstObjectByType<InventoryUI>();
             interactIcon.SetActive(false);
         }
 

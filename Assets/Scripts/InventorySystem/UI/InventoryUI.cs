@@ -43,7 +43,7 @@ namespace Akkerman.InventorySystem
             }
             mouseFollower.Toggle(false);
             inventoryDescription.ResetDescription();
-            player = FindObjectOfType<FPS.FPSPlayerController>().gameObject;
+            player = FindFirstObjectByType<FPS.FPSPlayerController>().gameObject;
         }
         private void Start()
         {

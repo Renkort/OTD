@@ -34,8 +34,6 @@ namespace Akkerman.FPS
         [SerializeField] private GameObject physicsBulletPrefab;
         [SerializeField] private bool usePhysicsBullets = true;
         [SerializeField] private Transform bulletSpawn;
-        [SerializeField] private float bulletVelocity = 100f;
-        [SerializeField] private float bulletPrefabLifeTime = 3f;
 
         [Header("Loading")]
         [SerializeField] private float reloadTime;

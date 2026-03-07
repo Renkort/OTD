@@ -23,14 +23,14 @@ namespace Akkerman.DialogueSystem
             yield return new WaitForSeconds(Player.StartFreezeTime + 0.05f);
 
             isPlayed = true;
-            FPS.Player player = FindObjectOfType<FPS.Player>();
+            Player player = FindFirstObjectByType<Player>();
             Interact(player);
         }
         private void OnTriggerEnter(Collider collision)
         {
             if (isPlayed)
                 return;
-            if (collision.CompareTag("Player") && collision.TryGetComponent(out FPS.Player player))
+            if (collision.CompareTag("Player") && collision.TryGetComponent(out Player player))
             {
                 isPlayed = true;
                 player.CurrentInteractable = this;
