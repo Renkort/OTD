@@ -19,7 +19,14 @@ namespace Akkerman.AI
         public float flySpeed = 8f;
         public float flyHeight = 5f;
         public float detectionRange = 10f;
+
+        [Header("COMBAT")]
+        public CombatType combatType = CombatType.Melee;
+        public float attackDamage = 25f;
         public float attackRange = 2f;
+        public float attackCooldown = 1.5f;
+        public GameObject projectilePrefab;
+        public float projectileSpeed;
 
         [Header("MODEL")]
         public GameObject modelPrefab;
@@ -31,5 +38,6 @@ namespace Akkerman.AI
 
         public enum MovementType { Ground, Flying, Jumping }
         public enum AIType { Aggressive, Scout, Defensive }
+        public enum CombatType { Melee, Projectile, JumpDamage, Turret }
     }
 }

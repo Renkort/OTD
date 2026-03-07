@@ -1,7 +1,6 @@
 using Akkerman.FPS;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UIElements;
 
 namespace Akkerman.AI
 {
@@ -16,6 +15,7 @@ namespace Akkerman.AI
 
         // components:
         private IMovement movement;
+        private ICombat combat;
         private IAIBrain brain;
         private SensorySystem perceprion;
         private Health health;
@@ -74,6 +74,21 @@ namespace Akkerman.AI
                     ((JumpingMovement)movement).Initialize( config);
                     break;
             }
+        }
+
+        private void SetupCombat()
+        {
+            switch (config.combatType)
+            {
+                case EnemyConfig.CombatType.Melee:
+                    break;
+                case EnemyConfig.CombatType.Projectile:
+                    break;
+                case EnemyConfig.CombatType.JumpDamage:
+                    break;
+            }
+            // if (combat != null)
+                // ((MonoBehaviour)combat).Initiazlize
         }
 
         private void Update()
