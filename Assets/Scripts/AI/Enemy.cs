@@ -8,10 +8,11 @@ namespace Akkerman.AI
     {
         [SerializeField] private EnemyConfig config;
         [SerializeField] private Transform player;
-        private Transform model;
+        private EnemyModel model;
 
         public EnemyConfig Config => config;
         public Transform Player => player;
+        public EnemyModel Model => model;
 
         // components:
         private IMovement movement;
@@ -33,19 +34,21 @@ namespace Akkerman.AI
             this.config = config;
             health = gameObject.AddComponent<Health>();
             health.Initialize(config.maxHealth);
+            health.OnDeath += Die; // TODO: pool
             perceprion = gameObject.AddComponent<SensorySystem>();
             perceprion.Initialize(config.detectionRange, LayerMask.GetMask("Player"));
 
             SetupMovement();
+            SetupCombat();
 
             brain = gameObject.AddComponent<SimpleFSM>();
             ((SimpleFSM)brain).Initialize(this, config.aiType);
 
-            health.OnDeath += Die; // TODO: pool
 
-            model = Instantiate(config.modelPrefab, transform).transform;
-
-            animator = model.GetComponent<Animator>();
+            model = Instantiate(config.modelPrefab, transform).GetComponent<EnemyModel>();
+            if (model == null)
+                Debug.LogError("ERROR: Null referece exception: No EnemyModel component");
+            animator = model.transform.GetComponent<Animator>();
             if (animator == null) animator = model.gameObject.AddComponent<Animator>();
             animator.runtimeAnimatorController = config.animatorController;
         }
@@ -81,10 +84,20 @@ namespace Akkerman.AI
             switch (config.combatType)
             {
                 case EnemyConfig.CombatType.Melee:
+                    combat = gameObject.AddComponent<MeleeAttack>();
+                    ((MeleeAttack)combat).Initialize(config, this);
                     break;
                 case EnemyConfig.CombatType.Projectile:
+                    combat = gameObject.AddComponent<ProjectileAttack>();
+                    ((ProjectileAttack)combat).Initialize(config, this);
                     break;
                 case EnemyConfig.CombatType.JumpDamage:
+                    combat = gameObject.AddComponent<JumpAttack>();
+                    ((JumpAttack)combat).Initialize(config, this);
+                    break;
+                case EnemyConfig.CombatType.Turret:
+                    combat = gameObject.AddComponent<TurretAttack>();
+                    ((TurretAttack)combat).Initialize(config, this);
                     break;
             }
             // if (combat != null)
@@ -97,18 +110,27 @@ namespace Akkerman.AI
 
             bool canSeePlayer = perceprion.CanSeeTarget(player);
             // Debug.Log($"DEBUG: Can see player: {canSeePlayer}");
-            brain?.UpdateAI(canSeePlayer ? player.position : Vector3.zero);
-            movement?.MoveTo(brain?.GetTargetPosition() ?? transform.position);
+            brain.UpdateAI(canSeePlayer ? player.position : Vector3.zero);
+            movement.MoveTo(brain?.GetTargetPosition() ?? transform.position);
 
             if (movement is GroundMovement ground)
                 SetMovementSpeed(ground.GetNormalizedSpeed());
 
+            combat.AttackUpdate(player.position);
+            
+            if (brain.GetCurrentState() == (int)SimpleFSM.State.Attack && combat.CanAttack())
+            {
+                combat.Attack(player.position);
+                TriggerAction("Attack");
+            }
         }
 
         public void SetMovementSpeed(float speed) => animator.SetFloat("Speed", speed, 0.1f, 0.1f); // normalized speed
-        public void SetAIState(int stateId) => animator.SetInteger("State", stateId); // 0=Patrol, 1=Chase, 2=Attack
+        public void SetAnimAIState(int stateId) => animator.SetInteger("State", stateId); // 0=Patrol, 1=Chase, 2=Attack
         public void TriggerAction(string trigger) => animator.SetTrigger(trigger);
         public void IsInTransition() => animator.IsInTransition(0);
+        public ICombat GetCombat() => combat;
+        public float GetAttackRange() => combat?.GetRange() ?? config.attackRange;
 
         public void Die()
         {

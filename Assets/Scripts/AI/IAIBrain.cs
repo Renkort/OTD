@@ -6,6 +6,7 @@ namespace Akkerman.AI
     {
         void UpdateAI(Vector3? playerPosition);
         Vector3? GetTargetPosition();
+        int GetCurrentState();
     }
     
 }

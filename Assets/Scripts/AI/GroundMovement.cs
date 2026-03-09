@@ -19,6 +19,7 @@ namespace Akkerman.AI
                 agent.speed = speed;
             agent.height = config.agentHeight;
             rb.mass = config.mass;
+            rb.isKinematic = true;
         }
 
         public virtual void MoveTo(Vector3 target)

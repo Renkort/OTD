@@ -1,15 +1,18 @@
+using Akkerman.FPS;
 using UnityEngine;
 
 namespace Akkerman.AI
 {
     public class SimpleFSM : MonoBehaviour, IAIBrain
     {
-        private enum State {Patrol, Chase, Attack}
+        public enum State {Patrol=0, Chase=1, Attack=2}
         [SerializeField] private State currentState = State.Patrol;
         private Vector3 patrolPoint;
         private Enemy enemy;
 
         private float patrolRange = 0.0f;
+
+        public State CurrentState => currentState;
 
         public void Initialize(Enemy e, EnemyConfig.AIType type) // TODO: implement AIType
         {
@@ -32,14 +35,14 @@ namespace Akkerman.AI
                 case State.Attack:
                     if (!playerPosition.HasValue || Vector3.Distance(enemy.transform.position, playerPosition.Value) > enemy.Config.attackRange * 2)
                         currentState = State.Chase;
-
-                    // attack animation, VFX, Player damage
+                    // float dist = playerPosition.HasValue ? Vector3.Distance(enemy.transform.position, playerPosition.Value) : 999f;
+                    // if (dist < enemy.GetAttackRange() && enemy.GetCombat().CanAttack())
+                    //     currentState = State.Attack;
                     break;
 
             }
 
-            enemy.SetAIState((int)currentState);
-            if (currentState == State.Attack) enemy.TriggerAction("Attack");
+            enemy.SetAnimAIState((int)currentState);
         }
 
         public Vector3? GetTargetPosition()
@@ -51,6 +54,8 @@ namespace Akkerman.AI
                 _ => null
             };
         }
+
+        public int GetCurrentState() => (int)currentState;
 
     }
 }

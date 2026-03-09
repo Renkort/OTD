@@ -7,6 +7,7 @@ namespace Akkerman.AI
     {
         bool CanAttack();
         void Attack(Vector3 targetPosition);
+        void AttackUpdate(Vector3 targetPosition);
         void OnAnimEvent(string phase); // Start, Hit, End 
         float GetRange();
 

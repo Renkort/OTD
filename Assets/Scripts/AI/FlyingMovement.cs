@@ -37,7 +37,7 @@ namespace Akkerman.AI
 
             enemy.SetMovementSpeed(GetNormalizedSpeed());
             if (Vector3.Distance(transform.position, target) < attackRange)
-                enemy.SetAIState(2); // hover/attack state
+                enemy.SetAnimAIState(2); // hover/attack state
         }
 
         public void Jump(Vector3 direction)

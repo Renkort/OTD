@@ -8,7 +8,7 @@ namespace Akkerman.FPS
     public abstract class Bullet : MonoBehaviour
     {
         [Header("BASIC SETTINGS")]
-        [SerializeField] protected int damage;
+        [SerializeField] protected float damage;
         [SerializeField] protected float moveSpeed = 100f;
         [SerializeField] private float lifeTime = 5f;
         [SerializeField] private List<ImpactSurfaceType> impactEffects;
@@ -31,7 +31,12 @@ namespace Akkerman.FPS
             }
 
             Move();
-        } 
+        }
+
+        public void Initialize(float damage)
+        {
+            this.damage = damage;
+        }
 
         protected abstract void Move();
 

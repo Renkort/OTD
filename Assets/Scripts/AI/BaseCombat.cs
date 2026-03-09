@@ -17,9 +17,8 @@ namespace Akkerman.AI
         }
         public virtual bool CanAttack() => Time.time > lastAttackTime + config.attackCooldown;
         public abstract void Attack(Vector3 targetPosition);
+        public abstract void AttackUpdate(Vector3 targetPosition);
         public abstract void OnAnimEvent(string phase);
-
-
         public float GetRange() => config.attackRange;
 
     }
