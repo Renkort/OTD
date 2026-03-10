@@ -25,6 +25,7 @@ namespace Akkerman.AI
         public float attackDamage = 25f;
         public float attackRange = 2f;
         public float attackCooldown = 1.5f;
+        public float shootSpread = 0.02f;
         public GameObject projectilePrefab;
 
         [Header("MODEL")]

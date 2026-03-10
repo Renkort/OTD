@@ -6,29 +6,37 @@ namespace Akkerman.AI
     {
         [SerializeField] private GameObject enemyPrefab; // one for all enemies
         [SerializeField] private float spawnRandomRange = 0f;
-        [SerializeField] private Utils.KeyValuePair<EnemyConfig, int>[] enemiesToSpawn;
+        [SerializeField] private EnemySpawnData[] enemiesToSpawn;
 
         void Start()
         {
-            TestSpawn();
+            SpawnAll();
         }
 
-        public void Spawn(EnemyConfig config)
+        private GameObject Spawn(EnemyConfig config)
         {
             GameObject enemyGO = Instantiate(enemyPrefab, Random.insideUnitSphere * spawnRandomRange + transform.position, Quaternion.identity);
             string enemyName = config.modelPrefab.name;
             enemyGO.name = enemyName.Remove(enemyName.IndexOf("Model"));
             enemyGO.transform.SetParent(gameObject.transform);
             enemyGO.GetComponent<Enemy>().Initialize(config);
+
+            return enemyGO;
+        }
+        private void Spawn(EnemyConfig config, Transform point)
+        {
+            GameObject enemyGO = Spawn(config);
+            enemyGO.transform.position = point.position;
+            enemyGO.transform.rotation = point.rotation;
         }
 
-        private void TestSpawn()
+        private void SpawnAll()
         {
             for (int i = 0; i < enemiesToSpawn.Length; i++)
             {
-                for (int j = 0; j < enemiesToSpawn[i].Value; j++)
+                for (int j = 0; j < enemiesToSpawn[i].enemyConfig.Value; j++)
                 {
-                   Spawn(enemiesToSpawn[i].Key); 
+                   Spawn(enemiesToSpawn[i].enemyConfig.Key, enemiesToSpawn[i].point); 
                 }
             }
         }
@@ -38,5 +46,12 @@ namespace Akkerman.AI
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, spawnRandomRange);
         }
+    }
+
+    [System.Serializable]
+    public struct EnemySpawnData
+    {
+        public Utils.KeyValuePair<EnemyConfig, int> enemyConfig;
+        public Transform point;
     }
 }

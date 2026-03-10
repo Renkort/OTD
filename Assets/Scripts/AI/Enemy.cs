@@ -36,14 +36,10 @@ namespace Akkerman.AI
             health.Initialize(config.maxHealth);
             health.OnDeath += Die; // TODO: pool
             perceprion = gameObject.AddComponent<SensorySystem>();
-            perceprion.Initialize(config.detectionRange, LayerMask.GetMask("Player"));
-
-            SetupMovement();
-            SetupCombat();
+            perceprion.Initialize(config.detectionRange, LayerMask.GetMask("Player", "Ground"));
 
             brain = gameObject.AddComponent<SimpleFSM>();
             ((SimpleFSM)brain).Initialize(this, config.aiType);
-
 
             model = Instantiate(config.modelPrefab, transform).GetComponent<EnemyModel>();
             if (model == null)
@@ -51,6 +47,9 @@ namespace Akkerman.AI
             animator = model.transform.GetComponent<Animator>();
             if (animator == null) animator = model.gameObject.AddComponent<Animator>();
             animator.runtimeAnimatorController = config.animatorController;
+
+            SetupMovement();
+            SetupCombat();
         }
 
         private void SetupMovement()
