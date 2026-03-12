@@ -10,18 +10,19 @@ namespace Akkerman.AI
         [SerializeField] private Transform player;
         private EnemyModel model;
 
-        public EnemyConfig Config => config;
-        public Transform Player => player;
-        public EnemyModel Model => model;
-
         // components:
         private IMovement movement;
         private ICombat combat;
         private IAIBrain brain;
-        private SensorySystem perceprion;
+        private SensorySystem perception;
         private Health health;
         private Animator animator;
 
+        public EnemyConfig Config => config;
+        public Transform Player => player;
+        public EnemyModel Model => model;
+        public SensorySystem Perception => perception;
+        
         void Awake()
         {
             player = FindAnyObjectByType<Player>().transform;
@@ -35,8 +36,8 @@ namespace Akkerman.AI
             health = gameObject.AddComponent<Health>();
             health.Initialize(config.maxHealth);
             health.OnDeath += Die; // TODO: pool
-            perceprion = gameObject.AddComponent<SensorySystem>();
-            perceprion.Initialize(config.detectionRange, LayerMask.GetMask("Player", "Static"));
+            perception = gameObject.AddComponent<SensorySystem>();
+            perception.Initialize(config.detectionRange, LayerMask.GetMask("Player"));
 
             brain = gameObject.AddComponent<SimpleFSM>();
             ((SimpleFSM)brain).Initialize(this, config.aiType);
@@ -107,7 +108,7 @@ namespace Akkerman.AI
         {
             if (health.IsDead) return;
 
-            bool canSeePlayer = perceprion.CanSeeTarget(player);
+            bool canSeePlayer = perception.CanSeeTarget(player.position);
             // Debug.Log($"DEBUG: Can see player: {canSeePlayer}");
             brain.UpdateAI(canSeePlayer ? player.position : Vector3.zero);
             movement.MoveTo(brain?.GetTargetPosition() ?? transform.position);

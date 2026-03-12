@@ -7,6 +7,7 @@ namespace Akkerman.AI
     {
         public enum State {Patrol=0, Chase=1, Attack=2}
         [SerializeField] private State currentState = State.Patrol;
+        private SensorySystem perception;
         private Vector3 patrolPoint;
         private Enemy enemy;
 
@@ -18,26 +19,25 @@ namespace Akkerman.AI
         {
             enemy = e;
             patrolPoint = transform.position + Random.insideUnitSphere * patrolRange;
+            perception = e.Perception;
         }
-        public void UpdateAI(Vector3? playerPosition)
+        public void UpdateAI(Vector3 playerPosition)
         {
             switch (currentState)
             {
                 case State.Patrol:
-                    if (playerPosition.HasValue && Vector3.Distance(transform.position, playerPosition.Value) < enemy.Config.detectionRange)
+                    if (Vector3.Distance(transform.position, playerPosition) < enemy.Config.detectionRange && perception.CanSeeTarget(playerPosition))
                         currentState = State.Chase;
                     break;
                 case State.Chase:
-                    if (!playerPosition.HasValue) currentState = State.Patrol;
-                    else if (Vector3.Distance(enemy.transform.position, playerPosition.Value) < enemy.Config.attackRange)
+                    if (playerPosition == Vector3.zero) currentState = State.Patrol;
+                    else if (Vector3.Distance(enemy.transform.position, playerPosition) < enemy.Config.attackRange)
                         currentState = State.Attack;
                     break;
                 case State.Attack:
-                    if (!playerPosition.HasValue || Vector3.Distance(enemy.transform.position, playerPosition.Value) > enemy.Config.attackRange * 2)
+                    if (Vector3.Distance(enemy.transform.position, playerPosition) > enemy.Config.attackRange * 2 && perception.CanSeeTarget(playerPosition))
                         currentState = State.Chase;
-                    // float dist = playerPosition.HasValue ? Vector3.Distance(enemy.transform.position, playerPosition.Value) : 999f;
-                    // if (dist < enemy.GetAttackRange() && enemy.GetCombat().CanAttack())
-                    //     currentState = State.Attack;
+
                     break;
 
             }

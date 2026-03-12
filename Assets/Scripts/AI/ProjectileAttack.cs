@@ -1,3 +1,4 @@
+using System.Collections;
 using Akkerman.FPS;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ namespace Akkerman.AI
         protected Transform attackPoint;
         protected float spreadIntensity;
         protected Vector3 lastTargetPosition;
+        protected int burst = 10;
+        protected int shootRate = 5; // shots per second
 
         public override void Initialize(EnemyConfig config, Enemy e)
         {
@@ -19,11 +22,8 @@ namespace Akkerman.AI
         public override void Attack(Vector3 targetPosition)
         {
             lastAttackTime = Time.time;
-            GameObject projectile = Instantiate(config.projectilePrefab, attackPoint.position, Quaternion.identity);
-            Vector3 direction = (targetPosition - projectile.transform.position).normalized;
-            direction += CalcSpread();
-            
-            projectile.transform.forward = direction;
+
+            StartCoroutine(ShootSequence(targetPosition));            
         }
         public override void AttackUpdate(Vector3 targetPosition)
         {
@@ -33,6 +33,19 @@ namespace Akkerman.AI
         public override void OnAnimEvent(string phase)
         {
             /* Shoot animation play */
+        }
+
+        private IEnumerator ShootSequence(Vector3 targetPosition)
+        {
+            for (int i = 0; i < burst; i++)
+            {
+                GameObject projectile = Instantiate(config.projectilePrefab, attackPoint.position, Quaternion.identity);
+                Vector3 direction = (targetPosition - projectile.transform.position).normalized;
+                direction += CalcSpread();
+                projectile.transform.forward = direction;
+
+                yield return new WaitForSeconds(1f / shootRate);
+            }
         }
 
         private Vector3 CalcSpread()

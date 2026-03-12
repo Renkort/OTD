@@ -51,6 +51,7 @@ namespace Akkerman.AI
         public override void AttackUpdate(Vector3 targetPosition)
         {
             base.AttackUpdate(targetPosition);
+            UpdateLaser();
             // if charging don't move laser
             if (isCharging)
             {
@@ -69,7 +70,6 @@ namespace Akkerman.AI
                 return;
             }
 
-            UpdateLaser();
 
             targetPosition += Vector3.up;
             Vector3 directionToTarget = (targetPosition - enemy.Model.head.position).normalized;
