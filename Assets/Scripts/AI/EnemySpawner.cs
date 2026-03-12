@@ -13,21 +13,16 @@ namespace Akkerman.AI
             SpawnAll();
         }
 
-        private GameObject Spawn(EnemyConfig config)
+        private GameObject Spawn(EnemyConfig config, Transform point)
         {
-            GameObject enemyGO = Instantiate(enemyPrefab, Random.insideUnitSphere * spawnRandomRange + transform.position, Quaternion.identity);
+            // GameObject enemyGO = Instantiate(enemyPrefab, Random.insideUnitSphere * spawnRandomRange + transform.position, Quaternion.identity);
+            GameObject enemyGO = Instantiate(enemyPrefab, point.position, point.rotation);
             string enemyName = config.modelPrefab.name;
             enemyGO.name = enemyName.Remove(enemyName.IndexOf("Model"));
             enemyGO.transform.SetParent(gameObject.transform);
             enemyGO.GetComponent<Enemy>().Initialize(config);
 
             return enemyGO;
-        }
-        private void Spawn(EnemyConfig config, Transform point)
-        {
-            GameObject enemyGO = Spawn(config);
-            enemyGO.transform.position = point.position;
-            enemyGO.transform.rotation = point.rotation;
         }
 
         private void SpawnAll()

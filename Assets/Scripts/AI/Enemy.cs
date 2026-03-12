@@ -36,7 +36,7 @@ namespace Akkerman.AI
             health.Initialize(config.maxHealth);
             health.OnDeath += Die; // TODO: pool
             perceprion = gameObject.AddComponent<SensorySystem>();
-            perceprion.Initialize(config.detectionRange, LayerMask.GetMask("Player", "Ground"));
+            perceprion.Initialize(config.detectionRange, LayerMask.GetMask("Player", "Static"));
 
             brain = gameObject.AddComponent<SimpleFSM>();
             ((SimpleFSM)brain).Initialize(this, config.aiType);
@@ -115,7 +115,8 @@ namespace Akkerman.AI
             if (movement is GroundMovement ground)
                 SetMovementSpeed(ground.GetNormalizedSpeed());
 
-            combat.AttackUpdate(player.position);
+            if (brain.GetCurrentState() == 2 && canSeePlayer) // attack state
+                combat.AttackUpdate(player.position);
             
             if (brain.GetCurrentState() == (int)SimpleFSM.State.Attack && combat.CanAttack())
             {

@@ -36,6 +36,8 @@ namespace Akkerman.FPS
         {
             if (Player.Instance.IsDead) return;
 
+            Player.Instance.FpsController.ShakeCamera(0.05f, 0.04f);
+
             currentHealth -= damage;
             if (currentHealth <= 0 )
             {
