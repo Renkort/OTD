@@ -21,21 +21,21 @@ namespace Akkerman.AI
             patrolPoint = transform.position + Random.insideUnitSphere * patrolRange;
             perception = e.Perception;
         }
-        public void UpdateAI(Vector3 playerPosition)
+        public void UpdateAI(Vector3 targetPosition)
         {
             switch (currentState)
             {
                 case State.Patrol:
-                    if (Vector3.Distance(transform.position, playerPosition) < enemy.Config.detectionRange && perception.CanSeeTarget(playerPosition))
+                    if (Vector3.Distance(transform.position, targetPosition) < enemy.Config.detectionRange && perception.CanSeeTarget(targetPosition))
                         currentState = State.Chase;
                     break;
                 case State.Chase:
-                    if (playerPosition == Vector3.zero) currentState = State.Patrol;
-                    else if (Vector3.Distance(enemy.transform.position, playerPosition) < enemy.Config.attackRange)
+                    if (targetPosition == Vector3.zero) currentState = State.Patrol;
+                    else if (Vector3.Distance(enemy.transform.position, targetPosition) < enemy.Config.attackRange && perception.CanSeeTarget(targetPosition))
                         currentState = State.Attack;
                     break;
                 case State.Attack:
-                    if (Vector3.Distance(enemy.transform.position, playerPosition) > enemy.Config.attackRange * 2 && perception.CanSeeTarget(playerPosition))
+                    if (Vector3.Distance(enemy.transform.position, targetPosition) > enemy.Config.attackRange * 2)
                         currentState = State.Chase;
 
                     break;

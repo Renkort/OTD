@@ -24,6 +24,7 @@ namespace Akkerman.AI
         public CombatType combatType = CombatType.Melee;
         public float attackDamage = 25f;
         public float attackRange = 2f;
+        public float damageRange = 0.5f;
         public float attackCooldown = 1.5f;
         public float shootSpread = 0.02f;
         public GameObject projectilePrefab;

@@ -13,7 +13,7 @@ namespace Akkerman.AI
 
         public override void AttackUpdate(Vector3 targetPosition)
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public override void OnAnimEvent(string phase)

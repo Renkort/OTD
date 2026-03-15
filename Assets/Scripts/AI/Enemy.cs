@@ -44,7 +44,7 @@ namespace Akkerman.AI
 
             model = Instantiate(config.modelPrefab, transform).GetComponent<EnemyModel>();
             if (model == null)
-                Debug.LogError("ERROR: Null referece exception: No EnemyModel component");
+                Debug.LogError("ERROR: NullReferenceException: No EnemyModel component");
             animator = model.transform.GetComponent<Animator>();
             if (animator == null) animator = model.gameObject.AddComponent<Animator>();
             animator.runtimeAnimatorController = config.animatorController;

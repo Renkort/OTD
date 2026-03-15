@@ -6,6 +6,7 @@ namespace Akkerman.AI
     {
         [SerializeField] private GameObject enemyPrefab; // one for all enemies
         [SerializeField] private float spawnRandomRange = 0f;
+        [SerializeField] private bool isRandomPosition = false;
         [SerializeField] private EnemySpawnData[] enemiesToSpawn;
 
         void Start()
@@ -15,8 +16,15 @@ namespace Akkerman.AI
 
         private GameObject Spawn(EnemyConfig config, Transform point)
         {
-            // GameObject enemyGO = Instantiate(enemyPrefab, Random.insideUnitSphere * spawnRandomRange + transform.position, Quaternion.identity);
-            GameObject enemyGO = Instantiate(enemyPrefab, point.position, point.rotation);
+            GameObject enemyGO;
+            if (isRandomPosition)
+            {
+                enemyGO = Instantiate(enemyPrefab, Random.insideUnitSphere * spawnRandomRange + transform.position, Quaternion.identity);
+            }
+            else
+            {
+                enemyGO = Instantiate(enemyPrefab, point.position, point.rotation);
+            }
             string enemyName = config.modelPrefab.name;
             enemyGO.name = enemyName.Remove(enemyName.IndexOf("Model"));
             enemyGO.transform.SetParent(gameObject.transform);
