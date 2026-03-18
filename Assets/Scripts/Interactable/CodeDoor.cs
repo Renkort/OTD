@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,6 +13,7 @@ namespace Akkerman.InteractionSystem
         [SerializeField] private bool isLocked = true;
         [SerializeField] private float moveTime = 3.0f;
         [SerializeField] private Material redMaterial;
+        [SerializeField] private List<GameObject> indicators;
         [SerializeField] private UnityEvent onIncorrectPassword, onCorrectPassword;
         [SerializeField] private UnityEvent onOpenDoor, onCloseDoor;
         private string currentInput;
@@ -23,6 +25,7 @@ namespace Akkerman.InteractionSystem
             currentInput = "";
             if (!isLocked && !isOpen)
                 TriggerDoor(true);
+            onIncorrectPassword.AddListener(BlinkRedMaterial);
         }
 
 
@@ -54,10 +57,10 @@ namespace Akkerman.InteractionSystem
         {
             if (this.isOpen == isOpen || isMoving)
                 return;
-            StartCoroutine(EffectDoor(isOpen));
+            StartCoroutine(MoveDoor(isOpen));
         }
 
-        private IEnumerator EffectDoor(bool isOpen)
+        private IEnumerator MoveDoor(bool isOpen)
         {
             isMoving = true;
             Vector3 moveDirection = isOpen ? Vector3.up : Vector3.down;
@@ -82,27 +85,35 @@ namespace Akkerman.InteractionSystem
             isMoving = false;
         }
 
-        public void BlinkRedMaterial(GameObject gameObject)
+        public void BlinkRedMaterial()
         {
             if (!isBlinking)
-                StartCoroutine(BlinkRed(gameObject));
+                StartCoroutine(BlinkRed());
         }
 
-        private IEnumerator BlinkRed(GameObject gameObject)
+        private IEnumerator BlinkRed()
         {
             isBlinking = true;
             const int blinkTimes = 3;
-            Material defaultMat = gameObject.GetComponent<MeshRenderer>().material;
-            MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
-              
+            List<MeshRenderer> meshRenderers = new();
+            List<Material> defaultMat = new();
+            for (int j = 0; j < indicators.Count; j++)
+            {
+                meshRenderers.Add(indicators[j].GetComponent<MeshRenderer>());
+                defaultMat.Add(meshRenderers[j].material);
+            }
             for (int i = 0; i < blinkTimes; i++)
             {
-                meshRenderer.material = redMaterial;
+                for (int j =0; j < indicators.Count; j++)
+                    meshRenderers[j].material = redMaterial;
                 yield return _waitForSeconds0_5;
-                meshRenderer.material = defaultMat;
+
+                for (int j =0; j < indicators.Count; j++)
+                    meshRenderers[j].material = defaultMat[j];
                 yield return _waitForSeconds0_5;
             }
-            meshRenderer.material = defaultMat;
+            for (int i=0; i < meshRenderers.Count; i++)
+                meshRenderers[i].material = defaultMat[i];
             isBlinking = false;
         }
     }
