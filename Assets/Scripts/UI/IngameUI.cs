@@ -32,6 +32,7 @@ namespace Akkerman.UI
         private const int lowHealthBound = 25;
 
         public Animator WhiteFadeScreen => whiteFadeScreen;
+        float defaultFontSize;
 
         void Start()
         {
@@ -40,6 +41,7 @@ namespace Akkerman.UI
             deathScreen.SetActive(false);
             ammoDisplay.SetActive(false);
             forceModifierSlider.maxValue = throwable.ForceModifierLimit;
+            defaultFontSize = ammoText.fontSize;
         }
 
         void Update()
@@ -97,7 +99,7 @@ namespace Akkerman.UI
             float displayTime = 10f;
 
             ammoText.text = barcode;
-            float defaultFontSize = ammoText.fontSize;
+            
             ammoText.fontSize = defaultFontSize + defaultFontSize / 4;
             yield return new WaitForSeconds(0.6f);
             ammoText.fontSize = defaultFontSize;

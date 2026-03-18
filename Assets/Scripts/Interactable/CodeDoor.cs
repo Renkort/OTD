@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,6 +7,7 @@ namespace Akkerman.InteractionSystem
 {
     public class CodeDoor : MonoBehaviour
     {
+        private static WaitForSeconds _waitForSeconds0_5 = new WaitForSeconds(0.5f);
         [SerializeField] private string password;
         [SerializeField] private bool isLocked = true;
         [SerializeField] private float moveTime = 3.0f;
@@ -16,6 +16,7 @@ namespace Akkerman.InteractionSystem
         [SerializeField] private UnityEvent onOpenDoor, onCloseDoor;
         private string currentInput;
         private bool isOpen;
+        private bool isMoving, isBlinking;
 
         void Start()
         {
@@ -27,6 +28,9 @@ namespace Akkerman.InteractionSystem
 
         public void EnterSign(string sign)
         {
+            if (isBlinking || isMoving)
+                return;
+
             currentInput += sign[0];
             if (currentInput.Length == password.Length)
             {
@@ -48,13 +52,14 @@ namespace Akkerman.InteractionSystem
         }
         public void TriggerDoor(bool isOpen)
         {
-            if (this.isOpen == isOpen)
+            if (this.isOpen == isOpen || isMoving)
                 return;
             StartCoroutine(EffectDoor(isOpen));
         }
 
         private IEnumerator EffectDoor(bool isOpen)
         {
+            isMoving = true;
             Vector3 moveDirection = isOpen ? Vector3.up : Vector3.down;
             float elapsed = moveTime;
             Vector3 targetPos = transform.position + new Vector3(0.0f, transform.localScale.y, 0.0f) * moveDirection.y;
@@ -74,15 +79,18 @@ namespace Akkerman.InteractionSystem
                 onOpenDoor?.Invoke();
             else
                 onCloseDoor?.Invoke();
+            isMoving = false;
         }
 
         public void BlinkRedMaterial(GameObject gameObject)
         {
-            StartCoroutine(BlinkRed(gameObject));
+            if (!isBlinking)
+                StartCoroutine(BlinkRed(gameObject));
         }
 
         private IEnumerator BlinkRed(GameObject gameObject)
         {
+            isBlinking = true;
             const int blinkTimes = 3;
             Material defaultMat = gameObject.GetComponent<MeshRenderer>().material;
             MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
@@ -90,11 +98,12 @@ namespace Akkerman.InteractionSystem
             for (int i = 0; i < blinkTimes; i++)
             {
                 meshRenderer.material = redMaterial;
-                yield return new WaitForSeconds(0.5f);
+                yield return _waitForSeconds0_5;
                 meshRenderer.material = defaultMat;
-                yield return new WaitForSeconds(0.5f);
+                yield return _waitForSeconds0_5;
             }
             meshRenderer.material = defaultMat;
+            isBlinking = false;
         }
     }
     
