@@ -8,11 +8,13 @@ namespace Akkerman.AI
         [SerializeField] private GameObject enemyPrefab; // one for all enemies
         [SerializeField] private float spawnRandomRange = 0f;
         [SerializeField] private bool isRandomPosition = false;
+        [SerializeField] private bool spawnOnAwake = false;
         [SerializeField] private EnemySpawnData[] enemiesToSpawn;
 
         void Start()
         {
-            SpawnAll();
+            if (spawnOnAwake)
+                SpawnAll();
         }
 
         private Enemy Spawn(EnemyConfig config, Transform point)
@@ -42,7 +44,7 @@ namespace Akkerman.AI
             {
                 for (int j = 0; j < enemiesToSpawn[i].enemyConfig.Value; j++)
                 {
-                   spawnedEnemies.Add(Spawn(enemiesToSpawn[i].enemyConfig.Key, enemiesToSpawn[i].point)); 
+                    spawnedEnemies.Add(Spawn(enemiesToSpawn[i].enemyConfig.Key, enemiesToSpawn[i].point)); 
                 }
             }
             return spawnedEnemies;

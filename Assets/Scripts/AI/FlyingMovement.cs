@@ -15,13 +15,14 @@ namespace Akkerman.AI
             flyHeight = config.flyHeight;
             attackRange = config.attackRange;
 
-            transform.position = new Vector3(transform.position.x, flyHeight, transform.position.z);
+            // transform.position = new Vector3(transform.position.x, flyHeight, transform.position.z);
 
             enemy = GetComponent<Enemy>();
         }
         public void MoveTo(Vector3 target)
         {
-            target.y = flyHeight;
+            // target.y = flyHeight;
+            flyHeight = target.y;
             Vector3 direction = (target - transform.position).normalized;
             transform.position += direction * flySpeed * Time.deltaTime;
 

@@ -20,6 +20,7 @@ public class SortingZones : ZoneEffector
     void Start()
     {
         turrets = turretSpawner.SpawnAll();
+        SetActiveTurrets(false);
     }
 
     void Update()

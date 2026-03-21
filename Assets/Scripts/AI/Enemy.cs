@@ -64,6 +64,8 @@ namespace Akkerman.AI
                     ((GroundMovement)movement).Initialize(agent, rb, config);
                     break;
                 case EnemyConfig.MovementType.Flying:
+                    var rbFly = gameObject.GetComponent<Rigidbody>() ?? gameObject.AddComponent<Rigidbody>();
+                    rbFly.isKinematic = true;
                     movement = gameObject.AddComponent<FlyingMovement>();
                     ((FlyingMovement)movement).Initialize(config);
                     break;
