@@ -65,18 +65,18 @@ namespace Akkerman.InteractionSystem
             isMoving = true;
             Vector3 moveDirection = isOpen ? Vector3.up : Vector3.down;
             float elapsed = moveTime;
-            Vector3 targetPos = transform.position + new Vector3(0.0f, transform.localScale.y, 0.0f) * moveDirection.y;
-            float moveDistance = Mathf.Abs(transform.position.y - targetPos.y);
+            Vector3 targetPos = transform.localPosition + new Vector3(0.0f, transform.localScale.y, 0.0f) * moveDirection.y;
+            float moveDistance = Mathf.Abs(transform.localPosition.y - targetPos.y);
             float coef = moveDistance / moveTime;
             
             while(elapsed > 0)
             {
-                transform.position += coef * Time.deltaTime * moveDirection;
+                transform.localPosition += coef * Time.deltaTime * moveDirection;
                 elapsed -= Time.deltaTime;
                 yield return null;
             }
 
-            transform.position = targetPos;
+            transform.localPosition = targetPos;
             this.isOpen = isOpen;
             if (isOpen)
                 onOpenDoor?.Invoke();

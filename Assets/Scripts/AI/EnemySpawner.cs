@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Akkerman.AI
@@ -14,7 +15,7 @@ namespace Akkerman.AI
             SpawnAll();
         }
 
-        private GameObject Spawn(EnemyConfig config, Transform point)
+        private Enemy Spawn(EnemyConfig config, Transform point)
         {
             GameObject enemyGO;
             if (isRandomPosition)
@@ -28,20 +29,23 @@ namespace Akkerman.AI
             string enemyName = config.modelPrefab.name;
             enemyGO.name = enemyName.Remove(enemyName.IndexOf("Model"));
             enemyGO.transform.SetParent(gameObject.transform);
-            enemyGO.GetComponent<Enemy>().Initialize(config);
+            Enemy enemy = enemyGO.GetComponent<Enemy>();
+            enemy.Initialize(config);
 
-            return enemyGO;
+            return enemy;
         }
 
-        private void SpawnAll()
+        public List<Enemy> SpawnAll()
         {
+            List<Enemy> spawnedEnemies = new();
             for (int i = 0; i < enemiesToSpawn.Length; i++)
             {
                 for (int j = 0; j < enemiesToSpawn[i].enemyConfig.Value; j++)
                 {
-                   Spawn(enemiesToSpawn[i].enemyConfig.Key, enemiesToSpawn[i].point); 
+                   spawnedEnemies.Add(Spawn(enemiesToSpawn[i].enemyConfig.Key, enemiesToSpawn[i].point)); 
                 }
             }
+            return spawnedEnemies;
         }
 
         void OnDrawGizmosSelected()

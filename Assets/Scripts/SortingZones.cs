@@ -10,12 +10,17 @@ public class SortingZones : ZoneEffector
     [SerializeField] private float timeForSorting;
     [SerializeField] private AudioClip alarmSound;
     [SerializeField] private AudioClip alarmMusic;
-    [SerializeField] private List<TurretAI> turrets;
+    [SerializeField] private EnemySpawner turretSpawner;
+    private List<Enemy> turrets;
     private float timeToCheckPlayer;
-    private bool isPlayerInside;
     private bool isSorting = false;
     private AudioClip defaultSfx;
     private AudioClip defaultMusic;
+
+    void Start()
+    {
+        turrets = turretSpawner.SpawnAll();
+    }
 
     void Update()
     {
@@ -28,44 +33,21 @@ public class SortingZones : ZoneEffector
     {
         if (Time.time >= timeToCheckPlayer)
         {
-            CheckIfPlayerInZone();
             StopSorting();
         }
 
     }
 
-    private void CheckIfPlayerInZone()
-    {
-        foreach (Zone zone in zones)
-        {
-            if (zone.IsPlayerInside)
-            {
-                isPlayerInside = true;
-                break;
-            }
-            else
-            {
-                isPlayerInside = false;
-            }
-        }
-
-        if (!isPlayerInside)
-        {
-            // player.Kill();
-            player.OnPlayerDied += DeactivateTurrets;
-            ActivateTurrets(true);
-        }
-    }
 
     public void DeactivateTurrets()
     {
-        ActivateTurrets(false);
+        SetActiveTurrets(false);
     }
-    public void ActivateTurrets(bool isActive)
+    public void SetActiveTurrets(bool isActive)
     {
-        foreach (TurretAI turret in turrets)
+        foreach (Enemy turret in turrets)
         {
-            turret.Activate(isActive);
+            turret.enabled = isActive;
         }
     }
     public void StartSorting()
@@ -74,6 +56,9 @@ public class SortingZones : ZoneEffector
         timeToCheckPlayer = Time.time + timeForSorting;
         animator.SetBool("Alarm", true);
         isSorting = true;
+        player.OnPlayerDied += DeactivateTurrets;
+        SetActiveTurrets(true);
+
         defaultSfx = AudioHandler.Instance.sfxClip;
         defaultMusic = AudioHandler.Instance.musicClip;
         AudioHandler.Instance.SetSfx(alarmSound);
@@ -86,5 +71,4 @@ public class SortingZones : ZoneEffector
         AudioHandler.Instance.SetSfx(defaultSfx);
         AudioHandler.Instance.SetMusic(defaultMusic);
     }
-
 }
