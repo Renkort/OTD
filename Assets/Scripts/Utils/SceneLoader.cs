@@ -13,6 +13,7 @@ namespace Akkerman.Utils
         [SerializeField] private string triggerSceneName;
         [Header("UI SETTINGS")]
         public GameObject loadingScreen;
+        [SerializeField] private bool showProgress = false;
         public Slider progressBar;
         public TextMeshProUGUI progressText;
 
@@ -51,11 +52,15 @@ namespace Akkerman.Utils
             {
                 float progress = asyncLoad.progress / 0.9f;
 
-                if (progressBar != null)
-                    progressBar.value = progress;
 
                 if (progressText != null)
-                    progressText.text = $"Loading... {Mathf.RoundToInt(progress * 100)}%";
+                    progressText.text = $"Loading...";
+
+                if (showProgress)
+                {
+                    progressBar.value = progress;
+                    progressText.text += $"{Mathf.RoundToInt(progress * 100)}%";
+                }
 
                 if (asyncLoad.progress >= 0.9f)
                 {

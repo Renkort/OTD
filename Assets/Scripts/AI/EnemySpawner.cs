@@ -50,6 +50,11 @@ namespace Akkerman.AI
             return spawnedEnemies;
         }
 
+        public void SpawnAllEnemies()
+        {
+            SpawnAll();
+        }
+
         void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;

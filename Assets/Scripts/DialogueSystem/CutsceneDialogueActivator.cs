@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Akkerman.DialogueSystem
 {
+    [RequireComponent(typeof(Collider))]
     public class CutsceneDialogueActivator : DialogueActivator3D
     {
         [SerializeField] private bool playOnAwake;
