@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,9 +11,11 @@ namespace Akkerman.InteractionSystem
         [SerializeField] private Rigidbody rb;
         public UnityEvent OnTakeDamage;
         public UnityEvent OnDeath;
+        public Action<float> onTakeDamage;
         private float health;
         private float damageForceImpact = 100f;
         float forceFalloff;
+        public float MaxHealth => maxHealth; 
 
         void Awake()
         {
@@ -25,6 +28,7 @@ namespace Akkerman.InteractionSystem
             if (health <= 0) return;
             health -= damage;
             OnTakeDamage?.Invoke();
+            onTakeDamage?.Invoke(damage);
             if (health <= 0)
             {
                 health = 0.0f;

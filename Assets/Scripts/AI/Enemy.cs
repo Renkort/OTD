@@ -9,6 +9,7 @@ namespace Akkerman.AI
         [SerializeField] private EnemyConfig config;
         [SerializeField] private Transform player;
         private EnemyModel model;
+        private CapsuleCollider capsuleCollider;
 
         // components:
         private IMovement movement;
@@ -43,6 +44,8 @@ namespace Akkerman.AI
             ((SimpleFSM)brain).Initialize(this, config.aiType);
 
             model = Instantiate(config.modelPrefab, transform).GetComponent<EnemyModel>();
+            capsuleCollider = gameObject.GetComponent<CapsuleCollider>();
+            capsuleCollider.height = config.agentHeight;
             if (model == null)
                 Debug.LogError("ERROR: NullReferenceException: No EnemyModel component");
             animator = model.transform.GetComponent<Animator>();

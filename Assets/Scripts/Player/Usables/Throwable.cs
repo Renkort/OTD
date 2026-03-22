@@ -103,7 +103,7 @@ namespace Akkerman.FPS.Usables
             GameObject explosionEffect = Instantiate(explodeEffect, transform.position, explodeEffect.transform.rotation);
             Player.Instance.FpsController.ShakeCamera(0.1f, 0.1f);
             
-            Collider[] colliders = Physics.OverlapSphere(transform.position, damageRadius, damageableLayer);
+            Collider[] colliders = Physics.OverlapSphere(transform.position, damageRadius/*, damageableLayer*/);
             foreach (Collider collider in colliders)
             {
                 Rigidbody rb = collider.attachedRigidbody; // faster than GetComponent
