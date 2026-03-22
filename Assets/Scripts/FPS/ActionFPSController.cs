@@ -61,7 +61,7 @@ namespace Akkerman.FPS
         [SerializeField] private SurfaceFootsteps[] footstepSounds;
         [SerializeField] private float footstepInterval = 0.3f;
         [SerializeField] private Transform footstepOrigin;
-        [SerializeField] private float raycastDistance = 0.2f;
+        [SerializeField] private float raycastDistance = 1.0f;
         [SerializeField] private LayerMask groundLayer;
         private float footstepTimer;
         private AudioSource audioSource;
@@ -482,7 +482,7 @@ namespace Akkerman.FPS
 
         private string GetSurfaceTag()
         {
-            if (Physics.Raycast(footstepOrigin.position, Vector3.down, out RaycastHit hit, raycastDistance, groundLayer))
+            if (Physics.Raycast(footstepOrigin.position, Vector3.down, out RaycastHit hit, raycastDistance/*, groundLayer*/))
             {
                 return hit.collider.tag;
             }
