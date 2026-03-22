@@ -49,6 +49,12 @@ namespace Akkerman.Audio
             sfxSource.Stop();
         }
 
+        public void SfxPlayOneShot(AudioClip clip)
+        {
+            sfxSource.Stop();
+            sfxSource.PlayOneShot(clip);
+        }
+
         public void CrossFadeMusicTo(AudioClip audioClip)
         {
             if (isCrossFading) return;

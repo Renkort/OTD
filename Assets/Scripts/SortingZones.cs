@@ -62,14 +62,14 @@ public class SortingZones : ZoneEffector
 
         defaultSfx = AudioHandler.Instance.sfxClip;
         defaultMusic = AudioHandler.Instance.musicClip;
-        AudioHandler.Instance.SetSfx(alarmSound);
-        AudioHandler.Instance.SetMusic(alarmMusic);
+        AudioHandler.Instance.SfxPlayOneShot(alarmSound);
+        AudioHandler.Instance.CrossFadeMusicTo(alarmMusic);
     }
     public void StopSorting()
     {
         isSorting = false;
         animator.SetBool("Alarm", false);
         AudioHandler.Instance.SetSfx(defaultSfx);
-        AudioHandler.Instance.SetMusic(defaultMusic);
+        AudioHandler.Instance.CrossFadeMusicTo(defaultMusic);
     }
 }
