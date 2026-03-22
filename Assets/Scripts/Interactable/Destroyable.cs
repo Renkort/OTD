@@ -6,13 +6,18 @@ namespace Akkerman.InteractionSystem
     public class Destroyable : MonoBehaviour, FPS.IDamagable
     {
         [SerializeField] private float maxHealth;
+        [SerializeField] private bool usePhysics;
+        [SerializeField] private Rigidbody rb;
         public UnityEvent OnTakeDamage;
         public UnityEvent OnDeath;
         private float health;
+        private float damageForceImpact = 100f;
+        float forceFalloff;
 
         void Awake()
         {
             health = maxHealth;
+            forceFalloff = Mathf.Pow(1f - rb.mass / damageForceImpact, 2f);
         }
 
         public void TakeDamage(float damage)
@@ -30,6 +35,10 @@ namespace Akkerman.InteractionSystem
         public void TakeDamage(float damage, Vector3 hitPosition, Vector3 hitNormal, Vector3 hitDirection)
         {
             TakeDamage(damage);
+            if (usePhysics)
+            {
+                rb.AddForce(damageForceImpact * forceFalloff * hitDirection, ForceMode.Impulse);
+            }
         }
     }
 }
