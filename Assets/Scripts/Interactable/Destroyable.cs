@@ -4,11 +4,16 @@ using UnityEngine.Events;
 
 namespace Akkerman.InteractionSystem
 {
+    [RequireComponent(typeof(Rigidbody))]
     public class Destroyable : MonoBehaviour, FPS.IDamagable
     {
+        [Header("HEALTH")]
         [SerializeField] private float maxHealth;
+        [SerializeField] private bool infiniteHealth = false;
+        [Header("PHYSICS")]
         [SerializeField] private bool usePhysics;
         [SerializeField] private Rigidbody rb;
+        [Header("DAMAGE EVENTS")]
         public UnityEvent OnTakeDamage;
         public UnityEvent OnDeath;
         public Action<float> onTakeDamage;
@@ -25,7 +30,7 @@ namespace Akkerman.InteractionSystem
 
         public void TakeDamage(float damage)
         {
-            if (health <= 0) return;
+            if (health <= 0 && !infiniteHealth) return;
             health -= damage;
             OnTakeDamage?.Invoke();
             onTakeDamage?.Invoke(damage);
