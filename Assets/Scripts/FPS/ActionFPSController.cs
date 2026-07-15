@@ -63,6 +63,9 @@ namespace Akkerman.FPS
         [SerializeField] private Transform footstepOrigin;
         [SerializeField] private float raycastDistance = 1.0f;
         [SerializeField] private LayerMask groundLayer;
+        
+        [Header("SWAY SETTINGS")]
+        [SerializeField] private WeaponSwayHandler weaponSwayHandler;
         private float footstepTimer;
         private AudioSource audioSource;
 
@@ -138,6 +141,8 @@ namespace Akkerman.FPS
             HandleWallJump();
 
             ApplyFinalMovements();
+
+            weaponSwayHandler.SetMovementState(currentVelocity.normalized.magnitude, Input.GetKey(KeyCode.LeftShift), isGrounded);
         }
 
         private void HandleGroundCheck()

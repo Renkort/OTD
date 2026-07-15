@@ -1,0 +1,16 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+
+namespace Akkerman.FPS
+{
+    public class WeaponInventory : MonoBehaviour
+    {
+        [Header("SLOTS")]
+        [Tooltip("Weapons by key numbers 0,1,2...")]
+        [SerializeField] private List<Weapon> weaponSlots;
+
+        [Header("SWITCH SETTIGNS")]
+        [SerializeField] private float switchDelay = 0.4f;
+    }
+}

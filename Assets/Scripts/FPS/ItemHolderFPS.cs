@@ -10,7 +10,7 @@ namespace Akkerman.FPS
     {
 
         [SerializeField] private ItemHolderFPSData data;
-        [SerializeField] private List<HoldableItemData> holdableItems;
+        [SerializeField] private List<HoldableItemInfo> holdableItems;
 
         [Header("CAMERA FOLLOWING")]
         [SerializeField] private Transform playerCamera;
@@ -144,11 +144,11 @@ namespace Akkerman.FPS
                 rotationSpeed * Time.deltaTime
             );
         }
-        public Weapon GetWeaponByModel(Weapon.WeaponModel weaponModel)
+        public WeaponComplex GetWeaponByModel(WeaponComplex.WeaponModel weaponModel)
         {
             for (int i = 0; i < holdableItems.Count; i++)
             {
-                Weapon weapon = holdableItems[i].instance.GetComponentInChildren<Weapon>();
+                WeaponComplex weapon = holdableItems[i].instance.GetComponentInChildren<WeaponComplex>();
                 if (weapon == null)
                     continue;
                 if (weapon.thisWeaponModel == weaponModel)
@@ -166,7 +166,7 @@ namespace Akkerman.FPS
 
 
     [System.Serializable]
-    public struct HoldableItemData
+    public struct HoldableItemInfo
     {
         public int ButtonNum;
         public Transform holder;
