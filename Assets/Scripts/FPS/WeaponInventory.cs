@@ -17,12 +17,19 @@ namespace Akkerman.FPS
 
         public HoldableItem CurrentWeapon {get; private set; }
         public int CurrentIndex {get; private set; }
+        public List<WeaponData> WeaponDatas {get; private set;}
+        public List<Weapon> Weapons {get; private set;}
 
         public event System.Action<HoldableItemData, int> OnWeaponSwitched;
 
         private bool isSwitching;
         public bool IsSwitching  => isSwitching;
         private float lastScrollTime;
+
+        private void Awake()
+        {
+            ReadWeaponSlots();
+        }
 
         private void Start()
         {
@@ -40,6 +47,22 @@ namespace Akkerman.FPS
         {
             HandleNumberKeys();
             HandleScrollWheel();
+        }
+
+        private void ReadWeaponSlots()
+        {
+            WeaponDatas = new();
+            Weapons = new();
+            for (int i = 0; i < weaponSlots.Count; i++)
+            {
+                Weapon weapon = weaponSlots[i] as Weapon;
+                if (weapon != null)
+                {
+                    Weapons.Add(weapon);
+                    WeaponDatas.Add(weapon.Data);
+                }
+                
+            }   
         }
 
         private void HandleNumberKeys()

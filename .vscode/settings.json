@@ -51,6 +51,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "OTD.sln",
+    "dotnet.defaultSolution": "OTD.slnx",
     "git.ignoreLimitWarning": true
 }

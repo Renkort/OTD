@@ -5,6 +5,7 @@ namespace Akkerman.AI
 {
     public class EnemySpawner : MonoBehaviour
     {
+        [Tooltip("Prefab used as a template for enemies. It should have an Enemy component.")]
         [SerializeField] private GameObject enemyPrefab; // one for all enemies
         [SerializeField] private float spawnRandomRange = 0f;
         [SerializeField] private bool isRandomPosition = false;
@@ -28,8 +29,8 @@ namespace Akkerman.AI
             {
                 enemyGO = Instantiate(enemyPrefab, point.position, point.rotation);
             }
-            string enemyName = config.modelPrefab.name;
-            enemyGO.name = enemyName.Remove(enemyName.IndexOf("Model"));
+            // string enemyName = config.modelPrefab.name;
+            // enemyGO.name = enemyName.Remove(enemyName.IndexOf("Model"));
             enemyGO.transform.SetParent(gameObject.transform);
             Enemy enemy = enemyGO.GetComponent<Enemy>();
             enemy.Initialize(config);

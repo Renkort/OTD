@@ -11,6 +11,7 @@ namespace Akkerman.FPS
         private static readonly int ReloadHash = Animator.StringToHash("Reload");
         [SerializeField] private WeaponData data;
         [SerializeField] private Transform muzzlePoint;
+        [SerializeField] private ParticleSystem muzzleVFX;
         [SerializeField] private Animator animator;
 
         public WeaponData Data => data;
@@ -21,6 +22,8 @@ namespace Akkerman.FPS
 
         private float nextFireTime;
         private Coroutine fireRoutine;
+
+        public event System.Action OnShoot;
 
 
         private void Awake()
@@ -110,7 +113,7 @@ namespace Akkerman.FPS
                 CurrentAmmo--;
                 UpdateUI();
             }
-            
+            OnShoot?.Invoke();
             PlayFireFX();
         }
 
@@ -128,7 +131,11 @@ namespace Akkerman.FPS
         private void PlayFireFX()
         {
             if (data.muzzleFlashPrefab != null)
-                Instantiate(data.muzzleFlashPrefab, muzzlePoint.position, muzzlePoint.rotation, muzzlePoint);
+            {
+                //Instantiate(data.muzzleFlashPrefab, muzzlePoint.position, muzzlePoint.rotation, muzzlePoint);
+                muzzleVFX.Play();
+            }
+
 
             if (data.fireSound != null)
                 AudioSource.PlayClipAtPoint(data.fireSound, muzzlePoint.position);
